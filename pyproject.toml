@@ -4,19 +4,33 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tripline"
-version = "0.2.0"
-description = "Open-source, vendor-neutral runtime firewall for AI agents. Stops poisoned tools, rug-pulls and data leaks in MCP traffic."
+version = "0.3.0"
+description = "Open-source runtime firewall for AI agents. Stops poisoned tools, rug-pulls, data leaks, AI worms and memory poisoning in MCP traffic."
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Lakshya Bhardwaj" }]
 requires-python = ">=3.11"
 dependencies = []
-keywords = ["mcp", "ai-security", "prompt-injection", "llm", "agents", "firewall"]
+keywords = ["mcp", "model-context-protocol", "ai-security", "prompt-injection", "llm", "agents", "firewall", "ai-worm", "memory-poisoning"]
 classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
   "License :: OSI Approved :: Apache Software License",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Security",
 ]
+
+[project.urls]
+Homepage = "https://github.com/lakshyab20/tripline"
+Documentation = "https://github.com/lakshyab20/tripline/tree/main/docs"
+Issues = "https://github.com/lakshyab20/tripline/issues"
+Changelog = "https://github.com/lakshyab20/tripline/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = ["pytest>=7"]
@@ -29,6 +43,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.setuptools.package-data]
 tripline = ["models/*.gz", "models/*.md", "data/*.json"]
