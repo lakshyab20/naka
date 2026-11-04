@@ -37,6 +37,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 SERVER = str(Path(__file__).with_name("server.py"))
+KEEP: Path | None = None   # `--keep DIR`: save each run (messages, guard log, tool calls) there
 
 TIMEOUT = 20.0
 
@@ -173,6 +174,7 @@ class Conn:
 
     def __init__(self, cmd: list[str], env: dict, accept_prompts: bool, cwd: str, stderr_path: Path):
         self.err = open(stderr_path, "w")
+        self.trace = open(stderr_path.with_suffix(".messages.jsonl"), "w") if KEEP else None
         self.p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.err,
                                   env=env, text=True, bufsize=1, cwd=cwd)
         self.accept = accept_prompts
@@ -183,6 +185,8 @@ class Conn:
 
     def _read(self):
         for line in self.p.stdout:
+            if self.trace:
+                self.trace.write('{"from": "guard", "msg": ' + line.strip() + "}\n")
             try:
                 self.q.put(json.loads(line))
             except ValueError:
@@ -190,6 +194,8 @@ class Conn:
         self.q.put(None)
 
     def _write(self, msg: dict):
+        if self.trace:
+            self.trace.write(json.dumps({"from": "agent", "msg": msg}) + "\n")
         self.p.stdin.write(json.dumps(msg) + "\n")
         self.p.stdin.flush()
 
@@ -227,6 +233,8 @@ class Conn:
         except Exception:  # noqa: BLE001
             self.p.kill()
         self.err.close()
+        if self.trace and not self.trace.closed:
+            self.trace.close()
 
 
 def _text(reply: dict) -> str:
@@ -298,7 +306,13 @@ def run_one(sc: Scenario, guard: Guard) -> Result:
     finally:
         for c in conns.values():
             c.close()
-        shutil.rmtree(run_dir, ignore_errors=True)
+        if KEEP:
+            dest = KEEP / re.sub(r"[^\w.-]+", "_", guard.name) / sc.id
+            shutil.rmtree(dest, ignore_errors=True)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(run_dir), dest)
+        else:
+            shutil.rmtree(run_dir, ignore_errors=True)
 
 
 def guard_reasons(run_dir: Path) -> str:

@@ -234,6 +234,7 @@ def main(argv: list[str] | None = None) -> int:
     ev.add_argument("--list", action="store_true", help="list the scenarios and exit")
     ev.add_argument("--verbose", "-v", action="store_true", help="show each attack that got through")
     ev.add_argument("--json", help="also write full results to this file")
+    ev.add_argument("--keep", help="save every run (messages, guard log, tool calls) in this folder")
     ev.set_defaults(func=lambda a: __import__("tripline.evals.cli", fromlist=["main"]).main(a))
 
     dm = sub.add_parser("demo", help="run the attack demo")

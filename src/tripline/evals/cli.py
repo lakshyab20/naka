@@ -59,6 +59,10 @@ def main(args) -> int:
     if missing:
         print(f"tripline eval: not installed: {', '.join(missing)}", file=sys.stderr)
         return 2
+    if getattr(args, "keep", None):
+        from . import core
+        core.KEEP = Path(args.keep).expanduser().resolve()
+        core.KEEP.mkdir(parents=True, exist_ok=True)
     scenarios = [sc for s in suites for sc in SUITES[s]()]
     if args.only:
         scenarios = [sc for sc in scenarios if any(o in sc.id for o in args.only)]
