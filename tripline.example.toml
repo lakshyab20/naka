@@ -25,6 +25,13 @@ on_egress_after_injection = "block"
 
 # Injection score needed to flag text (high-severity rules score 3).
 threshold = 3
+# Text in one message above this size is blocked instead of scanned
+# (scanning costs roughly 1 second per MB).
+max_scan_bytes = 8000000
+# After an injection attempt in this session: "egress" blocks tools that can
+# send data out (by name, or any call carrying a URL, host, IP or email);
+# "all" blocks every tool call that isn't allow-listed.
+lockdown_scope = "egress"
 
 # Tools that move data out, in addition to name-based guesses
 # (send, post, email, upload, webhook, http, comment, message...).

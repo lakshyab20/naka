@@ -48,9 +48,10 @@ INJECTION_RULES: list[tuple[str, int, re.Pattern[str]]] = [
     ("override-instructions", HIGH, _rx(
         r"(?:^|[.!?:;,>\-–—\n(*]\s*|\b(?:please|now|then|and|so|just|simply|kindly|must|should)\s+|"
         r"\byou\s+(?:must|should|need\s+to|have\s+to|will)\s+)"
+        r"(?:(?:\w+ly|now|then|also|just|simply|instead)\s+){0,3}"   # "please carefully ignore"
         r"(?:ignore|disregard|forget|override|bypass)\b.{0,40}?"
         r"\b(?:previous|prior|above|earlier|all|system|original|your|any)\b.{0,20}?"
-        r"\b(?:instructions?|prompts?|rules|guidelines|directives|guardrails)")),
+        r"\b(?:instructions?|prompts?|rules|guidelines|guidance|directives|guardrails|policies|constraints)")),
     ("fake-system-tag", HIGH, _rx(
         r"<\s*/?\s*(important|system|admin|instructions?|secret|assistant)\s*>|\[\s*(system|admin|important)\s*\]|^\s*#{1,6}\s*system\b")),
     # "Do not mention this to the user." but not "do not tell the user their
@@ -58,8 +59,12 @@ INJECTION_RULES: list[tuple[str, int, re.Pattern[str]]] = [
     ("conceal-from-user", HIGH, _rx(
         r"\b(?:do\s*n[o']?t|never|without)\s+(?:\w+\s+){0,2}?(?:tell|inform|mention|reveal|notify|alert|warn|show)\w*\s+"
         r"(?:(?:this|that|it|anything|any\s+of\s+this)\s+)?(?:to\s+)?(?:the\s+)?(?:user|human|operator)s?"
-        r"(?=\s*[.,;:!?)\n]|\s*$|\s+(?:about|that|of|this|it|what|why|how)\b)"
-        r"|\b(?:do\s*n[o']?t|never)\s+let\s+(?:the\s+)?(?:user|human)\s+(?:know|see|notice)")),
+        r"(?=\s*[.,;:!?)\n]|\s*$|\s+(?:about|that|of|this|it|what|why|how|in|during|while|when|until|before|"
+        r"after|unless|because|since|either|yet|anything)\b)"
+        r"|\b(?:do\s*n[o']?t|never)\s+let\s+(?:the\s+)?(?:user|human)\s+(?:know|see|notice)"
+        r"|\bkeep\s+(?:the\s+)?(?:user|human)\s+(?:unaware|uninformed|in\s+the\s+dark)"
+        r"|\bwithout\s+the\s+user(?:'s)?\s+(?:knowing|knowledge|noticing|seeing|consent|approval|permission)"
+        r"|\bhide\s+(?:this|it|that|these|the\s+\w+)\s+from\s+(?:the\s+)?user")),
     ("new-role", MEDIUM, _rx(
         r"\byou\s+are\s+now\b|\bfrom\s+now\s+on\b.{0,40}\b(you|assistant)\b|\bact\s+as\s+(an?\s+)?(admin|root|developer\s+mode)")),
     ("pre-call-hijack", MEDIUM, _rx(
@@ -90,6 +95,20 @@ INJECTION_RULES: list[tuple[str, int, re.Pattern[str]]] = [
     ("stealth-action", MEDIUM, _rx(
         r"\b(?:quietly|silently|secretly|covertly|discreetly)\s+(?:\w+\s+){0,2}?"
         r"(?:copy|send|include|add|forward|upload|read|call|run|exfiltrate|post|email|share)")),
+    ("financial-action", MEDIUM, _rx(
+        r"\b(?:transfer|wire|send|pay|move|withdraw)\b.{0,40}?\b(?:balance|funds|money|amount|payment|rs\.?|inr|usd|btc|crypto)\b"
+        r".{0,40}?\b(?:to|into)\s+(?:the\s+|this\s+|a\s+)?(?:account|wallet|iban|upi|address|beneficiary)"
+        r"|(?:mark|set)\s+(?:the\s+)?invoice\b.{0,30}?\bas\s+(?:fully\s+)?paid")),
+    ("approval-bypass", MEDIUM, _rx(
+        r"\b(?:clear|skip|bypass|disable|auto-?approve|dismiss|turn\s+off)\b.{0,30}?"
+        r"\b(?:approvals?|approval\s+queue|confirmations?|2fa|mfa|verification|security\s+checks?|alerts?|review\s+step)\b")),
+    ("destructive-action", MEDIUM, _rx(
+        r"\b(?:delete|remove|wipe|erase|destroy|drop|truncate|purge|rm\s+-rf)\b\s+(?:\w+\s+){0,3}?(?:every|all|entire|whole)\b.{0,40}?"
+        r"\b(?:files?|folders?|director(?:y|ies)|repos?|repositor(?:y|ies)|databases?|tables?|branch(?:es)?|records|backups?|emails?|messages)")),
+    ("deceive-user", MEDIUM, _rx(
+        r"\b(?:tell|inform|assure|reassure|report\s+to|reply\s+to|let)\s+the\s+user\s+(?:know\s+)?(?:that\s+)?"
+        r"(?:the\s+\w+\s+|everything\s+|it\s+|all\s+)?(?:succeeded|worked|went\s+(?:well|fine|smoothly)|"
+        r"was\s+(?:successful|fine|ok|completed)|is\s+(?:fine|ok|done|complete)|completed\s+successfully)")),
     ("cross-tool-shadowing", MEDIUM, _rx(
         r"\b(when|whenever|if)\b.{0,30}\b(the\s+)?(user|assistant|agent)\b.{0,30}\b(uses?|calls?|invokes?)\b.{0,40}\b(other|another|any)\b.{0,20}\b(tool|server|function)")),
     ("urgent-imperative", LOW, _rx(
@@ -255,6 +274,47 @@ def _decode_smuggled(chars: list[str]) -> str:
             data.append(o - 0xE0100 + 16)
     vs = data.decode("utf-8", errors="ignore") if len(data) >= 4 else ""
     return "\n".join(t for t in (tags, vs) if t)
+
+
+GREEK_NAMES = {"ALPHA": "a", "BETA": "b", "EPSILON": "e", "ETA": "n", "IOTA": "i", "KAPPA": "k",
+               "MU": "m", "NU": "v", "OMICRON": "o", "RHO": "p", "TAU": "t", "UPSILON": "u",
+               "CHI": "x", "ZETA": "z", "GAMMA": "y", "DELTA": "d", "OMEGA": "w"}
+CYRILLIC_NAMES = {"IE": "e", "ES": "c", "ER": "p", "HA": "x", "DZE": "s", "JE": "j", "SHHA": "h",
+                  "PALOCHKA": "l", "KOMI DE": "d", "BYELORUSSIAN-UKRAINIAN I": "i", "U": "y", "EL": "l"}
+
+
+def _fold_char(ch: str) -> str:
+    """Best-effort Latin look-alike for one character, from its Unicode name."""
+    if ch.isascii():
+        return ch
+    try:
+        name = unicodedata.name(ch)
+    except ValueError:
+        return ""
+    for script, table in (("CYRILLIC", CYRILLIC_NAMES), ("GREEK", GREEK_NAMES)):
+        if script in name:
+            for key, val in table.items():
+                if name.endswith(" LETTER " + key) or name.endswith(" " + key):
+                    return val
+    if "LETTER" in name:
+        last = name.rsplit(" ", 1)[-1]
+        if len(last) == 1:                       # "... LETTER A", "... SMALL CAPITAL A"
+            return last.lower()
+        if last in GREEK_NAMES:                  # "LATIN SMALL LETTER ALPHA" (ɑ)
+            return GREEK_NAMES[last]
+        if "DOTLESS I" in name:
+            return "i"
+        if "DOTLESS J" in name:
+            return "j"
+    return ch
+
+
+def skeleton(text: str) -> str:
+    """Collapse look-alike names to one form: 'Send‑Emɑil', 'send_email\u200b' -> 'sendemail'."""
+    text = unicodedata.normalize("NFKD", strip_hidden(text))
+    text = "".join(c for c in text if not unicodedata.combining(c))
+    text = "".join(_fold_char(c) for c in text.translate(CONFUSABLES))
+    return re.sub(r"[^a-z0-9]", "", text.casefold())
 
 
 def normalize(text: str) -> str:

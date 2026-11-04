@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import json
 import re
-import threading
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
@@ -47,7 +46,13 @@ READ_METHODS = {"resources/read", "prompts/get"}
 SERVER_REQUESTS = {"sampling/createMessage", "elicitation/create"}
 MAX_DEPTH = 64
 BASE64 = re.compile(r"[A-Za-z0-9+/]*={0,2}")
-URL = re.compile(r"https?://|\bwww\.|\b[a-z0-9-]+\.(?:com|net|org|io|dev|xyz|ru|cn|in|app|site|link)\b", re.I)
+# Anything that names a place data could be sent: URLs, scheme-less hosts with
+# a path, IP addresses and email addresses. Used only once lockdown is on.
+URL = re.compile(r"[a-z][a-z0-9+.-]*://|\bwww\.|//[a-z0-9.-]+|\b(?:\d{1,3}\.){3}\d{1,3}\b|"
+                 r"\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,24}(?=[/?:#=])|\b[\w.+-]+@[\w-]+\.[a-z]{2,}", re.I)
+TEXTUAL_MIME = ("text/", "application/json", "application/xml", "application/javascript", "application/yaml",
+                "application/x-yaml", "application/x-sh", "application/x-httpd-php", "message/")
+MAX_BINARY_PEEK = 64 * 1024
 TOOL_ERROR = -32001
 
 
@@ -78,11 +83,33 @@ def _is_binary_payload(parent: dict, key: str, value: Any) -> bool:
     """
     if not isinstance(value, str) or not BASE64.fullmatch(value):
         return False
+    mime = parent.get("mimeType")
+    if not isinstance(mime, str):
+        return False
+    mime = mime.strip().lower()
     if key == "data":
-        return parent.get("type") in ("image", "audio") and isinstance(parent.get("mimeType"), str)
+        return parent.get("type") in ("image", "audio") and mime.startswith(("image/", "audio/"))
     if key == "blob":
-        return isinstance(parent.get("uri"), str) and "text" not in parent
+        textual = mime.startswith(TEXTUAL_MIME) or mime.endswith(("+json", "+xml"))
+        return isinstance(parent.get("uri"), str) and "text" not in parent and not textual
     return False
+
+
+def _peek_binary(value: str) -> str | None:
+    """Decode the start of a binary payload; return it if it's really text.
+
+    Real images and audio never decode to readable UTF-8. If this one does,
+    it's text wearing a binary label, and it gets scanned like any text.
+    """
+    chunk = value[: MAX_BINARY_PEEK * 4 // 3]
+    chunk = chunk[: len(chunk) - len(chunk) % 4]
+    try:
+        raw = __import__("base64").b64decode(chunk)
+        text = raw.decode("utf-8")
+    except (ValueError, UnicodeDecodeError):
+        return None
+    printable = sum(c.isprintable() or c in "\n\r\t" for c in text)
+    return text if text and printable / len(text) > 0.9 else None
 
 
 def collect_strings(obj: Any, depth: int = 0, skip_binary: bool = True) -> list[str]:
@@ -103,6 +130,9 @@ def collect_strings(obj: Any, depth: int = 0, skip_binary: bool = True) -> list[
         for k, v in obj.items():
             out.append(str(k))
             if skip_binary and _is_binary_payload(obj, str(k), v):
+                hidden_text = _peek_binary(v)
+                if hidden_text is not None:
+                    out.append(hidden_text)
                 continue
             out.extend(collect_strings(v, depth + 1, skip_binary))
     elif isinstance(obj, list):
@@ -123,7 +153,7 @@ def id_key(req_id: Any) -> str:
 
 def _shadow_key(name: str) -> str:
     """Tool names that look the same to a person or model map to one key."""
-    return re.sub(r"[\s_\-.]+", "", d.normalize(d.strip_hidden(name))).casefold()
+    return d.skeleton(name)
 
 
 def _dict(value: Any, what: str) -> dict:
@@ -153,8 +183,8 @@ class Firewall:
         # Set when a tool tried to inject instructions (blocked or not). The
         # session is being targeted, so data-leaving tools need confirmation.
         self.injection_seen_from: str | None = None
-        # One decision at a time: the client and server threads share state.
-        self._lock = threading.Lock()
+        # No global lock: a slow scan in one direction must not stall the
+        # other. Shared dicts are only ever read through snapshots (list(...)).
 
     # ------------------------------------------------------------------ util
     def _emit(self, action: str, rule: str, detail: str, tool: str = "", **extra) -> None:
@@ -191,8 +221,7 @@ class Firewall:
     def from_client(self, msg: Message) -> Decision:
         """Check a message from the client. Fails closed on anything unexpected."""
         try:
-            with self._lock:
-                return self._from_client(msg)
+            return self._from_client(msg)
         except Exception as exc:  # noqa: BLE001 - deliberate: never pass unchecked
             self._emit("blocked", "malformed-request", f"could not inspect: {exc!r}")
             if isinstance(msg, dict) and "id" in msg and "method" in msg:
@@ -239,7 +268,7 @@ class Firewall:
 
         # 1. Data flow: something read from tool A is being sent through tool B.
         #    This is the exfiltration step of most agent attacks.
-        for value, source in self.tainted.items():
+        for value, source in list(self.tainted.items()):
             if value in text and source != name:
                 detail = f"value read from '{source}' is being sent to '{name}'"
                 if p.on_tainted_flow == "block":
@@ -262,7 +291,7 @@ class Firewall:
         #    may be acting for the attacker (detection can miss a second,
         #    reworded attempt), so stop data leaving: egress tools, and any
         #    call whose arguments carry a URL.
-        if self.injection_seen_from and (p.is_egress(name) or URL.search(text)):
+        if self.injection_seen_from and (p.lockdown_scope == "all" or p.is_egress(name) or URL.search(text)):
             detail = f"egress tool called after injected content from '{self.injection_seen_from}'"
             if p.on_egress_after_injection == "block":
                 self._emit("blocked", "egress-lockdown", detail, name)
@@ -283,8 +312,7 @@ class Firewall:
     def from_server(self, msg: Message) -> Decision:
         """Check a message from the server. Fails closed on anything unexpected."""
         try:
-            with self._lock:
-                return self._from_server(msg)
+            return self._from_server(msg)
         except Exception as exc:  # noqa: BLE001 - deliberate: never pass unchecked
             self._emit("blocked", "malformed-response", f"could not inspect: {exc!r}")
             if not isinstance(msg, dict):
@@ -337,7 +365,31 @@ class Firewall:
             blocked = self._inspect_read(method, str(label), _dict(result, "result"))
             if blocked:
                 return Decision(forward=[self._rpc_error(msg["id"], blocked)])
+        elif method == "initialize":
+            msg = dict(msg, result=self._inspect_initialize(_dict(result, "result")))
+        else:
+            # Default deny: every other response (completion/complete, and any
+            # method added to MCP later) gets the same scan.
+            blocked = self._inspect_read(method, method, result if isinstance(result, dict) else {"result": result})
+            if blocked:
+                return Decision(forward=[self._rpc_error(msg["id"], blocked)])
         return Decision(forward=[msg])
+
+    def _inspect_initialize(self, result: dict) -> dict:
+        """The handshake. Its `instructions` may go into the model's system prompt."""
+        instructions = result.get("instructions")
+        if isinstance(instructions, str):
+            result = dict(result, instructions=d.strip_hidden(instructions))
+        findings = self._flagged(self._strings(result))
+        if not findings:
+            return result
+        rules = ", ".join(f.rule for f in findings)
+        self.injection_seen_from = self.injection_seen_from or "server instructions"
+        self._emit("blocked", "injected-instructions", f"initialize: {rules}")
+        cleaned = {k: v for k, v in result.items() if k != "instructions"}
+        if self._flagged(self._strings(cleaned)):
+            raise Malformed("the server's handshake contains instructions for the AI")
+        return cleaned
 
     def _check_server_message(self, msg: Message) -> Decision:
         """Server requests (sampling, elicitation, ping...) and notifications."""

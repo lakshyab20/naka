@@ -39,6 +39,10 @@ class Policy:
     # Text larger than this in one message is blocked rather than scanned, to
     # bound the work a hostile server can force (scanning is ~1 s per MB).
     max_scan_bytes: int = 8_000_000
+    # After an injection attempt: "egress" blocks tools that can send data out
+    # (by name, or any call carrying a URL, host, IP or email); "all" blocks
+    # every tool call that isn't allow-listed until the session restarts.
+    lockdown_scope: str = "egress"
     egress_tools: list[str] = field(default_factory=list)
     egress_hints: list[str] = field(default_factory=lambda: list(DEFAULT_EGRESS_HINTS))
     allow_tools: list[str] = field(default_factory=list)  # never inspected
@@ -60,6 +64,8 @@ class Policy:
         for key, value in section.items():
             if not hasattr(policy, key):
                 raise ValueError(f"Unknown policy key: {key}")
+            if key == "lockdown_scope" and value not in ("egress", "all"):
+                raise ValueError("lockdown_scope must be 'egress' or 'all'")
             if key.startswith("on_") and value not in ACTIONS:
                 raise ValueError(f"{key} must be one of {sorted(ACTIONS)}, got {value!r}")
             setattr(policy, key, value)

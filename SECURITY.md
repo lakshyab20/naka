@@ -12,7 +12,7 @@ Tripline assumes the **MCP server is malicious** and the **model may already be 
 
 ### What Tripline is designed to stop
 
-- Instructions hidden in anything the server sends that reaches the model: tool definitions (every field), tool results (every content type, structured content, error messages), resources, prompts, their listings, sampling or elicitation requests, and notifications such as log and progress messages. Common phrasings are detected in English, Hindi (including Hinglish), Spanish, French, German and Portuguese.
+- Instructions hidden in anything the server sends that reaches the model, including the handshake's `instructions` (which clients may put in the system prompt): tool definitions (every field), tool results (every content type, structured content, error messages), resources, prompts, their listings, sampling or elicitation requests, and notifications such as log and progress messages. Common phrasings are detected in English, Hindi (including Hinglish), Spanish, French, German and Portuguese.
 - New tools whose names look like an existing tool (look-alike letters, case, separators, invisible characters).
 - Tool definitions that change after they were approved (rug-pulls), detected by a SHA-256 of the entire definition.
 - Credentials, and sensitive values read from one tool, leaving through another tool's arguments.
@@ -37,11 +37,14 @@ Be clear about these before relying on it:
 - **Transformed secrets.** Data-flow checks match exact values. A secret the model re-encodes or paraphrases before sending is not caught.
 - **A tool that is malicious on day one** and subtle enough to pass the scan gets pinned as trusted.
 - **Remote servers** over HTTP aren't supported yet.
+- **Large results are slow to scan.** Scanning costs roughly 1 second per MB, and only that server's own messages wait. Results over `max_scan_bytes` are blocked, not passed through.
+- **Local writes during lockdown.** In the default `egress` lockdown, tools that only change local state (for example writing a file) still run. Set `lockdown_scope = "all"` to require confirmation for every tool after an injection attempt.
 
 ## Review history
 
 - **Round 1 (internal):** 26 attacks on Tripline itself, including a full bypass through malformed messages. All fixed; see `tests/test_security.py`.
 - **Round 2 (independent red team):** 8 confirmed findings, including a full bypass through fields named `data` or `blob`, uninspected notifications, unmatched response ids, egress-lockdown gaps, a scanning slowdown and audit-log corruption. All fixed, each with a regression test.
+- **Round 3 (same red team, attacking the fixes):** 6 confirmed findings, including a full bypass through the handshake's `instructions` field, rewordings around the tightened rules, text disguised as binary payloads, look-alike tool names outside the confusables table, and lockdown gaps for IPs and scheme-less hosts. All fixed, each with a regression test. Every response type is now scanned by default.
 
 ## Supported versions
 
