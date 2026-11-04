@@ -55,6 +55,7 @@ class Policy:
     on_first_use: str = "trust"
     trusted_tools: list[str] = field(default_factory=list)    # outputs never mark values as untrusted
     read_only_tools: list[str] = field(default_factory=list)  # never treated as changing something
+    memory_tools: list[str] = field(default_factory=list)     # extra tools that write the AI's long-term memory
     # Second-opinion ML classifier: "off", "builtin", or a path to a model file.
     classifier: str = "off"
     classifier_action: str = "warn"    # "warn": label + lockdown; "block": withhold the output

@@ -50,10 +50,22 @@ tripline demo                 # the same agent through tripline: every one is st
 | **High-impact actions** | After reading untrusted content, the agent pays, unlocks, grants access or deletes | `after-untrusted`: asks you first |
 | **Credential leaks** | API keys, tokens or private keys in tool-call arguments | `secret-in-args` |
 | **Look-alike tools** | A new tool named `send_emaіl` (Cyrillic і) shadows `send_email` | `shadow-tool` |
+| **AI worms** (new) | A hijacked agent copies an injected note into an email reply, a forward, an issue comment, a code comment or team chat, where the next AI reads it and spreads it further | `spread`: Tripline remembers the wording of everything untrusted tools return; a copied note that asks to be passed on can't leave, in any of several languages, even edited or buried in padding |
+| **Memory poisoning** (new) | The note is written into CLAUDE.md, AGENTS.md, Cursor/Cline/Windsurf rules, skills, a memory server, an MCP config, a git hook or a CI workflow, so it comes back in every future session | `memory-poisoning` / `memory-write`: copied text with a link, command or AI-directed request is blocked; other outside text, moves onto those files, imports, and links or commands added after reading outside content ask first. Text from your own project files is fine |
 
 Detection covers hidden Unicode, base64, look-alike letters, English plus Hindi/Hinglish, Spanish, French, German and Portuguese phrasings, common credentials, and India-aware PII (PAN, Aadhaar, Luhn-checked card numbers).
 
 ## Measured, not claimed
+
+**`tripline eval`** runs attack scenarios and everyday tasks through *any* MCP guard over real stdio, and scores what actually reached the tools ([how it works](docs/EVALS.md)). It includes the first open test set for AI worms and memory poisoning, with everyday look-alikes (quoting, forwarding, saving notes) that a guard must let through:
+
+| Suite | No guard: attacks stopped | Tripline: attacks stopped | Tripline: everyday tasks interrupted |
+|---|---:|---:|---:|
+| `contagion` (AI worms, memory poisoning) | 0 / 27 | **27 / 27** | 1 / 15¹ |
+| `mcp-attacks` (poisoning, rug-pulls, theft, injected actions) | 0 / 13 | **13 / 13** | 3 / 7² |
+| `injecagent` (1,054 public cases) | 0% | **82.3%** | 24.3%³ |
+
+¹ Saving text from an email into the AI's long-term memory asks first. ² A reply to an address read from an email and paying a bill from a list ask first; copying `.env` into another file is blocked. ³ See the replay table below. On 924 real emails, documents and code snippets copied into outgoing messages, the spread rule fired on 0 (block) and 0.3% (ask).
 
 `tripline bench` scores every layer on public datasets (InjecAgent, BIPIA, NotInject) that the built-in classifier never saw in training. Run it yourself; numbers below are v0.2.
 

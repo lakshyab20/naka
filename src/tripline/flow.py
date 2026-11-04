@@ -59,6 +59,9 @@ DESTINATIONS = [
     ("id", re.compile(r"\b(?=[A-Za-z0-9_-]*\d)(?=[A-Za-z0-9_-]*[A-Za-z])[A-Za-z0-9]+(?:[_-][A-Za-z0-9]+)+\b")),
 ]
 # Common words that look like IDs but carry no meaning as a destination.
+# File names look like hosts ("notes.md", "fix.sh"); tools echo them back all the time.
+FILE_SUFFIXES = {"md", "mdc", "txt", "json", "yaml", "yml", "toml", "ts", "tsx", "js", "jsx", "py", "go", "rs",
+                 "sh", "env", "lock", "log", "csv", "html", "css", "xml", "ini", "cfg", "sql", "rb", "java"}
 BORING_HOSTS = {"example.com", "e.g", "i.e", "a.m", "p.m"}
 
 
@@ -86,7 +89,7 @@ def destinations(text: str) -> set[tuple[str, str]]:
     for kind, rx in DESTINATIONS:
         for m in rx.finditer(text):
             value = m.group(0).strip().rstrip(".,;")
-            if kind == "host" and value.lower() in BORING_HOSTS:
+            if kind == "host" and (value.lower() in BORING_HOSTS or value.rsplit(".", 1)[-1].lower() in FILE_SUFFIXES):
                 continue
             c = canonical(value)
             if len(c) >= 5:
@@ -111,6 +114,7 @@ class SessionState:
         self.text: dict[bytes, str] = {}  # hashed run of SHINGLE words from untrusted output -> source
         self.injection_from: str | None = None
         self.untrusted_from: str | None = None
+        self.external_from: str | None = None
         self.path: Path | None = None
         self._offset = 0
         if shared:
@@ -185,6 +189,8 @@ class SessionState:
             self.injection_from = self.injection_from or r["src"]
         elif t == "unt":
             self.untrusted_from = self.untrusted_from or r["src"]
+        elif t == "ext":
+            self.external_from = self.external_from or r["src"]
 
     def refresh(self) -> None:
         """Pick up records other Tripline processes in this session wrote."""
@@ -206,7 +212,7 @@ class SessionState:
                     continue
 
     # ------------------------------------------------------------- recording
-    def record_output(self, text: str, tool: str, trusted: bool) -> None:
+    def record_output(self, text: str, tool: str, trusted: bool, external: bool = True) -> None:
         src = f"{self.server}/{tool}"
         whole, chunks, sizes = set(), set(), set()
         for finding, value in d.find_secrets(text) + d.find_pii(text):
@@ -231,15 +237,26 @@ class SessionState:
             self._append({"t": "sw", "h": sorted(whole), "n": sorted(sizes), "src": src})
         if not trusted and not self.untrusted_from and text.strip():
             self._append({"t": "unt", "src": src})
+        if not trusted and external and not self.external_from and text.strip():
+            self._append({"t": "ext", "src": src})
         if not trusted:
             for kind, c in destinations(text):
                 self._append({"t": "dst", "h": self._h(c).hex(), "kind": kind, "src": src})
             # Remember the wording itself (as hashed runs of words), so we can
             # tell later when the AI copies this text into something it sends
             # or into its own memory: how an injected note spreads or persists.
+            # Every run is kept up to MAX_SHINGLES distinct ones; beyond that,
+            # runs are sampled evenly across the whole text, so padding at the
+            # start can't push a note out of view.
             words = [w for _, _, w in tokens(text)]
-            runs = {self._h8(" ".join(words[i:i + SHINGLE]))
-                    for i in range(min(len(words) - SHINGLE + 1, MAX_SHINGLES))}
+            n = len(words) - SHINGLE + 1
+            runs = {self._h8(" ".join(words[i:i + SHINGLE])) for i in range(max(n, 0))} if n <= MAX_SHINGLES \
+                else set()
+            if n > MAX_SHINGLES:
+                distinct = {" ".join(words[i:i + SHINGLE]) for i in range(n)}
+                step = max(1, -(-len(distinct) // MAX_SHINGLES))
+                runs = {self._h8(r) for j, r in enumerate(sorted(distinct, key=lambda r: hash(r))) if j % step == 0} \
+                    if step > 1 else {self._h8(r) for r in distinct}
             if runs:
                 self._append({"t": "tx", "h": sorted(h.hex() for h in runs), "src": src})
 
@@ -354,6 +371,11 @@ class SessionState:
     def untrusted_seen(self) -> str | None:
         self.refresh()
         return self.untrusted_from
+
+    def external_seen(self) -> str | None:
+        """First untrusted source from outside the user's workspace (web, email, issues...), if any."""
+        self.refresh()
+        return self.external_from
 
     def injection_source(self) -> str | None:
         self.refresh()
