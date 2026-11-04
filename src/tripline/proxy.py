@@ -18,7 +18,12 @@ import sys
 import threading
 from typing import IO
 
+from . import detectors as d
 from .firewall import Event, Firewall
+
+# One message larger than this is dropped. Stops a server from exhausting
+# memory with a never-ending line. Generous: real tool results are far smaller.
+MAX_LINE = 16 * 1024 * 1024
 
 COLORS = {"blocked": "\033[31m", "warned": "\033[33m", "pinned": "\033[36m", "info": "\033[2m"}
 RESET = "\033[0m"
@@ -33,10 +38,16 @@ def stderr_reporter(quiet: bool = False):
         label = e.action.upper()
         if use_color:
             label = COLORS.get(e.action, "") + label + RESET
-        tool = f" {e.tool}" if e.tool else ""
-        print(f"tripline ▸ {label} {e.rule}{tool}: {e.detail}", file=sys.stderr, flush=True)
+        # Tool names and details come from the server: escape control codes so a
+        # malicious server can't clear the screen or fake our log lines.
+        tool = f" {d.safe_text(e.tool, 80)}" if e.tool else ""
+        print(f"tripline ▸ {label} {e.rule}{tool}: {d.safe_text(e.detail)}", file=sys.stderr, flush=True)
 
     return report
+
+
+def _log(text: str) -> None:
+    print(f"tripline ▸ {text}", file=sys.stderr, flush=True)
 
 
 class StdioProxy:
@@ -70,29 +81,43 @@ class StdioProxy:
             pass
 
     # Pumps ------------------------------------------------------------------
+    @staticmethod
+    def _lines(source: IO[bytes]):
+        """Yield complete lines, dropping any longer than MAX_LINE."""
+        while True:
+            raw = source.readline(MAX_LINE + 1)
+            if not raw:
+                return
+            if len(raw) > MAX_LINE and not raw.endswith(b"\n"):
+                _log(f"dropped a message larger than {MAX_LINE // (1024 * 1024)} MB")
+                while raw and not raw.endswith(b"\n"):  # skip the rest of it
+                    raw = source.readline(MAX_LINE + 1)
+                continue
+            yield raw
+
     def _pump(self, source: IO[bytes], handler, forward, reply) -> None:
-        for raw in iter(source.readline, b""):
+        for raw in self._lines(source):
             line = raw.strip()
             if not line:
                 continue
             try:
                 payload = json.loads(line)
-            except json.JSONDecodeError:
-                forward([line])  # not ours to judge; pass it on unchanged
+            except (ValueError, RecursionError) as exc:
+                # Invalid JSON, bad UTF-8, or absurd nesting. We never forward
+                # what we could not read: another parser might read it differently.
+                _log(f"dropped a message that is not valid JSON ({type(exc).__name__})")
                 continue
             # JSON-RPC batches (arrays) were allowed in older MCP versions.
             messages = payload if isinstance(payload, list) else [payload]
             fwd, rep = [], []
             for m in messages:
                 if not isinstance(m, dict):
-                    fwd.append(m)
+                    _log("dropped a message that is not a JSON object")
                     continue
                 try:
                     decision = handler(m)
-                except Exception as exc:  # never let a bug take the agent down
-                    print(f"tripline ▸ internal error, passing message through: {exc!r}",
-                          file=sys.stderr, flush=True)
-                    fwd.append(m)
+                except Exception as exc:  # the firewall fails closed itself; this is a last guard
+                    _log(f"internal error, message dropped: {exc!r}")
                     continue
                 fwd.extend(decision.forward)
                 rep.extend(decision.reply)

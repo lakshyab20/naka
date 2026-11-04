@@ -37,7 +37,7 @@ Transport and decisions are separate so the same engine can sit behind Streamabl
 
 MCP over stdio is newline-delimited JSON-RPC 2.0. A response carries only the request's `id`, not its method, so the firewall keeps `pending[id] = (method, params)` for every request it forwards. That's how it knows a response is a `tools/list` or `tools/call` result.
 
-Three checkpoints, and everything else passes through untouched:
+Three main checkpoints, plus resources, prompts, error messages and server-initiated sampling requests, which get the same injection scan. Everything else passes through untouched:
 
 1. **`tools/list` result (server → client)**
    - Scan each description and schema for injection. If it scores at or above the threshold → **poisoned-tool**: removed from the list, quarantined, held in `pending` for review.
@@ -64,7 +64,8 @@ Three checkpoints, and everything else passes through untouched:
 - **Blocks as tool results, not JSON-RPC errors.** An error can make clients abort or retry. A tool result with `isError` reaches the model as text, so it can tell the user what happened.
 - **Pinning and data flow, not only detection.** Pattern matching can be evaded by rewording. A hash doesn't care about wording. "A secret from tool A is leaving through tool B" doesn't depend on how the attacker phrased the instructions. Detection catches the obvious cases cheaply; structure catches the rest.
 - **Trust on first use.** It's the SSH `known_hosts` model: no setup, and it makes the rug-pull, the hardest attack to see, the easiest to catch.
-- **Fail open on internal errors.** If Tripline itself crashes on a message, it passes the message through and logs it. A security tool that breaks the agent gets uninstalled. Policy decisions still fail closed.
+- **Fail closed.** Every message comes from an untrusted party, so if Tripline can't fully inspect one (malformed shape, bad JSON, extreme nesting, oversized), it stops it: requests get an error reply, responses are replaced with an error. An earlier version passed such messages through to avoid breaking the agent. That let a malicious server bypass every check by adding one malformed item, so it was changed. Well-formed traffic is never affected.
+- **Scan every string.** Inspection walks the whole message (titles, output schemas, resource links, structured content, error text), so unexpected fields can't carry instructions past the scanner.
 - **Never log secrets.** Findings carry redacted excerpts. Raw tainted values exist only in memory for the session.
 - **Zero dependencies.** `pip install` and done. Nothing to audit but this repo, which matters for a security tool.
 

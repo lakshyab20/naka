@@ -93,17 +93,19 @@ See [`tripline.example.toml`](tripline.example.toml) for every option.
 
 ## How it works
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: Tripline launches the real server as a child process and relays MCP's line-delimited JSON-RPC in both directions. A pure decision engine (`firewall.py`) inspects `tools/list` results, `tools/call` arguments and `tools/call` results. Everything else passes through untouched. Blocked calls come back to the model as a normal tool result with `isError: true`, so the agent can tell the user what happened instead of crashing.
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: Tripline launches the real server as a child process and relays MCP's line-delimited JSON-RPC in both directions. A pure decision engine (`firewall.py`) inspects tool definitions, tool-call arguments and results, resources, prompts, error messages and sampling requests from the server. It fails closed: a message that can't be fully inspected is stopped, never passed through. Blocked calls come back to the model as a normal tool result with `isError: true`, so the agent can tell the user what happened instead of crashing.
 
-Zero dependencies. Python 3.11+. Tested against the official MCP Python SDK (client and server, protocol 2025-11-25).
+Zero dependencies. Python 3.11+. 51 tests, including 26 attacks on Tripline itself (`tests/test_security.py`). Tested against the official MCP Python SDK (client and server, protocol 2025-11-25).
 
 ## Honest limitations (v0.1)
 
 - Detection is pattern-based. A determined attacker can paraphrase, translate or encode around it. Pinning and data-flow rules don't depend on wording, which is why they exist.
 - Data-flow tracking matches exact values. A secret that is re-encoded or summarised before leaving is not caught yet.
 - Trust on first use: a subtly malicious tool that passes the scan on day one gets pinned.
+- It guards the traffic, not the server's own code. A malicious local server is a program with your permissions and can act without the model. Run untrusted servers in a sandbox.
 - stdio transport only. Streamable HTTP is next.
-- Inspects tools only. Resources, prompts and sampling requests pass through.
+
+See [SECURITY.md](SECURITY.md) for the full threat model and how to report a vulnerability.
 
 ## Roadmap
 
