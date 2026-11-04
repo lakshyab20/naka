@@ -8,9 +8,14 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 import threading
 import time
 from pathlib import Path
+
+
+# Bump when tool_fingerprint changes what it hashes.
+PIN_FORMAT = 2
 
 
 def home() -> Path:
@@ -20,14 +25,12 @@ def home() -> Path:
 
 
 def tool_fingerprint(tool: dict) -> str:
-    """Hash the parts of a tool definition the model reads."""
-    material = {
-        "name": tool.get("name"),
-        "description": tool.get("description", ""),
-        "inputSchema": tool.get("inputSchema", {}),
-        "annotations": tool.get("annotations", {}),
-    }
-    blob = json.dumps(material, sort_keys=True, ensure_ascii=False).encode()
+    """Hash the entire tool definition.
+
+    Every field (title, output schema, annotations, _meta, fields added in
+    future spec versions) can reach the model, so any change counts.
+    """
+    blob = json.dumps(tool, sort_keys=True, ensure_ascii=False).encode()
     return hashlib.sha256(blob).hexdigest()
 
 
@@ -40,6 +43,12 @@ class PinStore:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._lock = threading.Lock()
         data = self._read()
+        if data and data.get("format") != PIN_FORMAT:
+            # Pins from an older version hash fewer fields, so every tool would
+            # look changed. Start over: the next listing is trusted and pinned.
+            print(f"tripline ▸ pins for '{server}' use an older format; re-pinning on next listing",
+                  file=sys.stderr, flush=True)
+            data = {}
         self.pins: dict[str, dict] = data.get("tools", {})
         # Definitions that changed or were held back, waiting for a human to
         # approve them with `tripline pins approve`.
@@ -54,7 +63,7 @@ class PinStore:
         with self._lock:
             tmp = self.path.with_suffix(".tmp")
             tmp.write_text(json.dumps(
-                {"server": self.server, "tools": self.pins, "pending": self.pending}, indent=2))
+                {"format": PIN_FORMAT, "server": self.server, "tools": self.pins, "pending": self.pending}, indent=2))
             tmp.replace(self.path)
 
     def hold(self, tool: dict, reason: str) -> None:

@@ -10,6 +10,7 @@ from __future__ import annotations
 import base64
 import binascii
 import re
+import unicodedata
 from dataclasses import dataclass, field
 
 # Severity weights. A text is considered "flagged" when its total score reaches
@@ -64,9 +65,31 @@ INJECTION_RULES: list[tuple[str, int, re.Pattern[str]]] = [
 ]
 
 # Characters that are invisible to humans but read by models.
+#   U+00AD soft hyphen, U+034F grapheme joiner, U+061C Arabic letter mark,
+#   U+115F/1160/3164/FFA0 Hangul fillers, U+17B4/17B5 Khmer vowels,
+#   U+180B-180F Mongolian selectors, U+200B-200F zero-width and direction marks,
+#   U+202A-202E and U+2066-2069 bidi controls, U+2060-206F invisible operators,
+#   U+FE00-FE0F and U+E0100-E01EF variation selectors, U+FEFF BOM,
+#   U+E0000-E007F tag characters (can spell out whole ASCII sentences).
 HIDDEN_UNICODE = re.compile(
-    "[​-‏‪-‮⁠-⁤⁦-⁩﻿\U000e0000-\U000e007f]"
+    "[­͏؜ᅟᅠ឴឵᠋-᠏​-‏‪-‮"
+    "⁠-⁯ㅤ︀-️﻿ﾠ\U000e0000-\U000e007f\U000e0100-\U000e01ef]"
 )
+# These appear in normal text: ZWNJ/ZWJ shape Devanagari conjuncts and emoji
+# sequences, FE0E/FE0F pick text or emoji style. Only flag them in long runs,
+# which is what smuggling looks like.
+BENIGN_INVISIBLE = set("‌‍︎️")
+SUSPICIOUS_RUN = re.compile("[‌‍︎️]{4,}")
+
+# Common Cyrillic/Greek look-alikes, mapped to Latin for scanning only.
+CONFUSABLES = str.maketrans({
+    "а": "a", "е": "e", "о": "o", "р": "p", "с": "c", "у": "y", "х": "x", "і": "i",
+    "ј": "j", "ѕ": "s", "ԁ": "d", "һ": "h", "ӏ": "l", "ɡ": "g", "ο": "o", "ι": "i",
+    "α": "a", "ν": "v", "ρ": "p", "τ": "t", "κ": "k", "Α": "A", "Β": "B", "Ε": "E",
+    "Ι": "I", "Κ": "K", "Μ": "M", "Ν": "N", "Ο": "O", "Ρ": "P", "Τ": "T", "Χ": "X",
+    "А": "A", "В": "B", "Е": "E", "К": "K", "М": "M", "Н": "H", "О": "O", "Р": "P",
+    "С": "C", "Т": "T", "Х": "X",
+})
 
 # --- Secrets ----------------------------------------------------------------
 SECRET_RULES: list[tuple[str, re.Pattern[str]]] = [
@@ -94,7 +117,7 @@ PII_RULES: list[tuple[str, re.Pattern[str]]] = [
 def _excerpt(text: str, m: re.Match[str], width: int = 60) -> str:
     start = max(0, m.start() - 10)
     snippet = text[start:start + width].replace("\n", " ")
-    return snippet
+    return redact_secrets(snippet)
 
 
 def _redact(value: str) -> str:
@@ -103,10 +126,35 @@ def _redact(value: str) -> str:
     return value[:4] + "…" + value[-2:]
 
 
+def redact_secrets(text: str) -> str:
+    """Mask credentials inside any text we are about to log or show."""
+    for _, rx in SECRET_RULES:
+        text = rx.sub(lambda m: _redact(m.group(0)), text)
+    return text
+
+
+def safe_text(text: str, limit: int = 300) -> str:
+    """Make attacker-controlled text safe to print to a terminal.
+
+    Escapes control characters (which can clear the screen or fake output),
+    bidi controls and other invisible characters, and caps the length.
+    """
+    out = []
+    for ch in str(text)[:limit]:
+        o = ord(ch)
+        if o < 0x20 or 0x7f <= o < 0xa0 or HIDDEN_UNICODE.match(ch):
+            out.append(f"\\u{o:04x}" if o > 0xff else f"\\x{o:02x}")
+        else:
+            out.append(ch)
+    if len(str(text)) > limit:
+        out.append("…")
+    return "".join(out)
+
+
 def _decoded_variants(text: str) -> list[str]:
     """Decode base64 blobs once so encoded payloads get scanned too."""
     out = []
-    for blob in re.findall(r"[A-Za-z0-9+/=_\-]{24,}", text):
+    for blob in re.findall(r"[A-Za-z0-9+/=_\-]{24,}", text)[:200]:
         padded = blob + "=" * (-len(blob) % 4)
         for decoder in (base64.b64decode, base64.urlsafe_b64decode):
             try:
@@ -123,20 +171,42 @@ def _decoded_variants(text: str) -> list[str]:
     return out
 
 
+def _decode_smuggled(chars: list[str]) -> str:
+    """Recover text hidden in tag characters or variation selectors."""
+    tags = "".join(chr(ord(c) - 0xE0000) for c in chars if 0xE0000 <= ord(c) <= 0xE007F)
+    data = bytearray()
+    for c in chars:
+        o = ord(c)
+        if 0xFE00 <= o <= 0xFE0F:
+            data.append(o - 0xFE00)
+        elif 0xE0100 <= o <= 0xE01EF:
+            data.append(o - 0xE0100 + 16)
+    vs = data.decode("utf-8", errors="ignore") if len(data) >= 4 else ""
+    return "\n".join(t for t in (tags, vs) if t)
+
+
+def normalize(text: str) -> str:
+    """Undo common disguises before pattern matching."""
+    text = unicodedata.normalize("NFKC", text)  # fullwidth and styled letters
+    return text.translate(CONFUSABLES)
+
+
 def scan_injection(text: str) -> list[Finding]:
     """Look for instructions aimed at the model, including hidden and encoded ones."""
     if not text:
         return []
     findings: list[Finding] = []
     hidden = HIDDEN_UNICODE.findall(text)
-    if hidden:
+    suspicious = [c for c in hidden if c not in BENIGN_INVISIBLE]
+    if suspicious or SUSPICIOUS_RUN.search(text):
         findings.append(Finding("hidden-unicode", "hidden_unicode", HIGH,
                                 f"{len(hidden)} invisible character(s)"))
-        # Unicode tag characters can smuggle ASCII; decode them for scanning.
-        smuggled = "".join(chr(ord(c) - 0xE0000) for c in hidden if 0xE0000 <= ord(c) <= 0xE007F)
+    if hidden:
+        smuggled = _decode_smuggled(hidden)
         text = HIDDEN_UNICODE.sub("", text) + ("\n" + smuggled if smuggled else "")
 
-    variants = [text] + _decoded_variants(text)
+    base = normalize(text)
+    variants = [base] + [normalize(v) for v in _decoded_variants(text)]
     seen: set[str] = set()
     for i, variant in enumerate(variants):
         for rule, severity, rx in INJECTION_RULES:

@@ -44,9 +44,9 @@ def cmd_pins(args) -> int:
             data = json.loads(f.read_text())
             print(f"{data.get('server', f.stem)}")
             for name, pin in data.get("tools", {}).items():
-                print(f"  pinned   {name:28} {pin['sha256'][:12]}  {pin['pinned_at']}")
+                print(f"  pinned   {d.safe_text(name, 60):28} {pin['sha256'][:12]}  {pin['pinned_at']}")
             for name, entry in data.get("pending", {}).items():
-                print(f"  PENDING  {name:28} {entry['reason']}")
+                print(f"  PENDING  {d.safe_text(name, 60):28} {d.safe_text(entry['reason'])}")
         if not files:
             print("No pinned servers yet.")
         return 0
@@ -69,8 +69,10 @@ def cmd_pins(args) -> int:
         for n in names:
             entry = store.pending.get(n)
             if entry:
-                print(f"Approving {n} ({entry['reason']}). New description:\n  "
-                      f"{entry['tool'].get('description', '')[:400]}")
+                # Show the full new definition, made safe for the terminal, so the
+                # person approving sees exactly what they are trusting.
+                print(f"Approving {d.safe_text(n, 80)} ({d.safe_text(entry['reason'])}). New definition:\n  "
+                      f"{d.safe_text(json.dumps(entry['tool'], ensure_ascii=False), 2000)}")
             print(("  approved " if store.approve(n) else "  nothing pending for ") + n)
         store.save()
         return 0
@@ -82,7 +84,7 @@ def cmd_scan(args) -> int:
     findings = d.scan_injection(text)
     findings += [f for f, _ in d.find_secrets(text)] + [f for f, _ in d.find_pii(text)]
     for f in findings:
-        print(f"{f.category:15} {f.rule:28} sev={f.severity}  {f.excerpt}")
+        print(f"{f.category:15} {f.rule:28} sev={f.severity}  {d.safe_text(f.excerpt)}")
     total = d.score([f for f in findings if f.category in ("injection", "hidden_unicode")])
     verdict = "FLAGGED" if total >= args.threshold else "clean"
     print(f"\ninjection score {total} (threshold {args.threshold}): {verdict}")
@@ -97,8 +99,8 @@ def cmd_log(args) -> int:
     lines = path.read_text(encoding="utf-8").splitlines()[-args.n:]
     for line in lines:
         r = json.loads(line)
-        print(f"{r['ts']}  {r['server']:14} {r['event']:8} {r.get('rule', ''):18} "
-              f"{r.get('tool', ''):16} {r.get('detail', '')[:90]}")
+        print(f"{r['ts']}  {d.safe_text(r['server'], 14):14} {r['event']:8} {r.get('rule', ''):18} "
+              f"{d.safe_text(r.get('tool', ''), 16):16} {d.safe_text(r.get('detail', ''), 90)}")
     return 0
 
 
