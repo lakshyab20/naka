@@ -11,6 +11,12 @@ Tripline sits between your agent (Claude, Cursor, any MCP client) and its MCP se
 
 Scanners check a tool before you install it. Red-teaming tools test an agent before you ship it. Tripline guards what happens **after**: the live traffic between the agent and its tools.
 
+## In plain words
+
+![Tripline is a guard between the AI assistant and its tools](docs/img/explained/2-guard.svg)
+
+AI assistants do whatever the text they read tells them, even a note an attacker hid in an email or a web page. Tripline is a security guard between the assistant and its tools: it remembers your secrets and stops them leaving, blocks tools that change after you approved them, and asks you before risky actions like payments. **[Tripline explained simply, with pictures →](docs/EXPLAINED.md)**
+
 ## Get started
 
 ```bash
