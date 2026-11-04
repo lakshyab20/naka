@@ -1,0 +1,35 @@
+# Tripline policy. Pass with: tripline wrap --config tripline.toml --name NAME -- <server>
+# Every on_* option is "block" (stop it, tell the agent why) or "warn" (log it, let it through).
+
+[policy]
+# Instructions hidden in a tool's description or schema.
+on_poisoned_tool = "block"
+# A pinned tool's definition changed.
+on_rug_pull = "block"
+# A tool appeared after the server's first approved listing.
+# "warn" pins it automatically; "block" holds it until `tripline pins approve`.
+on_new_tool = "warn"
+# Tool output contains instructions aimed at the model.
+# "warn" lets it through with a warning label and turns on egress lockdown.
+on_injected_response = "block"
+# API keys, tokens or private keys in the arguments the agent sends.
+on_secret_in_args = "block"
+# Credentials in tool output (they are always tracked for data-flow checks).
+on_secret_in_response = "warn"
+# PAN, Aadhaar, card numbers or emails in arguments.
+on_pii_in_args = "warn"
+# A sensitive value read from tool A is sent through tool B.
+on_tainted_flow = "block"
+# After injected content reached the model, block tools that can send data out.
+on_egress_after_injection = "block"
+
+# Injection score needed to flag text (high-severity rules score 3).
+threshold = 3
+
+# Tools that move data out, in addition to name-based guesses
+# (send, post, email, upload, webhook, http, comment, message...).
+egress_tools = []
+# Trusted tools: never inspected.
+allow_tools = []
+# Tools that can never be listed or called.
+deny_tools = []
