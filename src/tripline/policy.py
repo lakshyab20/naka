@@ -18,7 +18,9 @@ ACTIONS = {"block", "warn"}
 DEFAULT_EGRESS_HINTS = (
     "send", "post", "email", "mail", "upload", "webhook", "http", "request",
     "publish", "share", "comment", "create_issue", "message", "tweet", "slack",
-    "write_remote", "push",
+    "write_remote", "push", "fetch", "browse", "open_url", "url", "download",
+    "curl", "wget", "web", "search", "query", "graphql", "api", "dns", "resolve",
+    "sync", "backup", "export", "notify", "submit", "invite", "reply", "forward",
 )
 
 
@@ -34,6 +36,9 @@ class Policy:
     on_tainted_flow: str = "block"        # value read from tool A is sent out via tool B
     on_egress_after_injection: str = "block"
     threshold: int = 3
+    # Text larger than this in one message is blocked rather than scanned, to
+    # bound the work a hostile server can force (scanning is ~1 s per MB).
+    max_scan_bytes: int = 8_000_000
     egress_tools: list[str] = field(default_factory=list)
     egress_hints: list[str] = field(default_factory=lambda: list(DEFAULT_EGRESS_HINTS))
     allow_tools: list[str] = field(default_factory=list)  # never inspected

@@ -95,7 +95,7 @@ See [`tripline.example.toml`](tripline.example.toml) for every option.
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: Tripline launches the real server as a child process and relays MCP's line-delimited JSON-RPC in both directions. A pure decision engine (`firewall.py`) inspects tool definitions, tool-call arguments and results, resources, prompts, error messages and sampling requests from the server. It fails closed: a message that can't be fully inspected is stopped, never passed through. Blocked calls come back to the model as a normal tool result with `isError: true`, so the agent can tell the user what happened instead of crashing.
 
-Zero dependencies. Python 3.11+. 51 tests, including 26 attacks on Tripline itself (`tests/test_security.py`). Tested against the official MCP Python SDK (client and server, protocol 2025-11-25).
+Zero dependencies. Python 3.11+. 93 tests, including 68 attacks on Tripline itself from two rounds of red-teaming (`tests/test_security.py`). Tested against the official MCP Python SDK (client and server, protocol 2025-11-25).
 
 ## Honest limitations (v0.1)
 

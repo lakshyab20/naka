@@ -96,11 +96,17 @@ def cmd_log(args) -> int:
     if not path.exists():
         print("No audit log yet.")
         return 0
-    lines = path.read_text(encoding="utf-8").splitlines()[-args.n:]
+    # Split on \n only: str.splitlines() also splits on U+2028 and friends.
+    lines = [l for l in path.read_text(encoding="utf-8", errors="replace").split("\n") if l.strip()][-args.n:]
     for line in lines:
-        r = json.loads(line)
-        print(f"{r['ts']}  {d.safe_text(r['server'], 14):14} {r['event']:8} {r.get('rule', ''):18} "
-              f"{d.safe_text(r.get('tool', ''), 16):16} {d.safe_text(r.get('detail', ''), 90)}")
+        try:
+            r = json.loads(line)
+        except ValueError:
+            print(f"(unreadable log line: {d.safe_text(line, 60)})")
+            continue
+        print(f"{r.get('ts', '?')}  {d.safe_text(r.get('server', ''), 14):14} {d.safe_text(r.get('event', ''), 8):8} "
+              f"{d.safe_text(r.get('rule', ''), 18):18} {d.safe_text(r.get('tool', ''), 16):16} "
+              f"{d.safe_text(r.get('detail', ''), 90)}")
     return 0
 
 

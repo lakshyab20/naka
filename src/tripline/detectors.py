@@ -42,12 +42,24 @@ def _rx(pattern: str) -> re.Pattern[str]:
 # These target instructions aimed at the model rather than the user. Tool
 # descriptions and tool responses are both untrusted input for an agent.
 INJECTION_RULES: list[tuple[str, int, re.Pattern[str]]] = [
+    # Imperative only: "Ignore all previous instructions" or "...: ignore your
+    # rules", not a description like "the agent would ignore all previous
+    # instructions" in a changelog or a security article.
     ("override-instructions", HIGH, _rx(
-        r"\b(ignore|disregard|forget|override)\b.{0,40}\b(previous|prior|above|earlier|all|system|original)\b.{0,20}\b(instructions?|prompts?|rules|guidelines|directives)")),
+        r"(?:^|[.!?:;,>\-–—\n(*]\s*|\b(?:please|now|then|and|so|just|simply|kindly|must|should)\s+|"
+        r"\byou\s+(?:must|should|need\s+to|have\s+to|will)\s+)"
+        r"(?:ignore|disregard|forget|override|bypass)\b.{0,40}?"
+        r"\b(?:previous|prior|above|earlier|all|system|original|your|any)\b.{0,20}?"
+        r"\b(?:instructions?|prompts?|rules|guidelines|directives|guardrails)")),
     ("fake-system-tag", HIGH, _rx(
         r"<\s*/?\s*(important|system|admin|instructions?|secret|assistant)\s*>|\[\s*(system|admin|important)\s*\]|^\s*#{1,6}\s*system\b")),
+    # "Do not mention this to the user." but not "do not tell the user their
+    # password over chat", which is ordinary security advice.
     ("conceal-from-user", HIGH, _rx(
-        r"\b(do\s*n[o']?t|never|without)\b.{0,30}\b(tell|inform|mention|reveal|show|notify|alert|let)\w*\b.{0,30}\b(the\s+)?(user|human|operator)")),
+        r"\b(?:do\s*n[o']?t|never|without)\s+(?:\w+\s+){0,2}?(?:tell|inform|mention|reveal|notify|alert|warn|show)\w*\s+"
+        r"(?:(?:this|that|it|anything|any\s+of\s+this)\s+)?(?:to\s+)?(?:the\s+)?(?:user|human|operator)s?"
+        r"(?=\s*[.,;:!?)\n]|\s*$|\s+(?:about|that|of|this|it|what|why|how)\b)"
+        r"|\b(?:do\s*n[o']?t|never)\s+let\s+(?:the\s+)?(?:user|human)\s+(?:know|see|notice)")),
     ("new-role", MEDIUM, _rx(
         r"\byou\s+are\s+now\b|\bfrom\s+now\s+on\b.{0,40}\b(you|assistant)\b|\bact\s+as\s+(an?\s+)?(admin|root|developer\s+mode)")),
     ("pre-call-hijack", MEDIUM, _rx(
@@ -56,12 +68,60 @@ INJECTION_RULES: list[tuple[str, int, re.Pattern[str]]] = [
         r"(~|\$HOME|/home/\w+|/Users/\w+)?/?\.(ssh|aws|gnupg|kube|docker)/|\bid_(rsa|ed25519|ecdsa)\b|\.env\b|credentials\.json|mcp\.json|\.npmrc|\.netrc|/etc/(passwd|shadow)")),
     ("exfil-instruction", HIGH, _rx(
         r"\b(send|post|upload|forward|exfiltrate|transmit|leak|copy)\b.{0,60}\b(to|into)\b.{0,40}(https?://|webhook|\b(the\s+)?(sidenote|notes?|comment|parameter|argument|field)\b)")),
+    # Reworded exfiltration: get a secret, put it somewhere the model writes.
+    ("secret-exfil-intent", HIGH, _rx(
+        r"\b(?:append|include|add|insert|put|place|attach|embed|copy|paste|send|pass|forward|leak|write|encode|open|read|cat|load)\b"
+        r".{0,80}?(?:\b(?:environment\s+variables?|env\s+vars?|api[\s_-]?(?:keys?|tokens?)|access\s+tokens?|secrets?|passwords?|"
+        r"credentials?|private\s+keys?|ssh\s+keys?|session\s+cookies?|cookies)\b|id_(?:rsa|ed25519|ecdsa)|\.ssh/|\.aws/|\.env\b|"
+        r"\b(?-i:[A-Z][A-Z0-9]*_(?:TOKEN|KEY|SECRET|PASSWORD|PASS))\b)"
+        r".{0,80}?\b(?:to|into|in|as|inside|within)\s+(?:the\s+|your\s+|its\s+|a\s+|an\s+)?(?:\w+\s+){0,2}?"
+        r"(?:summary|response|reply|answer|output|sidenote|notes?|comment|argument)\b")),
+    # Same, but the destination is a URL or parameter: common in honest API docs
+    # too, so it only counts together with another signal.
+    ("secret-to-url", MEDIUM, _rx(
+        r"\b(?:append|include|add|insert|put|place|attach|embed|pass|encode)\b.{0,60}?"
+        r"\b(?:api[\s_-]?(?:keys?|tokens?)|access\s+tokens?|secrets?|passwords?|credentials?|environment\s+variables?)\b"
+        r".{0,60}?\b(?:to|into|in|as)\s+(?:the\s+|a\s+)?(?:\w+\s+){0,2}?(?:url|link|query(?:\s+string)?|parameter)\b")),
+    # A markdown image whose URL carries a placeholder for the model to fill in:
+    # when the client renders it, the data leaves in the request.
+    ("markdown-beacon", HIGH, _rx(
+        r"!\[[^\]\n]{0,100}\]\(\s*https?://[^)\s]{1,300}?[?&#][^)\s=]{0,40}=?"
+        r"(?:[^)\s&]*(?:\{|<|%7b|%3c|\$\{)|(?-i:[A-Z0-9]*[A-Z]{2,}_[A-Z_]{3,})|[^)\s&]*(?:_here|insert_|placeholder))")),
+    ("stealth-action", MEDIUM, _rx(
+        r"\b(?:quietly|silently|secretly|covertly|discreetly)\s+(?:\w+\s+){0,2}?"
+        r"(?:copy|send|include|add|forward|upload|read|call|run|exfiltrate|post|email|share)")),
     ("cross-tool-shadowing", MEDIUM, _rx(
         r"\b(when|whenever|if)\b.{0,30}\b(the\s+)?(user|assistant|agent)\b.{0,30}\b(uses?|calls?|invokes?)\b.{0,40}\b(other|another|any)\b.{0,20}\b(tool|server|function)")),
     ("urgent-imperative", LOW, _rx(
         r"\b(you\s+must|it\s+is\s+(critical|mandatory|essential)|this\s+is\s+(very\s+)?important)\b")),
     ("tool-call-request", MEDIUM, _rx(
         r"\b(call|invoke|use|run)\s+(the\s+)?[`'\"]?[a-z0-9]+(_[a-z0-9]+)+[`'\"]?\s+(tool|function)\b")),
+    # Other languages. Patterns, like the English ones, catch the common
+    # phrasings only; a classifier is on the roadmap.
+    ("override-instructions-hi", HIGH, _rx(  # Hindi and Hinglish
+        r"(?:पिछले|पहले\s+के|ऊपर\s+के|सभी|पूर्व)\s+(?:\S+\s+){0,2}?निर्देश\S*\s+(?:\S+\s+){0,2}?(?:भूल|अनदेखा|नज़रअंदाज़|नजरअंदाज|छोड़)"
+        r"|pichl[ei]\s+(?:sab(?:hi)?\s+)?(?:instructions?|nirdesh)\s+(?:\S+\s+)?(?:bhool|bhul|ignore)")),
+    ("conceal-from-user-hi", HIGH, _rx(
+        r"(?:उपयोगकर्ता|यूज़र|यूजर)\s+को\s+(?:बताए\s+बिना|(?:मत|न|ना)\s+बता|कुछ\s+(?:मत|न)\s+बता)"
+        r"|user\s+ko\s+(?:bina\s+bataye|(?:mat|na|mt)\s+bata)")),
+    ("secret-exfil-hi", HIGH, _rx(
+        r"(?:गुप्त\s+कुंजी|पासवर्ड|टोकन|क्रेडेंशियल|एपीआई\s+की|कुंजी)\S*\s+(?:\S+\s+){0,4}?(?:भेज|ईमेल|मेल|पोस्ट|अपलोड)")),
+    ("override-instructions-intl", HIGH, _rx(
+        r"\bignora\w*\s+(?:todas\s+)?(?:las\s+)?instrucciones\s+(?:anteriores|previas)"            # es
+        r"|\bignore[zr]?\s+(?:toutes\s+)?(?:les\s+)?instructions\s+(?:pr[ée]c[ée]dentes|ant[ée]rieures)"  # fr
+        r"|\bignorier\w*\s+(?:alle\s+)?(?:vorherigen|bisherigen|früheren|obigen)\s+anweisungen"     # de
+        r"|\bignor[ea]\w*\s+(?:todas\s+)?(?:as\s+)?instru[çc][õo]es\s+anteriores")),                # pt
+    ("conceal-from-user-intl", HIGH, _rx(
+        r"\bno\s+(?:se\s+lo\s+|le\s+)?(?:digas|menciones|informes|cuentes)\s+(?:nada\s+)?al\s+usuario"
+        r"|\bne\s+(?:le\s+)?(?:dis|dites|mentionne\w*)\s+(?:rien\s+)?(?:pas\s+)?(?:à|a)\s+l'utilisateur"
+        r"|\b(?:sag|erwähn)\w*\s+(?:es\s+|das\s+)?(?:dem\s+)?(?:benutzer|nutzer)\s+nicht"
+        r"|\bn[ãa]o\s+(?:conte|diga|mencione)\s+(?:nada\s+)?ao\s+usu[áa]rio")),
+    ("secret-exfil-intl", HIGH, _rx(
+        r"\b(?:incluye|env[ií]a|adjunta|copia|inclu[ia]|envoie|copie|joins?|füge|sende|kopiere)\w*\s+.{0,60}?"
+        r"(?:contraseñ|credencial|clave|token|secreto|archivo\s+de\s+configuraci|mot\s+de\s+passe|identifiant|fichier\s+de\s+config|"
+        r"passwort|zugangsdaten|schlüssel|konfigurationsdatei|senha|chave)"
+        r".{0,60}?(?:mensaje|correo|respuesta|resumen|comentario|argumento|message|courriel|r[ée]ponse|r[ée]sum[ée]|commentaire|"
+        r"nachricht|antwort|zusammenfassung|kommentar|mensagem|resposta|resumo)")),
 ]
 
 # Characters that are invisible to humans but read by models.
@@ -142,7 +202,7 @@ def safe_text(text: str, limit: int = 300) -> str:
     out = []
     for ch in str(text)[:limit]:
         o = ord(ch)
-        if o < 0x20 or 0x7f <= o < 0xa0 or HIDDEN_UNICODE.match(ch):
+        if o < 0x20 or 0x7f <= o < 0xa0 or o in (0x2028, 0x2029) or HIDDEN_UNICODE.match(ch):
             out.append(f"\\u{o:04x}" if o > 0xff else f"\\x{o:02x}")
         else:
             out.append(ch)
@@ -151,23 +211,35 @@ def safe_text(text: str, limit: int = 300) -> str:
     return "".join(out)
 
 
+MAX_DECODE_BLOBS = 50
+MAX_DECODED_BYTES = 256 * 1024
+
+
 def _decoded_variants(text: str) -> list[str]:
-    """Decode base64 blobs once so encoded payloads get scanned too."""
-    out = []
-    for blob in re.findall(r"[A-Za-z0-9+/=_\-]{24,}", text)[:200]:
-        padded = blob + "=" * (-len(blob) % 4)
-        for decoder in (base64.b64decode, base64.urlsafe_b64decode):
-            try:
-                raw = decoder(padded)
-            except (binascii.Error, ValueError):
-                continue
-            try:
-                decoded = raw.decode("utf-8")
-            except UnicodeDecodeError:
-                continue
-            if decoded.isprintable() or "\n" in decoded:
-                out.append(decoded)
-                break
+    """Decode base64 blobs so encoded payloads get scanned too.
+
+    Bounded: an attacker can pack a message with blobs to make scanning slow,
+    so we decode at most MAX_DECODE_BLOBS blobs and MAX_DECODED_BYTES in total,
+    with one decoder per blob, chosen from its alphabet.
+    """
+    out: list[str] = []
+    budget = MAX_DECODED_BYTES
+    for blob in re.findall(r"[A-Za-z0-9+/=_\-]{24,}", text)[:MAX_DECODE_BLOBS]:
+        if budget <= 0:
+            break
+        blob = blob[: budget * 4 // 3 + 4]
+        decoder = base64.urlsafe_b64decode if ("-" in blob or "_" in blob) else base64.b64decode
+        try:
+            raw = decoder(blob + "=" * (-len(blob) % 4))
+        except (binascii.Error, ValueError):
+            continue
+        budget -= len(raw)
+        try:
+            decoded = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            continue
+        if decoded.isprintable() or "\n" in decoded:
+            out.append(decoded)
     return out
 
 

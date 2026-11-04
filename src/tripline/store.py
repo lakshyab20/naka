@@ -121,5 +121,6 @@ class AuditLog:
             **fields,
         }
         with self._lock, open(self.path, "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+            # ASCII-only on disk: U+2028 and friends can't split a record.
+            fh.write(json.dumps(record, ensure_ascii=True) + "\n")
         return record
