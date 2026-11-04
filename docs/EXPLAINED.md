@@ -1,6 +1,6 @@
 # Tripline, explained simply
 
-No technical words. Five pictures, five minutes. (For the technical version, see [ARCHITECTURE.md](ARCHITECTURE.md).)
+No technical words. Six pictures, five minutes. (For the technical version, see [ARCHITECTURE.md](ARCHITECTURE.md).)
 
 ## 1. The problem
 
@@ -36,16 +36,29 @@ When the AI reads a password or a key, the guard quietly remembers it. If that s
 
 The guard doesn't need to understand the attacker's note. It only needs to see your secret heading out the door.
 
-## 5. Does it work?
+## 5. Stopping attacks from spreading or coming back
+
+![Two ways an attack lives on, spreading to other AIs and coming back from memory, both blocked by Tripline](img/explained/6-contagion.svg)
+
+A clever attack doesn't stop at one AI. There are two ways it can live on:
+
+1. **Spreading.** The hijacked AI copies the attacker's note into an email reply, a GitHub comment, a code comment or a chat message. The next AI that reads it gets hijacked too, and passes it on again, like a virus. OpenAI reported exactly this kind of "AI worm" in its own tests in 2026.
+2. **Coming back.** The hijacked AI writes the note into its own memory or instruction files (like CLAUDE.md). Now the attack runs every single day, long after the bad email is gone.
+
+Tripline remembers the exact words of everything strangers wrote. If those words, even edited or in another language, are about to be copied into a message or into the AI's memory, Tripline stops it, or asks you when it isn't sure. Your own project files are trusted, so normal work like writing CLAUDE.md from your README just works.
+
+## 6. Does it work?
 
 ![Data theft stopped in 1,054 public attacks: 1.7% by spotting tricks, 100% by following secrets](img/explained/5-proof.svg)
 
-We replayed 1,054 publicly known attacks against Tripline, pretending the AI had already fallen for every one of them:
+Tripline comes with a test kit, `tripline eval`, that runs the same attacks through any guard. On its worm and memory attacks, having no guard stops none of the 27; Tripline stops all 27.
+
+We also replayed 1,054 publicly known attacks against Tripline, pretending the AI had already fallen for every one of them:
 
 - Only **spotting tricks** stopped 1.7% of the attempts to steal data.
 - **Following your secrets** stopped all of them.
 
-That's the main lesson: you can't rely on spotting the attacker's words, because words can always be changed. You have to watch where your data goes. We also attacked Tripline ourselves four times before release and fixed every weakness we found.
+That's the main lesson: you can't rely on spotting the attacker's words, because words can always be changed. You have to watch where your data goes. We also attacked Tripline ourselves five times and fixed every weakness we found.
 
 ## What it can't do yet
 

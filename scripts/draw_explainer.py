@@ -264,7 +264,44 @@ def proof(c):
     return s.svg()
 
 
-DRAWINGS = {"1-problem": problem, "2-guard": guard, "3-five-jobs": jobs, "4-follow-secrets": follow, "5-proof": proof}
+def contagion(c):
+    s = Svg(960, 420, c, "Two ways an attack lives on, spreading to other AIs and coming back from memory, both blocked by Tripline")
+    # the infected email
+    s.envelope(28, 160, 150, 104)
+    s.add(f'<rect x="44" y="214" width="118" height="36" rx="6" fill="{c["badsoft"]}" stroke="{c["bad"]}" stroke-width="2"/>')
+    s.text(103, 237, "note", size=14, color="bad", weight=700, anchor="middle")
+    s.text(103, 296, ["An email with an", "attacker's note"], size=14, color="muted", anchor="middle")
+    s.arrow(184, 212, 240, 212, color="bad", sw=3)
+    # the hijacked AI
+    s.rect(246, 150, 150, 124)
+    s.robot(321, 212)
+    s.add(f'<rect x="346" y="160" width="38" height="22" rx="5" fill="{c["bad"]}"/>')
+    s.text(365, 176, "note", size=11, color="onfill", weight=700, anchor="middle")
+    s.text(321, 262, "AI assistant", size=15, weight=600, anchor="middle")
+    # Tripline band
+    s.add(f'<rect x="500" y="24" width="120" height="372" rx="18" fill="{c["goodsoft"]}" stroke="{c["good"]}" stroke-width="2.5"/>')
+    s.shield(560, 210, 0.6)
+    s.text(560, 268, "Tripline", size=17, weight=700, color="good", anchor="middle")
+    # path 1: spreading
+    s.add(f'<path d="M398,190 C450,190 450,96 500,96" fill="none" stroke="{c["bad"]}" stroke-width="3"/>')
+    s.cross(560, 96, 20)
+    s.add(f'<line x1="622" y1="96" x2="690" y2="96" stroke="{c["line"]}" stroke-width="3" stroke-dasharray="6 6"/>')
+    s.rect(696, 40, 240, 112)
+    s.text(716, 72, "1. Spreading", size=18, weight=700)
+    s.text(716, 100, ["Copied into emails, comments", "and chat that other AIs read"], size=14, color="muted")
+    # path 2: coming back
+    s.add(f'<path d="M398,236 C450,236 450,326 500,326" fill="none" stroke="{c["bad"]}" stroke-width="3"/>')
+    s.cross(560, 326, 20)
+    s.add(f'<line x1="622" y1="326" x2="690" y2="326" stroke="{c["line"]}" stroke-width="3" stroke-dasharray="6 6"/>')
+    s.rect(696, 270, 240, 112)
+    s.text(716, 302, "2. Coming back", size=18, weight=700)
+    s.text(716, 330, ["Saved into its memory or", "CLAUDE.md, read every day"], size=14, color="muted")
+    s.text(28, 360, ["Tripline remembers the words of everything", "strangers wrote, so it spots the note however it leaves."],
+           size=14, color="good", weight=600)
+    return s.svg()
+
+
+DRAWINGS = {"1-problem": problem, "2-guard": guard, "3-five-jobs": jobs, "4-follow-secrets": follow, "5-proof": proof, "6-contagion": contagion}
 
 
 def main() -> int:
