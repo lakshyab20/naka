@@ -223,6 +223,19 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--json", help="also write the results to this file")
     b.set_defaults(func=cmd_bench)
 
+    ev = sub.add_parser("eval", help="run attack and everyday-task scenarios through any MCP guard")
+    ev.add_argument("--suite", action="append", help="mcp-attacks, contagion, injecagent (repeatable; "
+                    "default: mcp-attacks and contagion)")
+    ev.add_argument("--guard", action="append", help="'no guard', tripline, 'tripline strict', pipelock, or "
+                    "NAME='command ... {cmd}' (repeatable; default: no guard and tripline)")
+    ev.add_argument("--only", action="append", help="only scenarios whose id contains this text")
+    ev.add_argument("--limit", type=int, help="only the first N scenarios")
+    ev.add_argument("--workers", type=int, default=8)
+    ev.add_argument("--list", action="store_true", help="list the scenarios and exit")
+    ev.add_argument("--verbose", "-v", action="store_true", help="show each attack that got through")
+    ev.add_argument("--json", help="also write full results to this file")
+    ev.set_defaults(func=lambda a: __import__("tripline.evals.cli", fromlist=["main"]).main(a))
+
     dm = sub.add_parser("demo", help="run the attack demo")
     dm.add_argument("--unprotected", action="store_true", help="run the same attack without tripline")
     dm.set_defaults(func=cmd_demo)

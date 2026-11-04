@@ -103,6 +103,55 @@ READ_WORDS = {"get", "list", "read", "search", "find", "view", "show", "describe
               "check", "fetch", "query", "browse", "retrieve", "download", "inspect", "status", "info"}
 
 
+# --- spread and memory ---------------------------------------------------------
+# Files an AI reads as instructions in every future session.
+INSTRUCTION_FILE = re.compile(
+    r"(?:^|[/\\])(?:CLAUDE|AGENTS|GEMINI|CONVENTIONS)\.md$|(?:^|[/\\])\.(?:cursorrules|windsurfrules|clinerules|"
+    r"goosehints)$|copilot-instructions\.md$|(?:^|[/\\])\.(?:cursor|windsurf|clinerules|roo|kiro|continue)"
+    r"[/\\](?:rules|steering)(?:[/\\]|$)|(?:^|[/\\])\.github[/\\](?:instructions|prompts)[/\\]|"
+    r"(?:^|[/\\])\.claude[/\\](?:skills|agents|commands|output-styles|rules)[/\\]|"
+    r"[/\\]skills[/\\][^/\\]+[/\\]SKILL\.md$|(?:^|[/\\])(?:memory|memories)[/\\]", re.I)
+# Files that make something run: tool-server configs, git hooks, shell start-up files.
+RUNS_CODE_FILE = re.compile(
+    r"(?:^|[/\\])(?:\.mcp|mcp|mcp_config|mcp_settings|claude_desktop_config)\.json$|"
+    r"(?:^|[/\\])\.claude[/\\]settings(?:\.local)?\.json$|(?:^|[/\\])\.(?:vscode|cursor)[/\\](?:settings|mcp|tasks)"
+    r"\.json$|(?:^|[/\\])\.git[/\\]hooks[/\\]|(?:^|[/\\])\.husky[/\\]|"
+    r"(?:^|[/\\])\.(?:bashrc|zshrc|bash_profile|zprofile|profile|zshenv)$", re.I)
+# Tool names of memory servers (e.g. the official knowledge-graph memory server).
+MEMORY_WORDS = {"memory", "memories", "remember", "observation", "observations", "entity", "entities",
+                "relation", "relations", "knowledge", "recall"}
+# Wording that asks for text to be passed on: what makes a copied note contagious.
+COPY_THIS = re.compile(
+    r"\b(?:copy|paste|include[sd]?|keep|add|append|insert|forward|share|repeat|reproduce|spread|post|"
+    r"put|leave)\b[^.\n]{0,40}?\b(?:this|the following|these|the same)(?:\s+\w+){0,2}?\s+(?:note|message|"
+    r"footer|text|announcement|paragraph|instructions?|block|line|signature|notice|warning|reminder)s?\b", re.I)
+TO_EVERYTHING = re.compile(
+    r"\b(?:every|each|all|any)\s+(?:\w+\s+){0,2}?(?:repl(?:y|ies)|responses?|messages?|emails?|comments?|"
+    r"issues?|channels?|threads?|posts?|chats?|conversations?|pull requests?|prs?|commits?|documents?)\b", re.I)
+AI_ADDRESSED = re.compile(
+    r"\b(?:ai|a\.i\.|llms?|language models?|(?:ai|automated|virtual|coding)\s+(?:assistants?|agents?)|"
+    r"assistants?|chatbots?|copilots?|claude|chatgpt|gpt-?\d*)\b", re.I)
+
+
+HOST = re.compile(r"\b(?:[a-z0-9-]+\.)+[a-z]{2,24}\b", re.I)
+FILE_EXTENSIONS = {"json", "md", "mdc", "ts", "tsx", "js", "jsx", "mjs", "cjs", "py", "txt", "yaml", "yml", "toml",
+                   "lock", "css", "scss", "html", "sh", "go", "rs", "java", "kt", "swift", "rb", "php", "cpp", "hpp",
+                   "env", "cfg", "ini", "xml", "csv", "log", "sql", "vue", "svelte", "dart", "gradle", "png", "svg"}
+
+
+def contagious(text: str, threshold: int) -> str | None:
+    """Why copied text would carry an attack onward, or None for ordinary quoting."""
+    copy_this, everything = COPY_THIS.search(text), TO_EVERYTHING.search(text)
+    if copy_this and everything:
+        return f"it asks to be passed on (\"{copy_this.group(0)[:40]}\", \"{everything.group(0)}\")"
+    addressed = AI_ADDRESSED.search(text)
+    if addressed and (copy_this or everything or d.scan_injection(text)):
+        return f"it gives instructions to AI (\"{addressed.group(0)}\")"
+    if d.score(d.scan_injection(text)) >= threshold:
+        return "it contains instructions aimed at the AI"
+    return None
+
+
 def name_words(name: str) -> set[str]:
     """'GmailSendEmail', 'send_email', 'send-email' -> {'gmail', 'send', 'email'}."""
     spaced = re.sub(r"(?<=[a-z0-9])(?=[A-Z])|[_\-.\s/]+", " ", name)
@@ -539,7 +588,15 @@ class Firewall:
             if msg:
                 return msg
 
-        # 5. After untrusted content: high-impact actions (money, access,
+        # 5. Spread and memory: text an untrusted tool wrote is being copied
+        #    into something other AIs will read (an AI worm), or into the AI's
+        #    own instructions or memory (so the attack comes back every session).
+        if changing:
+            msg = self._check_contagion(name, args, text, confirm)
+            if msg:
+                return msg
+
+        # 6. After untrusted content: high-impact actions (money, access,
         #    deletion, execution) ask first; in strict mode, every change does.
         untrusted = self.session.untrusted_seen() if changing else None
         if untrusted and (p.confirm_after_untrusted or (p.confirm_sensitive_after_untrusted and is_sensitive(name))):
@@ -555,6 +612,54 @@ class Firewall:
                 self._emit("blocked", "pii-in-args", ", ".join(rules), name)
                 return f"[tripline] Blocked: arguments to '{name}' contain personal data ({', '.join(rules)})."
             self._emit("warned", "pii-in-args", ", ".join(rules), name)
+        return None
+
+    def _instruction_surface(self, name: str, args: Any) -> tuple[str, bool] | None:
+        """(what it is, whether it starts programs) if this call writes the AI's memory or instructions."""
+        if name_words(name) & MEMORY_WORDS:
+            return "the AI's memory", False
+        for s in self._strings(args, skip_binary=False):
+            path = s.strip()
+            if "\n" in path or len(path) > 400:
+                continue
+            if RUNS_CODE_FILE.search(path):
+                return f"{d.safe_text(path, 80)}, a file that starts programs", True
+            if INSTRUCTION_FILE.search(path):
+                return f"{d.safe_text(path, 80)}, which the AI reads as instructions", False
+        return None
+
+    def _check_contagion(self, name: str, args: Any, text: str, confirm: list) -> str | None:
+        p = self.policy
+        surface = self._instruction_surface(name, args)
+        copied = self.session.copied_untrusted(text)
+        if copied:
+            passage = "\n".join(c for c, _ in copied)
+            src = copied[0][1]
+            short = src.split("/", 1)[-1]
+            if surface:
+                return self._decide(
+                    p.on_memory_poisoning, "memory-poisoning",
+                    f"'{name}' would write text from '{src}' into {surface[0]}", name,
+                    f"[tripline] Blocked: '{name}' would write text that came from '{short}' into {surface[0]}. "
+                    "Saved there, an injected note would come back in every future session. "
+                    "If the user wants this, they should write it themselves.", confirm, source=src)
+            why = contagious(passage, p.threshold)
+            if why:
+                return self._decide(
+                    p.on_spread, "spread", f"'{name}' would pass on text from '{src}': {why}", name,
+                    f"[tripline] Blocked: '{name}' would copy a note that came from '{short}' into something "
+                    f"others will read, and {why}. That's how an injected note spreads from one AI to the next. "
+                    "Leave the note out.", confirm, source=src)
+        if surface:
+            untrusted = self.session.untrusted_seen()
+            pointer = STRONG_DEST.search(text) or any(
+                h.group(0).rsplit(".", 1)[-1].lower() not in FILE_EXTENSIONS for h in HOST.finditer(text))
+            if untrusted and (surface[1] or pointer or self.injection_seen_from):
+                return self._decide(
+                    p.on_memory_write, "memory-write",
+                    f"'{name}' changes {surface[0]}, after this session read content from '{untrusted}'", name,
+                    f"[tripline] Blocked: '{name}' would change {surface[0]} after reading content from "
+                    f"'{untrusted}'. Confirm with the user first.", confirm)
         return None
 
     # ------------------------------------------------------- server -> client

@@ -39,6 +39,9 @@ from urllib.parse import urlsplit
 from . import detectors as d
 from .store import home
 
+SHINGLE = 8                 # runs of this many words copied from untrusted text are recognised
+MAX_SHINGLES = 50_000       # per tool output, to bound the work a huge page can force
+TOKEN = re.compile(r"\w+")
 CHUNK = 12                  # contiguous pieces this long are recognised in one call
 FRAG_MIN = 6                # shorter pieces are tracked across calls...
 REASSEMBLE = 0.75           # ...and blocked once they cover this share of a secret
@@ -73,6 +76,11 @@ def variants(value: str) -> set[str]:
     return {c for c in (canonical(f) for f in forms) if c}
 
 
+def tokens(text: str) -> list[tuple[int, int, str]]:
+    """Words with their positions, normalised so look-alike letters and case don't matter."""
+    return [(m.start(), m.end(), d.normalize(m.group(0)).lower()) for m in TOKEN.finditer(text)]
+
+
 def destinations(text: str) -> set[tuple[str, str]]:
     found = set()
     for kind, rx in DESTINATIONS:
@@ -100,6 +108,7 @@ class SessionState:
         self.secret_len: dict[str, tuple[int, str]] = {}   # secret id -> (length, source)
         self.covered: dict[str, set[int]] = {}  # secret id -> positions already sent out, any tool
         self.dest: dict[bytes, tuple[str, str]] = {}  # hashed destination -> (kind, source)
+        self.text: dict[bytes, str] = {}  # hashed run of SHINGLE words from untrusted output -> source
         self.injection_from: str | None = None
         self.untrusted_from: str | None = None
         self.path: Path | None = None
@@ -145,6 +154,9 @@ class SessionState:
     def _h(self, text: str) -> bytes:
         return hashlib.blake2b(text.encode(), digest_size=12, key=self._key).digest()
 
+    def _h8(self, text: str) -> bytes:
+        return hashlib.blake2b(text.encode(), digest_size=8, key=self._key).digest()
+
     def _append(self, record: dict) -> None:
         self._apply(record)
         if self.path:
@@ -166,6 +178,9 @@ class SessionState:
                 self.fragments.setdefault(bytes.fromhex(h), []).append((r["sid"], off, ln))
         elif t == "dst":
             self.dest.setdefault(bytes.fromhex(r["h"]), (r["kind"], r["src"]))
+        elif t == "tx":
+            for h in r["h"]:
+                self.text.setdefault(bytes.fromhex(h), r["src"])
         elif t == "inj":
             self.injection_from = self.injection_from or r["src"]
         elif t == "unt":
@@ -219,6 +234,14 @@ class SessionState:
         if not trusted:
             for kind, c in destinations(text):
                 self._append({"t": "dst", "h": self._h(c).hex(), "kind": kind, "src": src})
+            # Remember the wording itself (as hashed runs of words), so we can
+            # tell later when the AI copies this text into something it sends
+            # or into its own memory: how an injected note spreads or persists.
+            words = [w for _, _, w in tokens(text)]
+            runs = {self._h8(" ".join(words[i:i + SHINGLE]))
+                    for i in range(min(len(words) - SHINGLE + 1, MAX_SHINGLES))}
+            if runs:
+                self._append({"t": "tx", "h": sorted(h.hex() for h in runs), "src": src})
 
     def record_injection(self, source: str) -> None:
         if not self.injection_from:
@@ -303,6 +326,30 @@ class SessionState:
                 if hit:
                     return hit[0], value, hit[1]
         return None
+
+    def copied_untrusted(self, text: str) -> list[tuple[str, str]]:
+        """Passages of text copied from untrusted tool output: [(passage, source)].
+
+        A passage is a run of at least SHINGLE words that appeared, in order, in
+        something an untrusted tool returned. Small edits (a changed word, a
+        sign-off added, re-flowed lines) still leave most runs intact.
+        """
+        self.refresh()
+        if not self.text:
+            return []
+        toks = tokens(text)
+        hits: list[tuple[int, str]] = []
+        for i in range(len(toks) - SHINGLE + 1):
+            src = self.text.get(self._h8(" ".join(w for _, _, w in toks[i:i + SHINGLE])))
+            if src:
+                hits.append((i, src))
+        spans: list[list] = []
+        for i, src in hits:
+            if spans and i <= spans[-1][1]:
+                spans[-1][1] = i + SHINGLE
+            else:
+                spans.append([i, i + SHINGLE, src])
+        return [(text[toks[a][0]:toks[b - 1][1]], src) for a, b, src in spans]
 
     def untrusted_seen(self) -> str | None:
         self.refresh()

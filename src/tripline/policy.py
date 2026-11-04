@@ -13,7 +13,8 @@ from pathlib import Path
 
 ACTIONS = {"block", "warn"}
 # Rules where asking the user is a valid action (needs MCP elicitation support).
-CONFIRMABLE = {"on_egress_after_injection", "on_untrusted_destination", "on_tainted_flow"}
+CONFIRMABLE = {"on_egress_after_injection", "on_untrusted_destination", "on_tainted_flow", "on_spread",
+               "on_memory_poisoning", "on_memory_write"}
 
 # Tool names that look like they move data out of the machine. Used for
 # lockdown after untrusted content has reached the model.
@@ -38,6 +39,9 @@ class Policy:
     on_tainted_flow: str = "block"        # value read from tool A is sent out via tool B
     on_egress_after_injection: str = "confirm"
     on_untrusted_destination: str = "confirm"  # an address/URL/ID from untrusted output used to change something
+    on_spread: str = "block"              # a note from untrusted output, asking to be passed on, copied into a message
+    on_memory_poisoning: str = "block"    # text from untrusted output written into the AI's memory or instructions
+    on_memory_write: str = "confirm"      # memory/instructions changed after untrusted content (links, configs...)
     # When the app can't show confirmation prompts: "block" or "warn".
     confirm_fallback: str = "block"
     # Strict mode (CaMeL-like): any tool that changes something needs
