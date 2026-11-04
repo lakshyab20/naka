@@ -36,7 +36,7 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 def _log(text: str) -> None:
-    print(f"tripline ▸ {text}", file=sys.stderr, flush=True)
+    print(f"naka ▸ {text}", file=sys.stderr, flush=True)
 
 
 class ProcessUpstream:

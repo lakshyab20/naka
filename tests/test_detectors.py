@@ -1,6 +1,6 @@
 import base64
 
-from tripline import detectors as d
+from naka import detectors as d
 
 
 def flagged(text, threshold=3):

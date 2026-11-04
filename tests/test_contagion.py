@@ -8,7 +8,7 @@ import tempfile
 
 import pytest
 
-from tripline.firewall import contagious
+from naka.firewall import contagious
 from tests.test_flow import call, make, tools  # noqa: F401  (fixtures and helpers)
 from tests.test_flow import tmp_home  # noqa: F401
 
@@ -92,7 +92,7 @@ def test_eval_suites_end_to_end():
     """The built-in scenarios: every attack stopped, no contagion everyday task interrupted."""
     with tempfile.TemporaryDirectory() as tmp:
         out = os.path.join(tmp, "r.json")
-        subprocess.run([sys.executable, "-m", "tripline", "eval", "--guard", "tripline", "--json", out],
+        subprocess.run([sys.executable, "-m", "naka", "eval", "--guard", "naka", "--json", out],
                        check=True, capture_output=True, timeout=300)
         results = json.load(open(out))["results"]
     attacks = [r for r in results if r["kind"] == "attack"]
@@ -128,7 +128,7 @@ def test_eval_scores_against_the_real_secret():
     with tempfile.TemporaryDirectory() as tmp:
         helper, out = os.path.join(tmp, "guard.py"), os.path.join(tmp, "r.json")
         open(helper, "w").write(BLOCK_SECRET_READS)
-        subprocess.run([sys.executable, "-m", "tripline", "eval", "--suite", "mcp-attacks",
+        subprocess.run([sys.executable, "-m", "naka", "eval", "--suite", "mcp-attacks",
                         "--only", "exfil", "--guard", f"noread={sys.executable} -I {helper} {{cmd}}",
                         "--guard", "no guard", "--json", out], check=True, capture_output=True, timeout=300)
         results = json.load(open(out))["results"]

@@ -1,6 +1,6 @@
 """On-disk state: tool pins (for rug-pull detection) and the audit log.
 
-Everything lives under ``$TRIPLINE_HOME`` (default ``~/.tripline``).
+Everything lives under ``$NAKA_HOME`` (default ``~/.naka``).
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ PIN_FORMAT = 2
 
 
 def home() -> Path:
-    root = Path(os.environ.get("TRIPLINE_HOME", Path.home() / ".tripline"))
+    root = Path(os.environ.get("NAKA_HOME", Path.home() / ".naka"))
     root.mkdir(parents=True, exist_ok=True)
     return root
 
@@ -46,12 +46,12 @@ class PinStore:
         if data and data.get("format") != PIN_FORMAT:
             # Pins from an older version hash fewer fields, so every tool would
             # look changed. Start over: the next listing is trusted and pinned.
-            print(f"tripline ▸ pins for '{server}' use an older format; re-pinning on next listing",
+            print(f"naka ▸ pins for '{server}' use an older format; re-pinning on next listing",
                   file=sys.stderr, flush=True)
             data = {}
         self.pins: dict[str, dict] = data.get("tools", {})
         # Definitions that changed or were held back, waiting for a human to
-        # approve them with `tripline pins approve`.
+        # approve them with `naka pins approve`.
         self.pending: dict[str, dict] = data.get("pending", {})
 
     def _read(self) -> dict:

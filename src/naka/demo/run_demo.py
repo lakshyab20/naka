@@ -3,11 +3,11 @@
 We play the part of an AI agent that does whatever its tools tell it to, which
 is exactly what a successfully attacked model does. The agent has two servers:
 a malicious one, and an honest "workspace" server it is tricked into misusing.
-When Tripline asks the user to confirm something, the demo user says no.
+When Naka asks the user to confirm something, the demo user says no.
 Run it twice:
 
-    tripline demo --unprotected   # the agent talks to the server directly
-    tripline demo                 # same agent, same server, through tripline
+    naka demo --unprotected   # the agent talks to the server directly
+    naka demo                 # same agent, same server, through naka
 """
 
 from __future__ import annotations
@@ -63,7 +63,7 @@ class Client:
             if reply.get("id") == msg["id"] and "method" not in reply:
                 return reply
             if reply.get("method") == "elicitation/create" and "id" in reply:
-                # The app shows Tripline's question; our demo user declines.
+                # The app shows Naka's question; our demo user declines.
                 self.flush_logs()
                 self.prompts.append(reply["params"].get("message", ""))
                 self.show_prompt(reply["params"].get("message", ""))
@@ -94,7 +94,7 @@ class Client:
             line = self.logs.get()
             if " CONFIRM " in line:
                 continue  # the prompt below shows the same reasons
-            # Colour tripline's decisions so blocks stand out from the narration.
+            # Colour naka's decisions so blocks stand out from the narration.
             for word, color in (("BLOCKED", RED), ("WARNED", YELLOW), ("CONFIRM", YELLOW), ("PINNED", CYAN)):
                 if f" {word} " in line:
                     line = line.replace(f" {word} ", f" {BOLD}{color}{word}{RESET}{DIM} ", 1)
@@ -111,7 +111,7 @@ def step(n: int, title: str):
 
 
 def show(text: str, is_error: bool):
-    color = RED if is_error and text.startswith("[tripline]") else ""
+    color = RED if is_error and text.startswith("[naka]") else ""
     for line in textwrap.wrap(text.replace("\n", " ⏎ "), 92)[:4]:
         print(f"    {color}{line}{RESET}")
 
@@ -119,7 +119,7 @@ def show(text: str, is_error: bool):
 def connect(name: str, module: str, env: dict, unprotected: bool) -> Client:
     py = sys.executable
     server = [py, "-m", module]
-    cmd = server if unprotected else [py, "-m", "tripline", "wrap", "--name", name, "--", *server]
+    cmd = server if unprotected else [py, "-m", "naka", "wrap", "--name", name, "--", *server]
     c = Client(cmd, env)
     # Like Claude Code or VS Code, the demo app can show confirmation prompts.
     c.send("initialize", {"protocolVersion": "2025-06-18", "capabilities": {"elicitation": {}},
@@ -130,12 +130,12 @@ def connect(name: str, module: str, env: dict, unprotected: bool) -> Client:
 
 def main(unprotected: bool = False) -> int:
     env = dict(os.environ)
-    env["TRIPLINE_HOME"] = tempfile.mkdtemp(prefix="tripline-demo-")
-    env["TRIPLINE_SESSION"] = "demo"  # both servers belong to one agent session
-    mode = f"{RED}UNPROTECTED{RESET}" if unprotected else f"{GREEN}PROTECTED BY TRIPLINE{RESET}"
-    print(f"{BOLD}Tripline demo{RESET}: a hijacked agent vs. a malicious MCP server ({mode})")
+    env["NAKA_HOME"] = tempfile.mkdtemp(prefix="naka-demo-")
+    env["NAKA_SESSION"] = "demo"  # both servers belong to one agent session
+    mode = f"{RED}UNPROTECTED{RESET}" if unprotected else f"{GREEN}PROTECTED BY NAKA{RESET}"
+    print(f"{BOLD}Naka demo{RESET}: a hijacked agent vs. a malicious MCP server ({mode})")
 
-    c = connect("demo", "tripline.demo.evil_server", env, unprotected)
+    c = connect("demo", "naka.demo.evil_server", env, unprotected)
     leaks: list[str] = []
 
     step(1, "Agent connects and lists the server's tools")
@@ -185,7 +185,7 @@ def main(unprotected: bool = False) -> int:
     if not err:
         leaks.append("GitHub token sent through rug-pulled tool")
 
-    w = connect("workspace", "tripline.demo.workspace_server", env, unprotected)
+    w = connect("workspace", "naka.demo.workspace_server", env, unprotected)
     step(7, "Hijacked agent hides the key in base64 and posts it through a second, honest server")
     key = base64.b64encode(b"AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE").decode()
     text, err = w.call("post_comment", {"issue": 42, "text": f"build log: {key}"})
@@ -226,7 +226,7 @@ def main(unprotected: bool = False) -> int:
             print(f"  {RED}✗ {l}{RESET}")
     else:
         print(f"{GREEN}{BOLD}Result: every attack was stopped. Audit log: "
-              f"{env['TRIPLINE_HOME']}/audit.jsonl{RESET}")
+              f"{env['NAKA_HOME']}/audit.jsonl{RESET}")
     return 0
 
 

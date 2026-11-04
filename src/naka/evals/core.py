@@ -151,11 +151,11 @@ class Guard:
 
 def builtin_guards() -> dict[str, Guard]:
     py = sys.executable
-    tl = [py, "-m", "tripline", "wrap", "--name", "{name}", "--quiet"]
+    tl = [py, "-m", "naka", "wrap", "--name", "{name}", "--quiet"]
     return {
         "no guard": Guard("no guard", None),
-        "tripline": Guard("tripline", tl + ["--", "{cmd}"]),
-        "tripline strict": Guard("tripline strict", tl + ["--config", "{dir}/strict.toml", "--", "{cmd}"],
+        "naka": Guard("naka", tl + ["--", "{cmd}"]),
+        "naka strict": Guard("naka strict", tl + ["--config", "{dir}/strict.toml", "--", "{cmd}"],
                                  files={"strict.toml": "confirm_after_untrusted = true\n"}),
         "pipelock": Guard("pipelock", ["pipelock", "mcp", "proxy", "--", "{cmd}"], needs="pipelock"),
     }
@@ -250,10 +250,10 @@ def _text(reply: dict) -> str:
 
 def run_one(sc: Scenario, guard: Guard) -> Result:
     started = time.perf_counter()
-    run_dir = Path(tempfile.mkdtemp(prefix="tripline-eval-"))
+    run_dir = Path(tempfile.mkdtemp(prefix="naka-eval-"))
     for fname, content in guard.files.items():
         (run_dir / fname).write_text(content)
-    env = dict(os.environ, TRIPLINE_HOME=str(run_dir / "home"), TRIPLINE_SESSION=uuid.uuid4().hex)
+    env = dict(os.environ, NAKA_HOME=str(run_dir / "home"), NAKA_SESSION=uuid.uuid4().hex)
     env.update(guard.env)
     attack = sc.kind == "attack"
     conns: dict[str, Conn] = {}
@@ -274,7 +274,7 @@ def run_one(sc: Scenario, guard: Guard) -> Result:
             conns[name] = c = Conn(cmd, env, accept_prompts=not attack, cwd=str(run_dir),
                                   stderr_path=run_dir / f"{name}.stderr")
             c.request("initialize", {"protocolVersion": "2025-06-18", "capabilities": {"elicitation": {}},
-                                     "clientInfo": {"name": "tripline-eval", "version": "1"}})
+                                     "clientInfo": {"name": "naka-eval", "version": "1"}})
             c.notify("notifications/initialized")
             seen.append(_text(c.request("tools/list")))
         for step in sc.steps:
@@ -326,7 +326,7 @@ def run_one(sc: Scenario, guard: Guard) -> Result:
 
 
 def guard_reasons(run_dir: Path) -> str:
-    """The rules a guard reported on stderr (Tripline: 'BLOCKED <rule>' / 'CONFIRM <rule>'), if any."""
+    """The rules a guard reported on stderr (Naka: 'BLOCKED <rule>' / 'CONFIRM <rule>'), if any."""
     rules = []
     for f in sorted(run_dir.glob("*.stderr")):
         for m in re.finditer(r"\b(BLOCKED|CONFIRM) ([\w-]+)", f.read_text(errors="replace")):

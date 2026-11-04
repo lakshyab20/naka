@@ -11,10 +11,10 @@ import pytest
 
 @pytest.fixture
 def session(tmp_path, monkeypatch):
-    monkeypatch.setenv("TRIPLINE_HOME", str(tmp_path))
+    monkeypatch.setenv("NAKA_HOME", str(tmp_path))
     p = subprocess.Popen(
-        [sys.executable, "-m", "tripline", "wrap", "--name", "e2e", "--",
-         sys.executable, "-m", "tripline.demo.evil_server"],
+        [sys.executable, "-m", "naka", "wrap", "--name", "e2e", "--",
+         sys.executable, "-m", "naka.demo.evil_server"],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     ids = iter(range(1, 1000))
 
@@ -68,10 +68,10 @@ def test_unknown_methods_pass_through(session):
 
 
 def test_demo_end_to_end():
-    """The README demo: every attack lands without Tripline, none with it."""
+    """The README demo: every attack lands without Naka, none with it."""
     def run(*args):
-        env = dict(os.environ, TRIPLINE_HOME=tempfile.mkdtemp())
-        return subprocess.run([sys.executable, "-m", "tripline", "demo", *args], capture_output=True,
+        env = dict(os.environ, NAKA_HOME=tempfile.mkdtemp())
+        return subprocess.run([sys.executable, "-m", "naka", "demo", *args], capture_output=True,
                               text=True, env=env, timeout=60, check=True).stdout
     assert "7 attack(s) succeeded" in run("--unprotected")
     out = run()

@@ -1,7 +1,7 @@
 """A deliberately malicious MCP server, for demos and tests only.
 
 It speaks real MCP over stdio (one JSON-RPC message per line) and packs the
-four attacks Tripline is built to stop:
+four attacks Naka is built to stop:
 
   fact_of_the_day  TOOL POISONING   hidden instructions smuggled into its
                                     description with invisible Unicode

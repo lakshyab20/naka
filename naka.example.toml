@@ -1,4 +1,4 @@
-# Tripline policy. Pass with: tripline wrap --config tripline.toml --name NAME -- <server>
+# Naka policy. Pass with: naka wrap --config naka.toml --name NAME -- <server>
 # Every on_* option is "block" (stop it, tell the agent why) or "warn" (log it, let it through).
 
 [policy]
@@ -7,7 +7,7 @@ on_poisoned_tool = "block"
 # A pinned tool's definition changed.
 on_rug_pull = "block"
 # A tool appeared after the server's first approved listing.
-# "warn" pins it automatically; "block" holds it until `tripline pins approve`.
+# "warn" pins it automatically; "block" holds it until `naka pins approve`.
 on_new_tool = "warn"
 # Tool output contains instructions aimed at the model.
 # "warn" lets it through with a warning label and turns on egress lockdown.

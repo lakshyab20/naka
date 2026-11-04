@@ -1,7 +1,7 @@
 """Stdio transport: run the real MCP server as a child process and sit in the middle.
 
     MCP client (Claude, Cursor, ...)                    real MCP server
-          stdout/stdin  <-->  tripline  <-->  stdin/stdout (child process)
+          stdout/stdin  <-->  naka  <-->  stdin/stdout (child process)
 
 MCP over stdio sends one JSON-RPC message per line. We read a line from one
 side, ask the Firewall what to do, and write the result to the other side (or
@@ -41,13 +41,13 @@ def stderr_reporter(quiet: bool = False):
         # Tool names and details come from the server: escape control codes so a
         # malicious server can't clear the screen or fake our log lines.
         tool = f" {d.safe_text(e.tool, 80)}" if e.tool else ""
-        print(f"tripline ▸ {label} {e.rule}{tool}: {d.safe_text(e.detail)}", file=sys.stderr, flush=True)
+        print(f"naka ▸ {label} {e.rule}{tool}: {d.safe_text(e.detail)}", file=sys.stderr, flush=True)
 
     return report
 
 
 def _log(text: str) -> None:
-    print(f"tripline ▸ {text}", file=sys.stderr, flush=True)
+    print(f"naka ▸ {text}", file=sys.stderr, flush=True)
 
 
 class StdioProxy:

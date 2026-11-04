@@ -1,6 +1,6 @@
 # Code of Conduct
 
-Tripline is a security project, so people will disagree, point out mistakes and break each other's code. That's the point. Do it in a way that makes people want to come back.
+Naka is a security project, so people will disagree, point out mistakes and break each other's code. That's the point. Do it in a way that makes people want to come back.
 
 ## Expected
 
@@ -14,7 +14,7 @@ Tripline is a security project, so people will disagree, point out mistakes and 
 - Harassment, insults, slurs, or sexual language and imagery.
 - Personal or political attacks, trolling, or deliberately derailing discussions.
 - Publishing someone's private information without their permission.
-- Using Tripline's issues, test suites or discussions to share working attacks against real people, companies or services.
+- Using Naka's issues, test suites or discussions to share working attacks against real people, companies or services.
 
 ## Scope and enforcement
 

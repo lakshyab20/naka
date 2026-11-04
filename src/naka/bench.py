@@ -1,7 +1,7 @@
 """Benchmark: how much does each detection layer catch, and how often is it wrong?
 
-    tripline bench              # downloads public datasets once, then scores
-    tripline bench --json out.json
+    naka bench              # downloads public datasets once, then scores
+    naka bench --json out.json
 
 Two numbers matter for a firewall, and they pull against each other:
 - detection rate: share of attacks flagged (higher is better)
@@ -11,14 +11,14 @@ Two numbers matter for a firewall, and they pull against each other:
 Test sets (each is either all attacks or all harmless):
   injecagent-embedded   attacker instructions placed inside realistic tool
                         responses (product reviews, emails, notes): the
-                        indirect-injection case Tripline exists for
+                        indirect-injection case Naka exists for
   bipia-embedded        BIPIA attacks inserted into real emails
-  tripline-redteam      attacks from Tripline's own red-team reviews
+  naka-redteam      attacks from Naka's own red-team reviews
   notinject             harmless sentences full of trigger words ("ignore",
                         "bypass"...): measures over-blocking
   bipia-contexts        real emails, tables and code with no attack
   injecagent-benign     the same tool responses with harmless content
-  tripline-benign       harmless text that tripped earlier versions
+  naka-benign       harmless text that tripped earlier versions
 
 Datasets come from GitHub at pinned commits (all MIT licensed) and are only
 read as JSON; nothing from them is executed. InjecAgent and BIPIA are never
@@ -84,7 +84,7 @@ def fetch(names=SOURCES) -> dict[str, Path]:
     for name in names:
         url, commit = SOURCES[name]
         dest = data_dir() / name
-        marker = dest / ".tripline-commit"
+        marker = dest / ".naka-commit"
         if not (marker.exists() and marker.read_text().strip() == commit):
             dest.mkdir(parents=True, exist_ok=True)
             run = lambda *a: subprocess.run(["git", "-C", str(dest), *a], check=True,  # noqa: E731
@@ -103,7 +103,7 @@ def _jsonl(path: Path) -> list[dict]:
 
 
 def own_corpus() -> dict:
-    return json.loads(resources.files("tripline.data").joinpath("redteam_corpus.json").read_text("utf-8"))
+    return json.loads(resources.files("naka.data").joinpath("redteam_corpus.json").read_text("utf-8"))
 
 
 def build(paths: dict[str, Path], seed: int = 7) -> list[Sample]:
@@ -147,8 +147,8 @@ def build(paths: dict[str, Path], seed: int = 7) -> list[Sample]:
             out.append(Sample(r["prompt"], False, "notinject"))
 
     corpus = own_corpus()
-    out += [Sample(t, True, "tripline-redteam") for t in corpus["attacks"]]
-    out += [Sample(t, False, "tripline-benign") for t in corpus["benign"]]
+    out += [Sample(t, True, "naka-redteam") for t in corpus["attacks"]]
+    out += [Sample(t, False, "naka-benign") for t in corpus["benign"]]
     return out
 
 
@@ -287,7 +287,7 @@ def _attacker_args(instruction: str) -> dict:
 
 
 def replay(case: dict, policy_kwargs: dict, malicious: bool, rng: random.Random) -> bool:
-    """True if Tripline stopped (or asked about) a harmful step."""
+    """True if Naka stopped (or asked about) a harmful step."""
     import tempfile
 
     from .firewall import Firewall
@@ -295,7 +295,7 @@ def replay(case: dict, policy_kwargs: dict, malicious: bool, rng: random.Random)
     from .policy import Policy
     from .store import AuditLog, PinStore
 
-    tmp = Path(tempfile.mkdtemp(prefix="tripline-replay-"))
+    tmp = Path(tempfile.mkdtemp(prefix="naka-replay-"))
     session = SessionState("replay", shared=False)
     pins = PinStore.__new__(PinStore)
     pins.server, pins.path, pins.pins, pins.pending = "replay", tmp / "pins.json", {}, {}

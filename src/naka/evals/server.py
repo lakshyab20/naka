@@ -1,6 +1,6 @@
 """A scripted MCP server for eval scenarios.
 
-    python -m tripline.evals.server SPEC.json CALLS.jsonl
+    python -m naka.evals.server SPEC.json CALLS.jsonl
 
 It serves the tools described in SPEC.json over stdio and appends every call
 that reaches it to CALLS.jsonl. That log is the ground truth for scoring: an

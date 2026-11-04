@@ -1,4 +1,4 @@
-"""Draw Tripline's logo files into docs/img/brand/.
+"""Draw Naka's logo files into docs/img/brand/.
 
 The mark: a line (the connection between an AI agent and its tools) with a checkpoint on it.
 The wordmark is Inter Display SemiBold (SIL Open Font License), converted to outlines so it
@@ -64,8 +64,8 @@ def svg(w: float, h: float, body: str, label: str) -> str:
 
 def wordmark(color: str) -> str:
     h, size = 64, 44
-    word, width = text_path("tripline", 84, 47, size, color)
-    return svg(84 + width + 4, h, mark() + "\n  " + word, "Tripline")
+    word, width = text_path("naka", 84, 47, size, color)
+    return svg(84 + width + 4, h, mark() + "\n  " + word, "Naka")
 
 
 def social() -> str:
@@ -75,7 +75,7 @@ def social() -> str:
             f'<line x1="120" y1="420" x2="560" y2="420" stroke="#2A3550" stroke-width="6" stroke-linecap="round"/>',
             f'<line x1="720" y1="420" x2="1160" y2="420" stroke="#2A3550" stroke-width="6" stroke-linecap="round"/>',
             f'<rect x="604" y="384" width="72" height="72" rx="14" transform="rotate(45 640 420)" fill="{SIGNAL}"/>']
-    title, tw = text_path("tripline", 0, 0, 120, PAPER)
+    title, tw = text_path("naka", 0, 0, 120, PAPER)
     body.append(title.replace("<path ", f'<path transform="translate({(w - tw) / 2:.1f} 250)" '))
     tag = "The runtime firewall for AI agents"
     sub, sw = text_path(tag, 0, 0, 40, "#9AA8C0")
@@ -83,13 +83,13 @@ def social() -> str:
     for label, cx in (("AI agent", 340), ("its tools", 940)):
         p, lw = text_path(label, 0, 0, 30, "#6B7A96")
         body.append(p.replace("<path ", f'<path transform="translate({cx - lw / 2:.1f} 490)" '))
-    return svg(w, h, "\n  ".join(body), "Tripline: the runtime firewall for AI agents")
+    return svg(w, h, "\n  ".join(body), "Naka: the runtime firewall for AI agents")
 
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     files = {
-        "mark.svg": svg(64, 64, mark(), "Tripline"),
+        "mark.svg": svg(64, 64, mark(), "Naka"),
         "wordmark-light.svg": wordmark(INK),     # for light backgrounds
         "wordmark-dark.svg": wordmark(PAPER),    # for dark backgrounds
         "social-preview.svg": social(),

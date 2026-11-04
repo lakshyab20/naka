@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Report a vulnerability or a bypass (privately)
-    url: https://github.com/lakshyab20/tripline/security/advisories/new
-    about: Please don't open a public issue for a way to get past Tripline.
+    url: https://github.com/lakshyab20/naka/security/advisories/new
+    about: Please don't open a public issue for a way to get past Naka.
   - name: Ask a question
-    url: https://github.com/lakshyab20/tripline/discussions
+    url: https://github.com/lakshyab20/naka/discussions
     about: Questions, ideas and show-and-tell.

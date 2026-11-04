@@ -17,7 +17,7 @@ Two kinds of values are tracked from tool output:
   injection payoff.
 
 Values are stored only as keyed hashes. With a shared session (the default),
-every Tripline process started by the same app (Claude Desktop, Cursor...)
+every Naka process started by the same app (Claude Desktop, Cursor...)
 appends to one file, so data read through one server and sent through another
 is still caught.
 """
@@ -118,7 +118,7 @@ class SessionState:
         self.path: Path | None = None
         self._offset = 0
         if shared:
-            group = session or os.environ.get("TRIPLINE_SESSION") or f"ppid-{os.getppid()}"
+            group = session or os.environ.get("NAKA_SESSION") or f"ppid-{os.getppid()}"
             root = home() / "sessions"
             root.mkdir(parents=True, exist_ok=True)
             os.chmod(root, 0o700)
@@ -193,7 +193,7 @@ class SessionState:
             self.external_from = self.external_from or r["src"]
 
     def refresh(self) -> None:
-        """Pick up records other Tripline processes in this session wrote."""
+        """Pick up records other Naka processes in this session wrote."""
         if not self.path:
             return
         with self._lock:

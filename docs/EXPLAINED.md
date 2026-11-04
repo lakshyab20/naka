@@ -1,4 +1,4 @@
-# Tripline, explained simply
+# Naka, explained simply
 
 No technical words. Six pictures, five minutes. (For the technical version, see [ARCHITECTURE.md](ARCHITECTURE.md).)
 
@@ -10,17 +10,17 @@ Think of an AI assistant (Claude, ChatGPT, Cursor) as a very obedient new employ
 
 So an attacker doesn't need to hack your computer. They only need the AI to *read* their note.
 
-## 2. What Tripline is
+## 2. What Naka is
 
-![Tripline is a guard between the AI assistant and its tools](img/explained/2-guard.svg)
+![Naka is a guard between the AI assistant and its tools](img/explained/2-guard.svg)
 
-Tripline is a **security guard standing between the AI and its tools**. Every request the AI sends ("send this email") and every answer that comes back ("here's the web page") passes through the guard first. For each one, the guard either lets it through, blocks it, or asks you.
+Naka is a **security guard standing between the AI and its tools**. Every request the AI sends ("send this email") and every answer that comes back ("here's the web page") passes through the guard first. For each one, the guard either lets it through, blocks it, or asks you.
 
 You don't change the AI or the tools. One command puts the guard in place.
 
 ## 3. The guard's five jobs
 
-![The five jobs of the Tripline guard](img/explained/3-five-jobs.svg)
+![The five jobs of the Naka guard](img/explained/3-five-jobs.svg)
 
 1. **Checks IDs.** The first time a tool shows up, the guard records exactly what it is. If the tool later changes what it says it does, it's blocked. A tool can't be friendly on day one and turn evil on day ten.
 2. **Spots tricks.** Notes like "ignore your previous instructions" are held back. Attackers can reword their notes, so this is only a first filter.
@@ -30,7 +30,7 @@ You don't change the AI or the tools. One command puts the guard in place.
 
 ## 4. Following your secrets
 
-![Tripline follows a secret and stops it leaving, even when it is disguised](img/explained/4-follow-secrets.svg)
+![Naka follows a secret and stops it leaving, even when it is disguised](img/explained/4-follow-secrets.svg)
 
 When the AI reads a password or a key, the guard quietly remembers it. If that same secret later tries to leave through any tool, the guard stops it, even when it's disguised (scrambled, reversed or split into pieces) and even when it leaves through a different tool than the one it came from.
 
@@ -38,27 +38,27 @@ The guard doesn't need to understand the attacker's note. It only needs to see y
 
 ## 5. Stopping attacks from spreading or coming back
 
-![Two ways an attack lives on, spreading to other AIs and coming back from memory, both blocked by Tripline](img/explained/6-contagion.svg)
+![Two ways an attack lives on, spreading to other AIs and coming back from memory, both blocked by Naka](img/explained/6-contagion.svg)
 
 A clever attack doesn't stop at one AI. There are two ways it can live on:
 
 1. **Spreading.** The hijacked AI copies the attacker's note into an email reply, a GitHub comment, a code comment or a chat message. The next AI that reads it gets hijacked too, and passes it on again, like a virus. OpenAI reported exactly this kind of "AI worm" in its own tests in 2026.
 2. **Coming back.** The hijacked AI writes the note into its own memory or instruction files (like CLAUDE.md). Now the attack runs every single day, long after the bad email is gone.
 
-Tripline remembers the exact words of everything strangers wrote. If those words, even edited or in another language, are about to be copied into a message or into the AI's memory, Tripline stops it, or asks you when it isn't sure. Your own project files are trusted, so normal work like writing CLAUDE.md from your README just works.
+Naka remembers the exact words of everything strangers wrote. If those words, even edited or in another language, are about to be copied into a message or into the AI's memory, Naka stops it, or asks you when it isn't sure. Your own project files are trusted, so normal work like writing CLAUDE.md from your README just works.
 
 ## 6. Does it work?
 
 ![Data theft stopped in 1,054 public attacks: 1.7% by spotting tricks, 100% by following secrets](img/explained/5-proof.svg)
 
-Tripline comes with a test kit, `tripline eval`, that runs the same attacks through any guard. On its worm and memory attacks, having no guard stops none of the 27; Tripline stops all 27.
+Naka comes with a test kit, `naka eval`, that runs the same attacks through any guard. On its worm and memory attacks, having no guard stops none of the 27; Naka stops all 27.
 
-We also replayed 1,054 publicly known attacks against Tripline, pretending the AI had already fallen for every one of them:
+We also replayed 1,054 publicly known attacks against Naka, pretending the AI had already fallen for every one of them:
 
 - Only **spotting tricks** stopped 1.7% of the attempts to steal data.
 - **Following your secrets** stopped all of them.
 
-That's the main lesson: you can't rely on spotting the attacker's words, because words can always be changed. You have to watch where your data goes. We also attacked Tripline ourselves five times and fixed every weakness we found.
+That's the main lesson: you can't rely on spotting the attacker's words, because words can always be changed. You have to watch where your data goes. We also attacked Naka ourselves five times and fixed every weakness we found.
 
 ## What it can't do yet
 
@@ -69,6 +69,6 @@ That's the main lesson: you can't rely on spotting the attacker's words, because
 ## Try it
 
 ```bash
-tripline demo --unprotected   # watch 7 attacks succeed
-tripline demo                 # watch Tripline stop every one
+naka demo --unprotected   # watch 7 attacks succeed
+naka demo                 # watch Naka stop every one
 ```

@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/img/brand/wordmark-dark.svg">
-    <img alt="Tripline" src="docs/img/brand/wordmark-light.svg" height="64">
+    <img alt="Naka" src="docs/img/brand/wordmark-light.svg" height="64">
   </picture>
 </p>
 
@@ -9,7 +9,7 @@
 Stops poisoned tools, rug-pulls, data theft, AI worms and memory poisoning in the live traffic between your agent and its MCP servers.</p>
 
 <p align="center">
-  <a href="https://github.com/lakshyab20/tripline/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/lakshyab20/tripline/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/lakshyab20/naka/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/lakshyab20/naka/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
   <img alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11%2B-blue">
   <img alt="Zero dependencies" src="https://img.shields.io/badge/dependencies-0-brightgreen">
@@ -27,10 +27,10 @@ Stops poisoned tools, rug-pulls, data theft, AI worms and memory poisoning in th
 
 ---
 
-AI agents do whatever the text they read tells them, including a note an attacker hid in an email, a web page or a GitHub issue. And they hold the keys to your email, files, code and money. Tripline sits between the agent (Claude, Cursor, VS Code, any MCP client) and its tools, and checks every message both ways:
+AI agents do whatever the text they read tells them, including a note an attacker hid in an email, a web page or a GitHub issue. And they hold the keys to your email, files, code and money. Naka sits between the agent (Claude, Cursor, VS Code, any MCP client) and its tools, and checks every message both ways:
 
 ```
- AI agent  ⇄  tripline  ⇄  MCP servers
+ AI agent  ⇄  naka  ⇄  MCP servers
  (Claude,     checks         (GitHub, Slack, files, mail,
   Cursor...)  every message   or a remote https:// server)
 ```
@@ -43,28 +43,30 @@ AI agents do whatever the text they read tells them, including a note an attacke
 
 It fails closed, has zero dependencies, and sets up with one command.
 
-<p align="center"><img src="docs/demo.gif" alt="A hijacked agent with two MCP servers: 7 attacks succeed without Tripline, all are stopped with it" width="760"></p>
+*Naka* (नाका) is Hindi for a checkpoint: the post on the road where every vehicle stops and gets checked before it goes on.
+
+<p align="center"><img src="docs/demo.gif" alt="A hijacked agent with two MCP servers: 7 attacks succeed without Naka, all are stopped with it" width="760"></p>
 
 ## Get started
 
 ```bash
-pip install git+https://github.com/lakshyab20/tripline   # PyPI release coming
-tripline install --dry-run      # see which servers in Claude/Cursor/VS Code/... would be protected
-tripline install                # protect them (backs up each config; `tripline uninstall` restores)
+pip install git+https://github.com/lakshyab20/naka   # PyPI release coming
+naka install --dry-run   # see which servers in Claude/Cursor/VS Code/... would be protected
+naka install             # protect them (backs up each config; `naka uninstall` restores)
 ```
 
-Restart the apps. Every MCP server now runs through Tripline. To see it work first:
+Restart the apps. Every MCP server now runs through Naka. To see it work first:
 
 ```bash
-tripline demo --unprotected   # a hijacked agent, two servers: 7 attacks succeed
-tripline demo                 # the same agent through Tripline: every one is stopped
+naka demo --unprotected   # a hijacked agent, two servers: 7 attacks succeed
+naka demo                 # the same agent through Naka: every one is stopped
 ```
 
 ## In plain words
 
-![Tripline is a guard between the AI assistant and its tools](docs/img/explained/2-guard.svg)
+![Naka is a guard between the AI assistant and its tools](docs/img/explained/2-guard.svg)
 
-New to AI agent security? **[Tripline explained simply, in six pictures →](docs/EXPLAINED.md)**
+New to AI agent security? **[Naka explained simply, in six pictures →](docs/EXPLAINED.md)**
 
 ## Scoreboard
 
@@ -73,18 +75,18 @@ Same 40 attacks and 22 everyday tasks, through each guard, scored by what actual
 | Guard | Classic MCP attacks stopped | AI worms and memory poisoning stopped | Everyday tasks interrupted |
 |---|---:|---:|---:|
 | No guard | 0 / 13 | 0 / 27 | 0 / 22 |
-| **Tripline** | **13 / 13** | **27 / 27** | 4 / 22 |
+| **Naka** | **13 / 13** | **27 / 27** | 4 / 22 |
 | Pipelock 3.7.1 (`claude-code` and `strict` presets) | 10 / 13 | 0 / 27 | 1 / 22 |
 
 The suites are ours and include attack families other guards don't claim to cover, so read the [per-kind breakdown](docs/SCOREBOARD.md). Pipelock does plenty this test doesn't measure (an HTTP egress proxy, signed receipts). Run it yourself, or add your guard:
 
 ```bash
-tripline eval --guard tripline --guard "yourguard=yourguard proxy -- {cmd}" -v
+naka eval --guard naka --guard "yourguard=yourguard proxy -- {cmd}" -v
 ```
 
 ## What it stops
 
-| Attack | What happens | Tripline's rule |
+| Attack | What happens | Naka's rule |
 |---|---|---|
 | **Tool poisoning** | A tool's description hides instructions for the model, often in invisible Unicode | `poisoned-tool`: hidden from the agent, calls refused |
 | **Rug-pull** | A tool is harmless when you approve it, then changes later | `rug-pull`: every definition is pinned by SHA-256; a change is quarantined |
@@ -92,7 +94,7 @@ tripline eval --guard tripline --guard "yourguard=yourguard proxy -- {cmd}" -v
 | **Injected destinations** | The output says "email this to attacker@…" or "transfer to account …" and the agent does it | `untrusted-destination`: an address, URL, account or ID that came from tool output can't decide where data goes without your OK |
 | **Data theft** | A secret read through one server leaves through another | `tainted-flow`: tracked across every server in the app, even base64-encoded, reversed, reformatted or split up |
 | **High-impact actions** | After reading untrusted content, the agent pays, unlocks, grants access or deletes | `after-untrusted`: asks you first |
-| **AI worms** | A hijacked agent copies an injected note into an email reply, a forward, an issue comment, a code comment or team chat, where the next AI reads it and spreads it further | `spread`: Tripline remembers the wording of everything untrusted tools return; a copied note that asks to be passed on can't leave, in several languages, even edited or buried in padding |
+| **AI worms** | A hijacked agent copies an injected note into an email reply, a forward, an issue comment, a code comment or team chat, where the next AI reads it and spreads it further | `spread`: Naka remembers the wording of everything untrusted tools return; a copied note that asks to be passed on can't leave, in several languages, even edited or buried in padding |
 | **Memory poisoning** | The note is written into CLAUDE.md, AGENTS.md, Cursor/Cline/Windsurf rules, skills, a memory server, an MCP config, a git hook or a CI workflow, so it comes back every session | `memory-poisoning` / `memory-write`: copied text with a link, command or AI-directed request is blocked; other outside text asks first. Text from your own project files is fine |
 | **Credential leaks** | API keys, tokens or private keys in tool-call arguments | `secret-in-args` |
 | **Look-alike tools** | A new tool named `send_emaіl` (Cyrillic і) shadows `send_email` | `shadow-tool` |
@@ -101,9 +103,9 @@ Detection covers hidden Unicode, base64, look-alike letters, English plus Hindi/
 
 ## Measured, not claimed
 
-**`tripline eval`** runs attack scenarios and everyday tasks through *any* MCP guard over real stdio, and scores what actually reached the tools ([how it works](docs/EVALS.md)). It includes the first open test set for AI worms and memory poisoning, with everyday look-alikes (quoting, forwarding, saving notes) that a guard must let through.
+**`naka eval`** runs attack scenarios and everyday tasks through *any* MCP guard over real stdio, and scores what actually reached the tools ([how it works](docs/EVALS.md)). It includes the first open test set for AI worms and memory poisoning, with everyday look-alikes (quoting, forwarding, saving notes) that a guard must let through.
 
-| Suite | No guard: attacks stopped | Tripline: attacks stopped | Tripline: everyday tasks interrupted |
+| Suite | No guard: attacks stopped | Naka: attacks stopped | Naka: everyday tasks interrupted |
 |---|---:|---:|---:|
 | `contagion` (AI worms, memory poisoning) | 0 / 27 | **27 / 27** | 1 / 15¹ |
 | `mcp-attacks` (poisoning, rug-pulls, theft, injected actions) | 0 / 13 | **13 / 13** | 3 / 7² |
@@ -120,14 +122,14 @@ Detection covers hidden Unicode, base64, look-alike letters, English plus Hindi/
 | **Default** (+ ask before high-impact actions) | **63.3%** | **100%** | 24.3% |
 | Strict (ask before every change after untrusted content) | 96.7% | 100% | 98.4% |
 
-The lesson behind the design: **detection can't be the main defence.** Attackers can always reword, and InjecAgent's polite "Please unlock my front door" doesn't look like an attack. What stops attacks is structure: pinning, data flow, and asking a person before risky actions. Detection is a cheap first filter. `tripline bench` reproduces these numbers and scores detection alone on BIPIA and NotInject.
+The lesson behind the design: **detection can't be the main defence.** Attackers can always reword, and InjecAgent's polite "Please unlock my front door" doesn't look like an attack. What stops attacks is structure: pinning, data flow, and asking a person before risky actions. Detection is a cheap first filter. `naka bench` reproduces these numbers and scores detection alone on BIPIA and NotInject.
 
 ## Confirmation prompts
 
-Some calls aren't clearly wrong, only risky: replying to an address the agent just read, a payment after browsing, a tool's first use. If your app supports MCP elicitation, Tripline asks you in the app:
+Some calls aren't clearly wrong, only risky: replying to an address the agent just read, a payment after browsing, a tool's first use. If your app supports MCP elicitation, Naka asks you in the app:
 
 ```
-Tripline: allow 'send_email' on inbox?
+Naka: allow 'send_email' on inbox?
 - The email amy.watson@gmail.com came from the output of 'inbox/read_page', not from you.
 Arguments: {"to": "amy.watson@gmail.com", "body": "..."}
 ```
@@ -138,41 +140,41 @@ Apps without prompts get `confirm_fallback` (block by default, with a message ex
 
 ```bash
 # Local server
-claude mcp add github -- tripline wrap --name github -- npx -y @modelcontextprotocol/server-github
+claude mcp add github -- naka wrap --name github -- npx -y @modelcontextprotocol/server-github
 
 # Remote server (Streamable HTTP); $VARS in headers are read from the environment
-tripline wrap --name linear --url https://mcp.linear.app/mcp --header "Authorization: Bearer $LINEAR_TOKEN"
+naka wrap --name linear --url https://mcp.linear.app/mcp --header "Authorization: Bearer $LINEAR_TOKEN"
 
 # Untrusted server: hide your home folder from it
-tripline wrap --name sketchy --sandbox auto --allow-path ~/projects/app --env SKETCHY_TOKEN -- npx -y some-server
+naka wrap --name sketchy --sandbox auto --allow-path ~/projects/app --env SKETCHY_TOKEN -- npx -y some-server
 ```
 
 ```bash
-tripline pins list                       # what is pinned, what is waiting for review
-tripline pins approve --name github add  # accept a changed definition after reading it
-tripline log                             # recent decisions
-tripline scan suspicious.txt             # scan any text; exit code 1 if flagged (CI-friendly)
-tripline eval -v                         # run the attack suites through Tripline
+naka pins list                        # what is pinned, what is waiting for review
+naka pins approve --name github add   # accept a changed definition after reading it
+naka log                              # recent decisions
+naka scan suspicious.txt              # scan any text; exit code 1 if flagged (CI-friendly)
+naka eval -v                          # run the attack suites through Naka
 ```
 
-Defaults are safe; override them with `--config tripline.toml`:
+Defaults are safe; override them with `--config naka.toml`:
 
 ```toml
 [policy]
-on_first_use = "confirm"            # ask before each tool's first call, instead of trust-on-first-use
-confirm_after_untrusted = true      # strict mode
-classifier = "builtin"              # second-opinion ML classifier (warn mode by default)
-trusted_tools = ["get_contact"]     # outputs that may decide destinations
+on_first_use = "confirm"          # ask before each tool's first call, instead of trust-on-first-use
+confirm_after_untrusted = true    # strict mode
+classifier = "builtin"            # second-opinion ML classifier (warn mode by default)
+trusted_tools = ["get_contact"]   # outputs that may decide destinations
 deny_tools = ["delete_repo"]
 ```
 
-See [`tripline.example.toml`](tripline.example.toml) for every option.
+See [`naka.example.toml`](naka.example.toml) for every option.
 
 ## How it works
 
-Tripline relays MCP's JSON-RPC between the app and each server, local (stdio) or remote (Streamable HTTP). A pure decision engine (`firewall.py`) inspects every message, and a shared data-flow store (`flow.py`) remembers where secrets, destinations and untrusted wording came from, across all the servers one app runs. It fails closed: a message that can't be fully inspected is stopped, never passed through. More in [ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Naka relays MCP's JSON-RPC between the app and each server, local (stdio) or remote (Streamable HTTP). A pure decision engine (`firewall.py`) inspects every message, and a shared data-flow store (`flow.py`) remembers where secrets, destinations and untrusted wording came from, across all the servers one app runs. It fails closed: a message that can't be fully inspected is stopped, never passed through. More in [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-Zero runtime dependencies. Python 3.11+. Tested on Linux and macOS against the official MCP Python SDK (stdio and Streamable HTTP, protocol 2025-11-25, elicitation). 200+ tests, including attacks on Tripline itself from five rounds of security review.
+Zero runtime dependencies. Python 3.11+. Tested on Linux and macOS against the official MCP Python SDK (stdio and Streamable HTTP, protocol 2025-11-25, elicitation). 200+ tests, including attacks on Naka itself from five rounds of security review.
 
 ## Honest limitations
 
@@ -188,18 +190,18 @@ See [SECURITY.md](SECURITY.md) for the threat model, review history and how to r
 ## Roadmap
 
 - PyPI release and a one-click installer
-- Transformer classifier backend (Prompt Guard 2 / PIGuard via ONNX), measured with `tripline bench`
-- Run Tripline on [agent-egress-bench](https://github.com/luckyPipewrench/agent-egress-bench) and more public benchmarks
+- Transformer classifier backend (Prompt Guard 2 / PIGuard via ONNX), measured with `naka bench`
+- Run Naka on [agent-egress-bench](https://github.com/luckyPipewrench/agent-egress-bench) and more public benchmarks
 - Per-tool policies and argument schemas (CaMeL-style capabilities)
 - Team dashboard, central policies and alerts (Slack, SIEM)
 
-Ideas and votes are welcome in [issues](https://github.com/lakshyab20/tripline/issues).
+Ideas and votes are welcome in [issues](https://github.com/lakshyab20/naka/issues).
 
 ## Contributing
 
-Tripline gets better with every attack someone finds. The most useful contributions:
+Naka gets better with every attack someone finds. The most useful contributions:
 
-- **A new attack scenario** (with an everyday twin that must still pass) in [`src/tripline/evals/suites.py`](src/tripline/evals/suites.py)
+- **A new attack scenario** (with an everyday twin that must still pass) in [`src/naka/evals/suites.py`](src/naka/evals/suites.py)
 - **A bypass.** Report it privately first; see [SECURITY.md](SECURITY.md)
 - **Another guard on the scoreboard**, or a correction to how one is scored
 - **Client support**: install paths for more MCP apps
@@ -208,4 +210,4 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md). Everyone taking part follows the 
 
 ## License
 
-[Apache-2.0](LICENSE). Copyright 2026 Lakshya Bhardwaj. The built-in classifier's training data is described in [`MODEL_CARD.md`](src/tripline/models/MODEL_CARD.md).
+[Apache-2.0](LICENSE). Copyright 2026 Lakshya Bhardwaj. The built-in classifier's training data is described in [`MODEL_CARD.md`](src/naka/models/MODEL_CARD.md).

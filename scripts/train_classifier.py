@@ -1,6 +1,6 @@
-"""Train the built-in injection classifier (src/tripline/models/injection-v1.bin.gz).
+"""Train the built-in injection classifier (src/naka/models/injection-v1.bin.gz).
 
-    pip install scikit-learn   # training only; Tripline itself needs nothing
+    pip install scikit-learn   # training only; Naka itself needs nothing
     python scripts/train_classifier.py
 
 Data: the PIGuard training collection (github.com/leolee99/PIGuard, MIT),
@@ -8,7 +8,7 @@ which aggregates many public prompt-injection and benign-prompt datasets.
 
 Excluded, and why:
 - Alpaca, no_robots: licensed for non-commercial use only.
-- BIPIA, InjecAgent: held out, so `tripline bench` measures the model on
+- BIPIA, InjecAgent: held out, so `naka bench` measures the model on
   attacks it has never seen.
 
 The decision threshold is chosen on a validation split (never on the
@@ -31,8 +31,8 @@ from scipy.sparse import csr_matrix
 from sklearn.linear_model import LogisticRegression
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-from tripline import bench  # noqa: E402
-from tripline.classifier import Classifier, features, tokens  # noqa: E402
+from naka import bench  # noqa: E402
+from naka.classifier import Classifier, features, tokens  # noqa: E402
 
 BUCKETS = 1 << 20
 NGRAM_MAX = 3
@@ -42,7 +42,7 @@ KEEP = 250_000            # largest weights kept in the shipped model
 EXCLUDE = {"Alpaca", "no_robots", "BIPIA", "InjecAgent"}
 TARGET_FPR = 0.01
 SYNTH = 18_000            # synthetic harmless + injected tool outputs (each)
-OUT = Path(__file__).resolve().parent.parent / "src" / "tripline" / "models"
+OUT = Path(__file__).resolve().parent.parent / "src" / "naka" / "models"
 
 
 def matrix(texts):
@@ -56,7 +56,7 @@ def matrix(texts):
 
 
 # ---------------------------------------------------------------- synthetic data
-# Tripline scans tool output (JSON, code, emails, tables, logs), not chat
+# Naka scans tool output (JSON, code, emails, tables, logs), not chat
 # prompts. A model trained only on prompts flags anything that looks like tool
 # output. So we also train on realistic tool outputs: harmless ones, and the
 # same documents with one injection hidden inside. Sources: Python's standard

@@ -1,4 +1,4 @@
-"""`tripline eval`: run the scenario suites through one or more guards."""
+"""`naka eval`: run the scenario suites through one or more guards."""
 
 from __future__ import annotations
 
@@ -42,22 +42,22 @@ def main(args) -> int:
     suites = args.suite or ["mcp-attacks", "contagion"]
     for s in suites:
         if s not in SUITES:
-            print(f"tripline eval: unknown suite {s!r}; choose from {', '.join(SUITES)}", file=sys.stderr)
+            print(f"naka eval: unknown suite {s!r}; choose from {', '.join(SUITES)}", file=sys.stderr)
             return 2
     known = builtin_guards()
     guards: list[Guard] = []
-    for spec in args.guard or ["no guard", "tripline"]:
+    for spec in args.guard or ["no guard", "naka"]:
         if "=" in spec:
             guards.append(parse_guard(spec))
         elif spec in known:
             guards.append(known[spec])
         else:
-            print(f"tripline eval: unknown guard {spec!r}; built in: {', '.join(known)}, "
+            print(f"naka eval: unknown guard {spec!r}; built in: {', '.join(known)}, "
                   "or NAME='command ... {cmd}'", file=sys.stderr)
             return 2
     missing = [g.name for g in guards if not g.available()]
     if missing:
-        print(f"tripline eval: not installed: {', '.join(missing)}", file=sys.stderr)
+        print(f"naka eval: not installed: {', '.join(missing)}", file=sys.stderr)
         return 2
     if getattr(args, "keep", None):
         from . import core

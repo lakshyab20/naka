@@ -1,4 +1,4 @@
-"""Official MCP SDK client talking to an official SDK server, through tripline.
+"""Official MCP SDK client talking to an official SDK server, through naka.
 
 Needs the official SDK:  pip install "mcp>=2"
 Run:  python examples/sdk_client.py [--unprotected]
@@ -9,7 +9,7 @@ from mcp.client.stdio import stdio_client
 
 async def main(protected: bool):
     server = [sys.executable, str(__import__("pathlib").Path(__file__).with_name("sdk_server.py"))]
-    cmd = ["tripline", "wrap", "--name", "sdk-notes", "--quiet", "--", *server] if protected else server
+    cmd = ["naka", "wrap", "--name", "sdk-notes", "--quiet", "--", *server] if protected else server
     params = StdioServerParameters(command=cmd[0], args=cmd[1:])
     async with stdio_client(params) as (r, w):
         async with ClientSession(r, w) as s:

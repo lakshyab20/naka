@@ -1,14 +1,14 @@
 """Command-line interface.
 
-    tripline wrap [--name NAME] [--config FILE] [--sandbox auto] -- <server command...>
-    tripline wrap [--name NAME] --url https://server/mcp [--header "K: V"]
-    tripline pins list|approve|reset --name NAME [TOOL ...] [--all]
-    tripline scan [FILE]           scan text (or stdin) for injection and secrets
-    tripline log [-n N]            show recent decisions
-    tripline install [--dry-run]   protect every MCP server in Claude, Cursor...
-    tripline uninstall             put the original configs back
-    tripline bench [--agent]       measure every layer on public datasets
-    tripline demo [--unprotected]  run the attack demo
+    naka wrap [--name NAME] [--config FILE] [--sandbox auto] -- <server command...>
+    naka wrap [--name NAME] --url https://server/mcp [--header "K: V"]
+    naka pins list|approve|reset --name NAME [TOOL ...] [--all]
+    naka scan [FILE]           scan text (or stdin) for injection and secrets
+    naka log [-n N]            show recent decisions
+    naka install [--dry-run]   protect every MCP server in Claude, Cursor...
+    naka uninstall             put the original configs back
+    naka bench [--agent]       measure every layer on public datasets
+    naka demo [--unprotected]  run the attack demo
 """
 
 from __future__ import annotations
@@ -32,14 +32,14 @@ def cmd_wrap(args) -> int:
     if command and command[0] == "--":
         command = command[1:]
     if bool(command) == bool(args.url):
-        print("tripline wrap: give either a server command after --, or --url", file=sys.stderr)
+        print("naka wrap: give either a server command after --, or --url", file=sys.stderr)
         return 2
     if args.url:
         headers = {}
         for h in args.header or []:
             key, sep, value = h.partition(":")
             if not sep:
-                print(f"tripline wrap: --header must look like 'Name: value', got {h!r}", file=sys.stderr)
+                print(f"naka wrap: --header must look like 'Name: value', got {h!r}", file=sys.stderr)
                 return 2
             headers[key.strip()] = os.path.expandvars(value.strip())
         upstream = HttpUpstream(args.url, headers)
@@ -55,7 +55,7 @@ def cmd_wrap(args) -> int:
                                             env_names=args.env or [])
             except SandboxUnavailable as exc:
                 # Never fall back to running the server unsandboxed.
-                print(f"tripline wrap: sandbox not started: {exc}", file=sys.stderr)
+                print(f"naka wrap: sandbox not started: {exc}", file=sys.stderr)
                 return 2
         upstream = ProcessUpstream(command, env, cwd)
         sid = server_id(args.name, command)
@@ -169,9 +169,9 @@ def cmd_demo(args) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="tripline", description=__doc__,
+    parser = argparse.ArgumentParser(prog="naka", description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--version", action="version", version=f"tripline {__version__}")
+    parser.add_argument("--version", action="version", version=f"naka {__version__}")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     w = sub.add_parser("wrap", help="run an MCP server behind the firewall")
@@ -226,8 +226,8 @@ def main(argv: list[str] | None = None) -> int:
     ev = sub.add_parser("eval", help="run attack and everyday-task scenarios through any MCP guard")
     ev.add_argument("--suite", action="append", help="mcp-attacks, contagion, injecagent (repeatable; "
                     "default: mcp-attacks and contagion)")
-    ev.add_argument("--guard", action="append", help="'no guard', tripline, 'tripline strict', pipelock, or "
-                    "NAME='command ... {cmd}' (repeatable; default: no guard and tripline)")
+    ev.add_argument("--guard", action="append", help="'no guard', naka, 'naka strict', pipelock, or "
+                    "NAME='command ... {cmd}' (repeatable; default: no guard and naka)")
     ev.add_argument("--only", action="append", help="only scenarios whose id contains this text")
     ev.add_argument("--limit", type=int, help="only the first N scenarios")
     ev.add_argument("--workers", type=int, default=8)
@@ -235,10 +235,10 @@ def main(argv: list[str] | None = None) -> int:
     ev.add_argument("--verbose", "-v", action="store_true", help="show each attack that got through")
     ev.add_argument("--json", help="also write full results to this file")
     ev.add_argument("--keep", help="save every run (messages, guard log, tool calls) in this folder")
-    ev.set_defaults(func=lambda a: __import__("tripline.evals.cli", fromlist=["main"]).main(a))
+    ev.set_defaults(func=lambda a: __import__("naka.evals.cli", fromlist=["main"]).main(a))
 
     dm = sub.add_parser("demo", help="run the attack demo")
-    dm.add_argument("--unprotected", action="store_true", help="run the same attack without tripline")
+    dm.add_argument("--unprotected", action="store_true", help="run the same attack without naka")
     dm.set_defaults(func=cmd_demo)
 
     args = parser.parse_args(argv)

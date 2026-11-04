@@ -4,22 +4,22 @@
 
 An AI agent treats everything it reads as possible instructions. With MCP, it reads three kinds of text from third parties: tool **definitions** (names, descriptions, schemas), tool **results** (web pages, issues, emails, files), and the instructions it gets from those. Any of them can be written by an attacker. The model can't reliably tell data from instructions, so the defence has to live outside the model, in the traffic.
 
-## Where Tripline sits
+## Where Naka sits
 
 ```
  ┌──────────────┐  stdin/stdout  ┌───────────────────────────────┐  stdio (child process,
- │  MCP client  │ ─────────────▶ │           tripline            │  optionally sandboxed)
+ │  MCP client  │ ─────────────▶ │           naka            │  optionally sandboxed)
  │ Claude/Cursor│ ◀───────────── │ proxy.py → firewall.py        │ ─────────▶ local MCP server
  └──────┬───────┘   elicitation  │              ↕ flow.py        │
         │ ◀── "allow this?" ──── │ upstream.py                   │  Streamable HTTP
         ▼                        └──────────────┬────────────────┘ ─────────▶ remote MCP server
      the user                                   │
-                       ~/.tripline/pins/*.json     tool pins
-                       ~/.tripline/audit.jsonl     every decision
-                       ~/.tripline/sessions/*.jsonl  data-flow state shared by the app's servers
+                       ~/.naka/pins/*.json     tool pins
+                       ~/.naka/audit.jsonl     every decision
+                       ~/.naka/sessions/*.jsonl  data-flow state shared by the app's servers
 ```
 
-The client launches `tripline wrap -- <server command>` (or `--url`) as if it were the server. Tripline starts or connects to the real server and relays messages both ways. Neither side has to know it's there, so it works with any MCP client and server. `tripline install` does that rewrite in the apps' config files for you.
+The client launches `naka wrap -- <server command>` (or `--url`) as if it were the server. Naka starts or connects to the real server and relays messages both ways. Neither side has to know it's there, so it works with any MCP client and server. `naka install` does that rewrite in the apps' config files for you.
 
 ## Modules
 
@@ -30,7 +30,7 @@ The client launches `tripline wrap -- <server command>` (or `--url`) as if it we
 | `detectors.py` | Pure text functions: injection, hidden Unicode, base64, secrets, PII. | no |
 | `store.py` | Tool pins (trust on first use) and the JSONL audit log. | disk |
 | `policy.py` | Which rules block and which only warn. TOML. | reads config |
-| `flow.py` | Data-flow state: hashed secrets and destinations seen in tool output, shared through a session file by every Tripline process the same app started. | disk |
+| `flow.py` | Data-flow state: hashed secrets and destinations seen in tool output, shared through a session file by every Naka process the same app started. | disk |
 | `classifier.py` | Optional built-in ML classifier (logistic regression over hashed word n-grams, sliding windows). | no |
 | `upstream.py` | Where the server lives: a child process, or a remote URL over Streamable HTTP. | yes |
 | `sandbox.py` | Builds bwrap / sandbox-exec / docker commands that hide the home folder from a server. | no |
@@ -60,7 +60,7 @@ Three main checkpoints, plus resources, prompts, error messages and server-initi
    - **egress-lockdown**: has injected content reached the model in this session, and is this tool an egress tool (by config or name hint)?
    - PII in arguments
 
-   If a rule blocks, the request is never forwarded. Tripline answers the client itself with `result.isError = true` and a message the model can read.
+   If a rule blocks, the request is never forwarded. Naka answers the client itself with `result.isError = true` and a message the model can read.
 
 3. **`tools/call` result (server → client)**
    - Record secrets and PII (except email addresses) as tainted values, keyed to the source tool. These are kept in memory only.
@@ -74,9 +74,9 @@ Detection asks "does this text look like an attack?", which wording can always d
 - **Is it now deciding where something goes?** `destination_text()` reads only destination-like arguments (`to`, `recipient`, `url`, `account`, `guest`...), not payloads like an email body. If a destination there came from untrusted output, and the tool changes something (`changes_something()`), the user is asked.
 - **Is this a high-impact action after untrusted content?** Payments, unlocking, access grants, deletion and execution ask first. Strict mode asks before every change.
 
-The state is shared across servers: every Tripline process started by the same app (same parent process, or the same `TRIPLINE_SESSION`) appends to one file, so a key read through the GitHub server is recognised when the Gmail server tries to send it.
+The state is shared across servers: every Naka process started by the same app (same parent process, or the same `NAKA_SESSION`) appends to one file, so a key read through the GitHub server is recognised when the Gmail server tries to send it.
 
-**Confirmations** use MCP elicitation. When a rule's action is `confirm` and the client declared the elicitation capability, the firewall holds the `tools/call`, sends the client an `elicitation/create` request with a random id (`tripline-confirm-<hex>`), and forwards the held call only if the answer is accept with `allow: true`. The model can't answer it: only the client produces JSON-RPC responses, and the id is unguessable and single-use. Without elicitation, `confirm_fallback` decides.
+**Confirmations** use MCP elicitation. When a rule's action is `confirm` and the client declared the elicitation capability, the firewall holds the `tools/call`, sends the client an `elicitation/create` request with a random id (`naka-confirm-<hex>`), and forwards the held call only if the answer is accept with `allow: true`. The model can't answer it: only the client produces JSON-RPC responses, and the id is unguessable and single-use. Without elicitation, `confirm_fallback` decides.
 
 ## Why these choices
 
@@ -84,11 +84,11 @@ The state is shared across servers: every Tripline process started by the same a
 - **Blocks as tool results, not JSON-RPC errors.** An error can make clients abort or retry. A tool result with `isError` reaches the model as text, so it can tell the user what happened.
 - **Pinning and data flow, not only detection.** Pattern matching can be evaded by rewording. A hash doesn't care about wording. "A secret from tool A is leaving through tool B" doesn't depend on how the attacker phrased the instructions. Detection catches the obvious cases cheaply; structure catches the rest.
 - **Trust on first use.** It's the SSH `known_hosts` model: no setup, and it makes the rug-pull, the hardest attack to see, the easiest to catch.
-- **Fail closed.** Every message comes from an untrusted party, so if Tripline can't fully inspect one (malformed shape, bad JSON, extreme nesting, oversized), it stops it: requests get an error reply, responses are replaced with an error. An earlier version passed such messages through to avoid breaking the agent. That let a malicious server bypass every check by adding one malformed item, so it was changed. Well-formed traffic is never affected.
+- **Fail closed.** Every message comes from an untrusted party, so if Naka can't fully inspect one (malformed shape, bad JSON, extreme nesting, oversized), it stops it: requests get an error reply, responses are replaced with an error. An earlier version passed such messages through to avoid breaking the agent. That let a malicious server bypass every check by adding one malformed item, so it was changed. Well-formed traffic is never affected.
 - **Scan every string.** Inspection walks the whole message (titles, output schemas, resource links, structured content, error text), so unexpected fields can't carry instructions past the scanner.
 - **Never log secrets.** Findings carry redacted excerpts. Raw tainted values exist only in memory for the session.
 - **Zero dependencies.** `pip install` and done. Nothing to audit but this repo, which matters for a security tool. Even the classifier is pure Python.
-- **Measure before trusting.** `tripline bench` showed regex catching ~1% of realistic embedded attacks, and a prompt-trained classifier flagging 96% of harmless tool output. Both findings changed the design: structure first, detection second, every layer scored on held-out data.
+- **Measure before trusting.** `naka bench` showed regex catching ~1% of realistic embedded attacks, and a prompt-trained classifier flagging 96% of harmless tool output. Both findings changed the design: structure first, detection second, every layer scored on held-out data.
 - **Ask, don't guess.** Replying to an address you just read and an injected "send it to attacker@..." look identical structurally. A confirmation turns an unsolvable classification problem into a one-click decision for the person who knows.
 
 ## Extending

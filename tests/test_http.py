@@ -76,10 +76,10 @@ def server():
 
 
 def run(url, messages, tmp_path, monkeypatch):
-    monkeypatch.setenv("TRIPLINE_HOME", str(tmp_path))
+    monkeypatch.setenv("NAKA_HOME", str(tmp_path))
     monkeypatch.setenv("DEMO_TOKEN", "s3cret")
     lines = b"".join(json.dumps(m).encode() + b"\n" for m in messages)
-    r = subprocess.run([sys.executable, "-m", "tripline", "wrap", "--name", "remote", "--url", url,
+    r = subprocess.run([sys.executable, "-m", "naka", "wrap", "--name", "remote", "--url", url,
                         "--header", "Authorization: Bearer $DEMO_TOKEN"],
                        input=lines, capture_output=True, timeout=30)
     return [json.loads(x) for x in r.stdout.splitlines() if x.strip()], r.stderr.decode()

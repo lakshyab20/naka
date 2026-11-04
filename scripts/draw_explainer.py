@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "img" / "explained"
 
-# Brand colours: ink on warm paper, orange for the attacker, teal for Tripline.
+# Brand colours: ink on warm paper, orange for the attacker, teal for Naka.
 FILE_COLORS = {"bg": "#F7F5EF", "card": "#FFFFFF", "line": "#DCD7CC", "ink": "#10151B", "muted": "#5A6270",
                "bad": "#C2410C", "badsoft": "#FBE7DC", "good": "#0F766E", "goodsoft": "#DDF1EE", "onfill": "#FFFFFF"}
 FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
@@ -135,13 +135,13 @@ def problem(c):
 
 
 def guard(c):
-    s = Svg(960, 400, c, "Tripline is a guard between the AI assistant and its tools")
+    s = Svg(960, 400, c, "Naka is a guard between the AI assistant and its tools")
     s.rect(24, 120, 200, 160)
     s.robot(124, 196)
     s.text(124, 256, "AI assistant", size=18, weight=600, anchor="middle")
     s.add(f'<rect x="330" y="40" width="240" height="320" rx="20" fill="{c["goodsoft"]}" stroke="{c["good"]}" stroke-width="2.5"/>')
     s.shield(450, 140, 1.0)
-    s.text(450, 226, "Tripline", size=26, weight=700, color="good", anchor="middle")
+    s.text(450, 226, "Naka", size=26, weight=700, color="good", anchor="middle")
     s.text(450, 252, "checks every message", size=15, color="muted", anchor="middle")
     for i, (sym, label, col) in enumerate((("✓", "allow", "good"), ("✕", "block", "bad"), ("?", "ask you", "ink"))):
         x = 352 + i * 68
@@ -163,7 +163,7 @@ def guard(c):
 
 
 def jobs(c):
-    s = Svg(960, 400, c, "The five jobs of the Tripline guard")
+    s = Svg(960, 400, c, "The five jobs of the Naka guard")
     cards = [
         ("Checks IDs", ["Remembers every", "tool as it was on", "day one. A changed", "tool is blocked."]),
         ("Spots tricks", ["Catches notes like", "“ignore your", "instructions”.", "A first filter only."]),
@@ -201,7 +201,7 @@ def jobs(c):
 
 
 def follow(c):
-    s = Svg(960, 400, c, "Tripline follows a secret and stops it leaving, even when it is disguised")
+    s = Svg(960, 400, c, "Naka follows a secret and stops it leaving, even when it is disguised")
 
     def lane(y, label, label_color="ink"):
         s.text(32, y, label, size=16, weight=600, color=label_color)
@@ -214,10 +214,10 @@ def follow(c):
     def guard_box(y):
         s.add(f'<rect x="380" y="{y}" width="200" height="110" rx="16" fill="{c["goodsoft"]}" stroke="{c["good"]}" stroke-width="2.5"/>')
         s.shield(424, y + 52, 0.42)
-        s.text(458, y + 46, "Tripline", size=17, weight=700, color="good")
+        s.text(458, y + 46, "Naka", size=17, weight=700, color="good")
 
-    # Row 1: the AI reads a file; Tripline notes the key on the way through.
-    lane(44, "1. The AI reads a file. Tripline notes the key as it passes by.")
+    # Row 1: the AI reads a file; Naka notes the key on the way through.
+    lane(44, "1. The AI reads a file. Naka notes the key as it passes by.")
     ai_box(66)
     guard_box(66)
     s.add(f'<rect x="458" y="{66 + 62}" width="104" height="28" rx="14" fill="{c["card"]}" stroke="{c["good"]}" stroke-width="1.5"/>')
@@ -242,13 +242,13 @@ def follow(c):
     s.text(756, 346, "never sent", size=14, color="bad", weight=700)
     s.arrow(228, 313, 376, 313, color="bad", sw=2.5)
     s.arrow(584, 313, 732, 313, color="line", sw=2.5, dash="6 6")
-    s.text(32, 392, "Tripline recognises the same key in any disguise and blocks it.", size=15, color="bad", weight=600)
+    s.text(32, 392, "Naka recognises the same key in any disguise and blocks it.", size=15, color="bad", weight=600)
     return s.svg()
 
 
 def proof(c):
     s = Svg(960, 300, c, "Data theft stopped in 1,054 public attacks: 1.7% by spotting tricks, 100% by following secrets")
-    s.text(32, 58, "1,054 known attacks, replayed against Tripline", size=21, weight=700)
+    s.text(32, 58, "1,054 known attacks, replayed against Naka", size=21, weight=700)
     s.text(32, 86, "Share of data-theft attempts stopped", size=15, color="muted")
     left, full = 300, 560
     rows = [("Spotting tricks only", 1.7, "bad"), ("Following your secrets", 100.0, "good")]
@@ -260,12 +260,12 @@ def proof(c):
         s.rect(left, y, w, 44, fill=col, stroke=None, r=8)
         s.text(left + w + 12 if pct < 50 else left + w - 14, y + 29, f"{pct:g}%", size=18, weight=700,
                color="ink" if pct < 50 else "onfill", anchor="start" if pct < 50 else "end")
-    s.text(32, 282, "Attacks from the public InjecAgent set. Run it yourself: tripline bench", size=13, color="muted")
+    s.text(32, 282, "Attacks from the public InjecAgent set. Run it yourself: naka bench", size=13, color="muted")
     return s.svg()
 
 
 def contagion(c):
-    s = Svg(960, 420, c, "Two ways an attack lives on, spreading to other AIs and coming back from memory, both blocked by Tripline")
+    s = Svg(960, 420, c, "Two ways an attack lives on, spreading to other AIs and coming back from memory, both blocked by Naka")
     # the infected email
     s.envelope(28, 160, 150, 104)
     s.add(f'<rect x="44" y="214" width="118" height="36" rx="6" fill="{c["badsoft"]}" stroke="{c["bad"]}" stroke-width="2"/>')
@@ -278,10 +278,10 @@ def contagion(c):
     s.add(f'<rect x="346" y="160" width="38" height="22" rx="5" fill="{c["bad"]}"/>')
     s.text(365, 176, "note", size=11, color="onfill", weight=700, anchor="middle")
     s.text(321, 262, "AI assistant", size=15, weight=600, anchor="middle")
-    # Tripline band
+    # Naka band
     s.add(f'<rect x="500" y="24" width="120" height="372" rx="18" fill="{c["goodsoft"]}" stroke="{c["good"]}" stroke-width="2.5"/>')
     s.shield(560, 210, 0.6)
-    s.text(560, 268, "Tripline", size=17, weight=700, color="good", anchor="middle")
+    s.text(560, 268, "Naka", size=17, weight=700, color="good", anchor="middle")
     # path 1: spreading
     s.add(f'<path d="M398,190 C450,190 450,96 500,96" fill="none" stroke="{c["bad"]}" stroke-width="3"/>')
     s.cross(560, 96, 20)
@@ -296,7 +296,7 @@ def contagion(c):
     s.rect(696, 270, 240, 112)
     s.text(716, 302, "2. Coming back", size=18, weight=700)
     s.text(716, 330, ["Saved into its memory or", "CLAUDE.md, read every day"], size=14, color="muted")
-    s.text(28, 360, ["Tripline remembers the words of everything", "strangers wrote, so it spots the note however it leaves."],
+    s.text(28, 360, ["Naka remembers the words of everything", "strangers wrote, so it spots the note however it leaves."],
            size=14, color="good", weight=600)
     return s.svg()
 

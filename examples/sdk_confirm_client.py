@@ -1,4 +1,4 @@
-"""Official MCP SDK client that answers Tripline's confirmation prompts.
+"""Official MCP SDK client that answers Naka's confirmation prompts.
 
 Needs: pip install "mcp>=2". Run: python examples/sdk_confirm_client.py
 """
@@ -24,7 +24,7 @@ async def on_elicit(context, params):
 
 async def main():
     env = dict(os.environ)
-    params = StdioServerParameters(command="tripline", args=["wrap", "--name", "inbox", "--quiet", "--",
+    params = StdioServerParameters(command="naka", args=["wrap", "--name", "inbox", "--quiet", "--",
                                                              sys.executable, str(HERE / "sdk_confirm_server.py")],
                                    env=env)
     async with stdio_client(params) as (r, w):

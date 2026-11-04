@@ -1,18 +1,18 @@
 # Evaluating MCP guards
 
-`tripline eval` measures any MCP guard (Tripline, another product, or none) on the same scenarios, over real stdio, and scores what actually happened rather than what the guard says it did.
+`naka eval` measures any MCP guard (Naka, another product, or none) on the same scenarios, over real stdio, and scores what actually happened rather than what the guard says it did.
 
 ```bash
-tripline eval                                    # default suites, "no guard" vs tripline
-tripline eval --suite contagion -v               # AI worms and memory poisoning, with details
-tripline eval --suite injecagent                 # the 1,054 InjecAgent cases (downloaded once)
-tripline eval --guard tripline --guard "tripline strict" --json results.json
-tripline eval --guard "myguard=myguard proxy -- {cmd}"   # any guard that wraps a stdio MCP server
+naka eval                                            # default suites, "no guard" vs naka
+naka eval --suite contagion -v                       # AI worms and memory poisoning, with details
+naka eval --suite injecagent                         # the 1,054 InjecAgent cases (downloaded once)
+naka eval --guard naka --guard "naka strict" --json results.json
+naka eval --guard "myguard=myguard proxy -- {cmd}"   # any guard that wraps a stdio MCP server
 ```
 
 ## How a scenario runs
 
-1. Each fake MCP server in the scenario starts behind the guard under test (`{cmd}` is replaced by the server's command line). With Tripline, all servers of a scenario share one session, as they would in a real app.
+1. Each fake MCP server in the scenario starts behind the guard under test (`{cmd}` is replaced by the server's command line). With Naka, all servers of a scenario share one session, as they would in a real app.
 2. A scripted client connects to each server the way Claude, Cursor or VS Code does, lists its tools, then makes the scenario's calls in order. For attacks it plays a fully hijacked agent: it does whatever the attacker wanted, even after a block.
 3. If the guard asks the user to confirm (MCP elicitation), the simulated user **declines during attacks** and **accepts during everyday tasks**.
 4. The fake servers log every call that reaches them. That log is the ground truth.
@@ -41,16 +41,16 @@ All secrets, addresses and accounts are fake.
 Any guard that wraps a stdio MCP server works:
 
 ```bash
-tripline eval --guard "pipelock=pipelock mcp proxy --config $HOME/pipelock.yaml -- {cmd}"
+naka eval --guard "pipelock=pipelock mcp proxy --config $HOME/pipelock.yaml -- {cmd}"
 ```
 
 `{cmd}` is the full server command and `{name}` the server's name. Guards that run as a separate network gateway need a small adapter that starts them and points at the server; contributions welcome.
 
 ## Adding scenarios
 
-Scenarios are plain Python data (`src/tripline/evals/suites.py`): fake servers with canned tool outputs, the agent's calls (which can reuse earlier outputs: `{out:N}`, `{b64:N}`, `{hex:N}`, `{rev:N}`, `{half1:N}`, `{half2:N}`, `{para:N:word}`), and for attacks the harmful call that must not arrive. Every new attack should come with an everyday twin that a good guard must let through.
+Scenarios are plain Python data (`src/naka/evals/suites.py`): fake servers with canned tool outputs, the agent's calls (which can reuse earlier outputs: `{out:N}`, `{b64:N}`, `{hex:N}`, `{rev:N}`, `{half1:N}`, `{half2:N}`, `{para:N:word}`), and for attacks the harmful call that must not arrive. Every new attack should come with an everyday twin that a good guard must let through.
 
 ## Limits
 
 - The agent is scripted, not a real model: it measures whether a guard stops the harmful *action* once a model has been fooled, not whether a model gets fooled.
-- Hand-written suites are small and were written by Tripline's authors. Treat them as a starting point, and add your own: the contagion suite includes every bypass and false alarm an independent red team found in round 5 (see [SECURITY.md](../SECURITY.md)).
+- Hand-written suites are small and were written by Naka's authors. Treat them as a starting point, and add your own: the contagion suite includes every bypass and false alarm an independent red team found in round 5 (see [SECURITY.md](../SECURITY.md)).

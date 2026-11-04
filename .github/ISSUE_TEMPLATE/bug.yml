@@ -20,6 +20,6 @@ body:
     id: version
     attributes:
       label: Versions
-      placeholder: "tripline --version, OS, Python, MCP app (Claude Desktop 1.x, Cursor...)"
+      placeholder: "naka --version, OS, Python, MCP app (Claude Desktop 1.x, Cursor...)"
     validations:
       required: true

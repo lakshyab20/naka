@@ -4,7 +4,7 @@ labels: [eval]
 body:
   - type: markdown
     attributes:
-      value: "**If Tripline does not stop this attack, report it privately instead:** Security → Report a vulnerability."
+      value: "**If Naka does not stop this attack, report it privately instead:** Security → Report a vulnerability."
   - type: textarea
     id: attack
     attributes:

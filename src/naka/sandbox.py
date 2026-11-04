@@ -3,12 +3,12 @@
 The macOS mode is verified on a real Mac; the Linux and Docker modes are
 experimental (their commands are tested, the sandboxes themselves not yet).
 
-Tripline inspects what a server *says*. A local server is also a program
+Naka inspects what a server *says*. A local server is also a program
 running with your permissions: a malicious one could read ~/.ssh directly, or
-edit Tripline's own pin files, without saying anything. The sandbox closes
+edit Naka's own pin files, without saying anything. The sandbox closes
 that gap by starting the server with your home folder hidden:
 
-    tripline wrap --sandbox auto --allow-path ~/projects/app -- npx some-server
+    naka wrap --sandbox auto --allow-path ~/projects/app -- npx some-server
 
 - Linux: bubblewrap (bwrap). The filesystem is read-only, /home and /root are
   empty, /tmp is private. Toolchains under your home (nvm, uv, cargo...) are
@@ -22,7 +22,7 @@ that gap by starting the server with your home folder hidden:
 Only a minimal environment reaches the server (PATH, locale...) plus the
 variables you name with --env (for example --env GITHUB_TOKEN). Network stays
 on unless --no-network (most servers call an API). If the
-requested sandbox isn't available, Tripline refuses to start rather than
+requested sandbox isn't available, Naka refuses to start rather than
 silently running the server unsandboxed.
 """
 
@@ -41,7 +41,7 @@ TOOLCHAINS = [".nvm", ".volta", ".bun", ".deno", ".local/bin", ".local/share/uv"
 CACHES = [".npm", ".cache/uv", ".cache/pip", ".cache/pnpm", ".cache/node", "Library/Caches/uv",
           "Library/Caches/pip", "Library/Caches/pnpm"]
 # Never exposed, even if a broader allow-path includes them.
-NEVER = [".ssh", ".aws", ".gnupg", ".kube", ".docker", ".tripline", ".config/gh", ".netrc", ".npmrc",
+NEVER = [".ssh", ".aws", ".gnupg", ".kube", ".docker", ".naka", ".config/gh", ".netrc", ".npmrc",
          ".pypirc", ".git-credentials", "Library/Keychains", ".password-store"]
 
 # A sandboxed server gets only these environment variables, plus the ones you
@@ -149,7 +149,7 @@ def docker_args(command: list[str], allow: list[Path], network: bool, image: str
     args = ["docker", "run", "--rm", "-i", "--network", "bridge" if network else "none",
             "--cap-drop", "ALL", "--security-opt", "no-new-privileges"]
     for key in sorted(set(names)):
-        args += ["-e", key]  # value is copied from Tripline's environment by docker
+        args += ["-e", key]  # value is copied from Naka's environment by docker
     for p in allow:
         args += ["-v", f"{p}:{p}"]
     if allow:

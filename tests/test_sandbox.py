@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from tripline import sandbox as sb
+from naka import sandbox as sb
 
 
 @pytest.fixture
@@ -80,7 +80,7 @@ def test_unavailable_sandbox_refuses_to_run(monkeypatch, tmp_path):
 @pytest.mark.skipif(not shutil.which("bwrap"), reason="bubblewrap not installed")
 def test_bwrap_really_hides_files(tmp_path):
     import subprocess
-    secret = Path.home() / ".tripline-sandbox-test"
+    secret = Path.home() / ".naka-sandbox-test"
     secret.write_text("secret")
     try:
         argv, env = sb.wrap_command(["cat", str(secret)], "bwrap", [])

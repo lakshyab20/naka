@@ -77,7 +77,7 @@ class Classifier:
         if path:
             blob = open(path, "rb").read()
         else:
-            blob = resources.files("tripline.models").joinpath(DEFAULT_MODEL).read_bytes()
+            blob = resources.files("naka.models").joinpath(DEFAULT_MODEL).read_bytes()
         raw = gzip.decompress(blob)
         (header_len,) = struct.unpack("<I", raw[:4])
         meta = json.loads(raw[4:4 + header_len])

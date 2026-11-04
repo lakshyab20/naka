@@ -1,10 +1,10 @@
-"""tripline install / uninstall on realistic config files."""
+"""naka install / uninstall on realistic config files."""
 
 import json
 
 import pytest
 
-from tripline import install
+from naka import install
 
 DESKTOP = {"mcpServers": {
     "github": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"],
@@ -23,8 +23,8 @@ VSCODE = {"servers": {"git": {"type": "stdio", "command": "uvx", "args": ["mcp-s
 
 @pytest.fixture
 def env(tmp_path, monkeypatch):
-    monkeypatch.setenv("TRIPLINE_HOME", str(tmp_path / "th"))
-    monkeypatch.setattr(install, "tripline_command", lambda: ["/opt/bin/tripline"])
+    monkeypatch.setenv("NAKA_HOME", str(tmp_path / "th"))
+    monkeypatch.setattr(install, "naka_command", lambda: ["/opt/bin/naka"])
     files = {}
     for name, data in (("desktop.json", DESKTOP), ("claude.json", CLAUDE_CODE), ("vscode.json", VSCODE)):
         p = tmp_path / name
@@ -38,7 +38,7 @@ def test_wraps_local_and_remote_servers(env):
     assert install.run(None, None, dry_run=False, yes=True, uninstall=False, config=str(p)) == 0
     cfg = json.loads(p.read_text())
     gh = cfg["mcpServers"]["github"]
-    assert gh["command"] == "/opt/bin/tripline"
+    assert gh["command"] == "/opt/bin/naka"
     assert gh["args"] == ["wrap", "--name", "github", "--", "npx", "-y", "@modelcontextprotocol/server-github"]
     assert gh["env"] == {"GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_x"}
     remote = cfg["mcpServers"]["remote"]
@@ -47,7 +47,7 @@ def test_wraps_local_and_remote_servers(env):
     assert cfg["mcpServers"]["legacy"] == DESKTOP["mcpServers"]["legacy"]   # SSE: left alone
     assert cfg["mcpServers"]["off"] == DESKTOP["mcpServers"]["off"]         # disabled: left alone
     assert cfg["globalShortcut"] == "Ctrl+Space"                            # other settings untouched
-    assert list(p.parent.glob("desktop.json.bak-tripline-*"))               # backup made
+    assert list(p.parent.glob("desktop.json.bak-naka-*"))               # backup made
 
 
 def test_uninstall_restores_exactly(env):
@@ -80,7 +80,7 @@ def test_claude_code_projects_and_types(env):
 def test_vscode_servers_key(env):
     p = env["vscode.json"]
     install.run(None, None, False, True, False, config=str(p))
-    assert json.loads(p.read_text())["servers"]["git"]["command"] == "/opt/bin/tripline"
+    assert json.loads(p.read_text())["servers"]["git"]["command"] == "/opt/bin/naka"
 
 
 def test_dry_run_writes_nothing(env, capsys):

@@ -1,6 +1,6 @@
 """Record the before/after demo as docs/demo.gif and docs/demo.mp4.
 
-Runs the real `tripline demo` (unprotected, then protected), replays its exact
+Runs the real `naka demo` (unprotected, then protected), replays its exact
 output in a terminal-style frame with Playwright, and encodes it with ffmpeg.
 
     pip install playwright && playwright install chromium   # once
@@ -38,7 +38,7 @@ pre{margin:0;font:15px/1.5 "DejaVu Sans Mono",monospace;color:#d6dde6;white-spac
 .b{font-weight:bold}.d{color:#7d8792}.r{color:#ff6b6b}.g{color:#5fd38d}.y{color:#f2c14e}.c{color:#56c8d8}
 .p{color:#5fd0c3}.cur{background:#d6dde6;color:#111419}
 </style></head><body><div class="win"><div class="bar"><i style="background:#ff5f57"></i>
-<i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">~/tripline</span>
+<i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">~/naka</span>
 <span class="tag" id="tag"></span></div><div class="term"><pre id="out"></pre></div></div>
 <script>
 function show(h, tag, cls){document.getElementById('out').innerHTML=h;
@@ -67,15 +67,15 @@ def ansi_to_html(line: str) -> str:
 
 def capture(args: list[str]) -> list[str]:
     env = dict(os.environ, FORCE_COLOR="1")
-    r = subprocess.run([sys.executable, "-m", "tripline", "demo", *args],
+    r = subprocess.run([sys.executable, "-m", "naka", "demo", *args],
                        capture_output=True, text=True, env=env, check=True)
     return r.stdout.rstrip("\n").split("\n")
 
 
 def timeline():
     """Yield (html, tag, tag_class, seconds) frames."""
-    runs = [("tripline demo --unprotected", capture(["--unprotected"]), "without tripline", "off"),
-            ("tripline demo", capture([]), "with tripline", "on")]
+    runs = [("naka demo --unprotected", capture(["--unprotected"]), "without naka", "off"),
+            ("naka demo", capture([]), "with naka", "on")]
     for cmd, lines, tag, cls in runs:
         prompt = '<span class="p">❯</span> '
         for i in range(0, len(cmd) + 1, 2):
@@ -104,7 +104,7 @@ def main() -> int:
         print("ffmpeg is required", file=sys.stderr)
         return 1
     OUT.mkdir(exist_ok=True)
-    tmp = Path(tempfile.mkdtemp(prefix="tripline-rec-"))
+    tmp = Path(tempfile.mkdtemp(prefix="naka-rec-"))
     concat = []
     with sync_playwright() as pw:
         browser = pw.chromium.launch()

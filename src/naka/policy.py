@@ -1,4 +1,4 @@
-"""Policy: what Tripline does when a rule fires.
+"""Policy: what Naka does when a rule fires.
 
 Loaded from a TOML file (``--config``) or defaults. Every action is either
 ``block`` (stop it and tell the agent why) or ``warn`` (let it through, log it).

@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tripline"
+name = "naka"
 version = "0.3.0"
 description = "Open-source runtime firewall for AI agents. Stops poisoned tools, rug-pulls, data leaks, AI worms and memory poisoning in MCP traffic."
 readme = "README.md"
@@ -27,16 +27,16 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/lakshyab20/tripline"
-Documentation = "https://github.com/lakshyab20/tripline/tree/main/docs"
-Issues = "https://github.com/lakshyab20/tripline/issues"
-Changelog = "https://github.com/lakshyab20/tripline/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/lakshyab20/naka"
+Documentation = "https://github.com/lakshyab20/naka/tree/main/docs"
+Issues = "https://github.com/lakshyab20/naka/issues"
+Changelog = "https://github.com/lakshyab20/naka/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = ["pytest>=7"]
 
 [project.scripts]
-tripline = "tripline.cli:main"
+naka = "naka.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -46,4 +46,4 @@ testpaths = ["tests"]
 pythonpath = ["."]
 
 [tool.setuptools.package-data]
-tripline = ["models/*.gz", "models/*.md", "data/*.json"]
+naka = ["models/*.gz", "models/*.md", "data/*.json"]

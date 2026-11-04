@@ -1,10 +1,10 @@
-"""`tripline install` / `tripline uninstall`: wrap every MCP server in your apps' configs.
+"""`naka install` / `naka uninstall`: wrap every MCP server in your apps' configs.
 
-    tripline install --dry-run      # show what would change
-    tripline install                # wrap, after a backup of each file
-    tripline uninstall              # put every config back the way it was
+    naka install --dry-run      # show what would change
+    naka install                # wrap, after a backup of each file
+    naka uninstall              # put every config back the way it was
 
-Each server entry is rewritten so the app starts `tripline wrap --name <name>
+Each server entry is rewritten so the app starts `naka wrap --name <name>
 -- <original command>` (or `--url <original url>` for remote servers). The
 original entry is saved, so uninstall restores it exactly. Close the apps
 first: some of them rewrite their config while running.
@@ -48,10 +48,10 @@ def client_configs(project: Path | None = None) -> dict[str, Path]:
     return paths
 
 
-def tripline_command() -> list[str]:
-    """How an app should start Tripline. Apps often have a minimal PATH, so be absolute."""
-    exe = shutil.which("tripline")
-    return [str(Path(exe).resolve())] if exe else [sys.executable, "-m", "tripline"]
+def naka_command() -> list[str]:
+    """How an app should start Naka. Apps often have a minimal PATH, so be absolute."""
+    exe = shutil.which("naka")
+    return [str(Path(exe).resolve())] if exe else [sys.executable, "-m", "naka"]
 
 
 def _server_maps(config: dict):
@@ -72,10 +72,12 @@ def is_wrapped(entry: dict) -> bool:
     if not isinstance(cmd, str) or not isinstance(args, list):
         return False
     base = Path(cmd).name.lower().removesuffix(".exe")
-    return (base == "tripline" and args[:1] == ["wrap"]) or ("tripline" in args and "wrap" in args and "-m" in args)
+    # "tripline" is Naka's earlier name: entries wrapped by it are still recognised.
+    names = ("naka", "tripline")
+    return (base in names and args[:1] == ["wrap"]) or (any(n in args for n in names) and "wrap" in args and "-m" in args)
 
 
-def wrap_entry(name: str, entry: dict, tripline: list[str]) -> tuple[dict | None, str]:
+def wrap_entry(name: str, entry: dict, naka: list[str]) -> tuple[dict | None, str]:
     """(new entry or None to leave alone, explanation)."""
     if not isinstance(entry, dict):
         return None, "not a server entry"
@@ -83,7 +85,7 @@ def wrap_entry(name: str, entry: dict, tripline: list[str]) -> tuple[dict | None
         return None, "already protected"
     if entry.get("disabled"):
         return None, "disabled"
-    command, args = tripline[0], tripline[1:] + ["wrap", "--name", name]
+    command, args = naka[0], naka[1:] + ["wrap", "--name", name]
     if isinstance(entry.get("command"), str):
         new = {k: v for k, v in entry.items() if k not in ("command", "args")}
         new["command"] = command
@@ -121,7 +123,7 @@ def _save_originals(data: dict) -> None:
     tmp.replace(p)
 
 
-def plan(path: Path, tripline: list[str], uninstall: bool = False) -> tuple[dict, dict, list[str]]:
+def plan(path: Path, naka: list[str], uninstall: bool = False) -> tuple[dict, dict, list[str]]:
     """(old config, new config, notes) for one file. Nothing is written."""
     old = json.loads(path.read_text(encoding="utf-8"))
     new = copy.deepcopy(old)
@@ -135,7 +137,7 @@ def plan(path: Path, tripline: list[str], uninstall: bool = False) -> tuple[dict
                     servers[name] = originals.get(key) or _unwrap(entry)
                     notes.append(f"  restore  {name}")
                 continue
-            wrapped, why = wrap_entry(name, entry, tripline)
+            wrapped, why = wrap_entry(name, entry, naka)
             if wrapped is None:
                 notes.append(f"  skip     {name}: {why}")
             else:
@@ -145,7 +147,7 @@ def plan(path: Path, tripline: list[str], uninstall: bool = False) -> tuple[dict
 
 
 def _unwrap(entry: dict) -> dict:
-    """Rebuild an entry from Tripline's arguments when no saved original exists."""
+    """Rebuild an entry from Naka's arguments when no saved original exists."""
     args = list(entry.get("args") or [])
     rest = args[args.index("wrap") + 1:] if "wrap" in args else []
     restored = {k: v for k, v in entry.items() if k not in ("command", "args")}
@@ -167,7 +169,7 @@ def _unwrap(entry: dict) -> dict:
 
 def apply(path: Path, old: dict, new: dict) -> Path:
     stamp = time.strftime("%Y%m%d-%H%M%S")
-    backup = path.with_name(f"{path.name}.bak-tripline-{stamp}")
+    backup = path.with_name(f"{path.name}.bak-naka-{stamp}")
     shutil.copy2(path, backup)
     originals = _load_originals()
     saved = originals.setdefault(str(path), {})
@@ -176,7 +178,7 @@ def apply(path: Path, old: dict, new: dict) -> Path:
             if isinstance(entry, dict) and not is_wrapped(entry):
                 saved[f"{where}/{name}"] = entry
     _save_originals(originals)
-    tmp = path.with_name(path.name + ".tripline-tmp")
+    tmp = path.with_name(path.name + ".naka-tmp")
     tmp.write_text(json.dumps(new, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     os.chmod(tmp, path.stat().st_mode & 0o777)
     tmp.replace(path)
@@ -188,13 +190,13 @@ def run(apps: list[str] | None, project: str | None, dry_run: bool, yes: bool, u
     targets = {"custom": Path(config).expanduser()} if config else client_configs(Path(project) if project else None)
     if apps:
         targets = {k: v for k, v in targets.items() if k in apps or k.split("-project")[0] in apps}
-    tripline = tripline_command()
+    naka = naka_command()
     changes = []
     for app, path in targets.items():
         if not path.exists():
             continue
         try:
-            old, new, notes = plan(path, tripline, uninstall)
+            old, new, notes = plan(path, naka, uninstall)
         except (ValueError, OSError) as exc:
             print(f"{app}: can't read {path}: {exc}")
             continue

@@ -1,4 +1,4 @@
-"""Official SDK client (stdio) -> tripline -> remote server (Streamable HTTP).
+"""Official SDK client (stdio) -> naka -> remote server (Streamable HTTP).
 
 Run the server first: python examples/sdk_http_server.py 8765
 Then: python examples/sdk_http_client.py http://127.0.0.1:8765/mcp
@@ -11,7 +11,7 @@ from mcp.client.stdio import stdio_client
 
 
 async def main(url):
-    params = StdioServerParameters(command="tripline", args=["wrap", "--name", "remote-notes", "--quiet",
+    params = StdioServerParameters(command="naka", args=["wrap", "--name", "remote-notes", "--quiet",
                                                              "--url", url, "--header", "X-Demo: 1"])
     async with stdio_client(params) as (r, w):
         async with ClientSession(r, w) as s:
