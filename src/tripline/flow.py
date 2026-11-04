@@ -34,11 +34,14 @@ import secrets
 import threading
 import time
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from . import detectors as d
 from .store import home
 
-CHUNK = 12                  # minimum piece length for split-secret detection
+CHUNK = 12                  # contiguous pieces this long are recognised in one call
+FRAG_MIN = 6                # shorter pieces are tracked across calls...
+REASSEMBLE = 0.75           # ...and blocked once they cover this share of a secret
 SESSION_TTL = 12 * 3600     # forget sessions older than this
 
 DESTINATIONS = [
@@ -92,6 +95,10 @@ class SessionState:
         self.secret_chunks: dict[bytes, str] = {}   # hashed piece -> "server/tool"
         self.secret_whole: dict[bytes, str] = {}    # hashed short value -> source
         self.whole_sizes: set[int] = set()
+        # Fragment hash -> list of (secret id, offset, length), for reassembly.
+        self.fragments: dict[bytes, list[tuple[str, int, int]]] = {}
+        self.secret_len: dict[str, tuple[int, str]] = {}   # secret id -> (length, source)
+        self.covered: dict[str, set[int]] = {}  # secret id -> positions already sent out, any tool
         self.dest: dict[bytes, tuple[str, str]] = {}  # hashed destination -> (kind, source)
         self.injection_from: str | None = None
         self.untrusted_from: str | None = None
@@ -153,6 +160,10 @@ class SessionState:
             for h in r["h"]:
                 self.secret_whole.setdefault(bytes.fromhex(h), r["src"])
             self.whole_sizes.update(r.get("n", []))
+        elif t == "fr":
+            self.secret_len[r["sid"]] = (r["n"], r["src"])
+            for h, off, ln in r["f"]:
+                self.fragments.setdefault(bytes.fromhex(h), []).append((r["sid"], off, ln))
         elif t == "dst":
             self.dest.setdefault(bytes.fromhex(r["h"]), (r["kind"], r["src"]))
         elif t == "inj":
@@ -186,6 +197,12 @@ class SessionState:
         for finding, value in d.find_secrets(text) + d.find_pii(text):
             if finding.rule == "email-address":
                 continue
+            base = canonical(value)
+            if len(base) > CHUNK:
+                sid = secrets.token_hex(6)
+                frags = [[self._h(base[i:i + ln]).hex(), i, ln]
+                         for ln in range(FRAG_MIN, CHUNK) for i in range(len(base) - ln + 1)]
+                self._append({"t": "fr", "sid": sid, "n": len(base), "src": src, "f": frags})
             for c in variants(value):
                 if len(c) <= CHUNK:
                     if len(c) >= 8:
@@ -225,6 +242,53 @@ class SessionState:
                 src = self.secret_chunks.get(self._h(c[i:i + CHUNK]))
                 if src and src != here:
                     return src
+        if self.fragments:
+            # Pieces too short to recognise alone: remember which parts of each
+            # secret this tool has been sent, across calls, and stop the call
+            # that would complete most of it.
+            hits: dict[str, set[int]] = {}
+            for ln in range(CHUNK - 1, FRAG_MIN - 1, -1):
+                for i in range(len(c) - ln + 1):
+                    for sid, off, flen in self.fragments.get(self._h(c[i:i + ln]), ()):
+                        hits.setdefault(sid, set()).update(range(off, off + flen))
+            for sid, positions in hits.items():
+                total, src = self.secret_len[sid]
+                if src == here:
+                    continue
+                # Counted across all tools: the attacker controls where pieces
+                # go and can reassemble them anywhere.
+                seen = self.covered.setdefault(sid, set())
+                if len(seen | positions) >= REASSEMBLE * total:
+                    return src
+                seen |= positions
+        return None
+
+    def untrusted_host_with_data(self, text: str) -> tuple[str, str, str] | None:
+        """A URL to a host from untrusted output, carrying data that output didn't contain.
+
+        Following a link exactly as it appeared, with nothing else, is normal
+        browsing. The same host with a query or fragment added, or with other
+        arguments alongside (a body, a payload), is how data gets smuggled out.
+        Used for tools named like readers, since a name proves nothing.
+        """
+        self.refresh()
+        if not self.dest:
+            return None
+        urls = [m.group(0).rstrip(".,;") for m in DESTINATIONS[1][1].finditer(text)]
+        rest = text
+        for url in urls:
+            rest = rest.replace(url, "")
+        other = len(canonical(rest))
+        for url in urls:
+            parts = urlsplit(url)
+            host = parts.hostname or ""
+            hit = self.dest.get(self._h(canonical(host))) if host else None
+            if not hit:
+                continue
+            exact = self._h(canonical(url)) in self.dest
+            extra = len(canonical(parts.query + parts.fragment))
+            if (not exact and extra >= 16) or other >= 24:
+                return "url", url, hit[1]
         return None
 
     def untrusted_destination(self, text: str) -> tuple[str, str, str] | None:

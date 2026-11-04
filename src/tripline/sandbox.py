@@ -16,7 +16,9 @@ that gap by starting the server with your home folder hidden:
 - Docker: any OS with Docker. The server runs in a throwaway container that
   sees only the paths you allow.
 
-Network stays on unless --no-network (most servers call an API). If the
+Only a minimal environment reaches the server (PATH, locale...) plus the
+variables you name with --env (for example --env GITHUB_TOKEN). Network stays
+on unless --no-network (most servers call an API). If the
 requested sandbox isn't available, Tripline refuses to start rather than
 silently running the server unsandboxed.
 """
@@ -38,8 +40,10 @@ CACHES = [".npm", ".cache/uv", ".cache/pip", ".cache/pnpm", ".cache/node", "Libr
 NEVER = [".ssh", ".aws", ".gnupg", ".kube", ".docker", ".tripline", ".config/gh", ".netrc", ".npmrc",
          ".pypirc", ".git-credentials", "Library/Keychains", ".password-store"]
 
-ENV_SKIP = {"PATH", "HOME", "PWD", "OLDPWD", "SHELL", "TMPDIR", "USER", "LOGNAME", "SHLVL", "_", "TERM",
-            "SSH_AUTH_SOCK", "SSH_AGENT_PID", "GPG_AGENT_INFO", "DISPLAY", "XAUTHORITY", "DBUS_SESSION_BUS_ADDRESS"}
+# A sandboxed server gets only these environment variables, plus the ones you
+# name with --env. Everything else (API keys, tokens, database URLs that the
+# app or your shell happens to have) stays out: the server is untrusted.
+BASE_ENV = ("PATH", "LANG", "LC_ALL", "LC_CTYPE", "TERM", "TZ", "TMPDIR", "USER", "LOGNAME")
 
 
 class SandboxUnavailable(RuntimeError):
@@ -127,15 +131,21 @@ def default_image(command: list[str]) -> str:
     raise SandboxUnavailable(f"no default container image for '{tool}'; pass --image")
 
 
+def sandbox_env(env: dict[str, str], names: list[str], home: Path) -> dict[str, str]:
+    out = {k: env[k] for k in BASE_ENV if k in env}
+    out.update({k: env[k] for k in names if k in env})
+    out["HOME"] = str(home)
+    return out
+
+
 def docker_args(command: list[str], allow: list[Path], network: bool, image: str | None,
-                env: dict[str, str]) -> list[str]:
+                names: list[str]) -> list[str]:
     if not shutil.which("docker"):
         raise SandboxUnavailable("docker is not installed")
     args = ["docker", "run", "--rm", "-i", "--network", "bridge" if network else "none",
             "--cap-drop", "ALL", "--security-opt", "no-new-privileges"]
-    for key in sorted(env):
-        if key not in ENV_SKIP and not key.startswith(("TRIPLINE_", "LC_")):
-            args += ["-e", key]
+    for key in sorted(set(names)):
+        args += ["-e", key]  # value is copied from Tripline's environment by docker
     for p in allow:
         args += ["-v", f"{p}:{p}"]
     if allow:
@@ -144,14 +154,17 @@ def docker_args(command: list[str], allow: list[Path], network: bool, image: str
 
 
 def wrap_command(command: list[str], mode: str, allow: list[str], network: bool = True,
-                 image: str | None = None, home: Path | None = None) -> list[str]:
+                 image: str | None = None, home: Path | None = None,
+                 env_names: list[str] | None = None) -> tuple[list[str], dict[str, str] | None]:
+    """(command line, environment for it). None means: inherit (docker's own CLI)."""
     home = (home or Path.home()).resolve()
     paths = _allowed(allow, home)
+    names = list(env_names or [])
     chosen = pick(mode)
     if chosen == "bwrap":
-        return bwrap_args(command, paths, network, home)
+        return bwrap_args(command, paths, network, home), sandbox_env(dict(os.environ), names, home)
     if chosen == "macos":
-        return macos_args(command, paths, network, home)
+        return macos_args(command, paths, network, home), sandbox_env(dict(os.environ), names, home)
     if chosen == "docker":
-        return docker_args(command, paths, network, image, dict(os.environ))
+        return docker_args(command, paths, network, image, names), None
     raise SandboxUnavailable(f"unknown sandbox '{mode}'")

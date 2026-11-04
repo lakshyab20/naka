@@ -32,11 +32,11 @@ Tripline assumes the **MCP server is malicious** and the **model may already be 
 
 ### New surfaces in v0.2, and how they're protected
 
-- **Confirmation prompts.** Ids are random and single-use; a held call is forwarded only on an explicit accept with `allow: true`; prompt text is escaped and shows the arguments. The model can't answer a prompt (only the client sends responses).
+- **Confirmation prompts.** Ids are random (128 bits) and single-use; a held call is forwarded only on an explicit accept with `allow: true`. The prompt shows the complete arguments that will be forwarded; a call too large to show in full is blocked instead of asked about. At most 20 prompts can wait at once, each for 10 minutes. The model can't answer a prompt (only the client sends responses).
 - **Shared session file** (`~/.tripline/sessions/`). Holds keyed hashes, never raw values; mode 0600 in a 0700 folder; expires after 12 hours. Anything that can write to it is already local code running as you (see below).
-- **Remote servers.** Remote messages go through the same reader and firewall as local ones; plain `http://` to a non-local host is warned about.
+- **Remote servers.** Remote messages go through the same reader and firewall as local ones. Redirects are never followed (a redirect could send your auth headers to another host). Plain `http://` to a non-local host is warned about.
 - **`tripline install`.** Backs up every file it changes; originals (which may include auth headers) are saved with mode 0600.
-- **Sandbox.** Refuses to start the server if the requested sandbox isn't available; never exposes credential folders even inside allowed paths.
+- **Sandbox.** Refuses to start the server if the requested sandbox isn't available; never exposes credential folders even inside allowed paths; passes the server only a minimal environment plus the variables you name with `--env`, so API keys in your environment stay out.
 
 ### What Tripline does NOT protect against
 
@@ -45,7 +45,8 @@ Be clear about these before relying on it:
 - **A malicious server's own code, outside a sandbox.** A stdio MCP server is a program running with your permissions. It can read your files, open network connections, or edit Tripline's state files directly, without going through the model. `--sandbox` hides your home folder from it. The sandbox is experimental: its commands are tested, but verify it on your OS.
 - **Rewording.** Detection is pattern-based (plus an optional bag-of-words classifier). Rewording, unusual languages or novel encodings can get past it. Pinning, data-flow rules and confirmations don't depend on wording, which is why they carry the weight.
 - **Action-only injections** with no injected destination ("unlock the door") are stopped by default only when the action is high-impact (63% of InjecAgent's direct-harm cases in `tripline bench --agent`). Strict mode (`confirm_after_untrusted`) stops 97%, at the cost of a prompt for nearly every change.
-- **Data leaving in plain prose.** Secrets are tracked, and so are destinations. Ordinary text (a summary of your emails) sent to a destination you supplied isn't blocked. Secrets split into pieces shorter than 12 characters aren't recognised.
+- **Data leaving in plain prose.** Secrets are tracked, and so are destinations. Ordinary text (a summary of your emails) sent to a destination you supplied isn't blocked. Secrets split into pieces are caught once the pieces sent (6+ characters each, across any tools) cover 75% of the secret; smaller pieces aren't recognised.
+- **Following an untrusted link exactly.** A reader tool may open a URL exactly as it appeared in untrusted output, with nothing else sent along: that's normal browsing and carries none of your data. Adding a query, or sending any other data alongside, needs confirmation.
 - **A tool that is malicious on day one** and subtle enough to pass the scan gets pinned as trusted, unless you use `on_first_use = "confirm"`.
 - **Apps without elicitation** can't show confirmation prompts; there `confirm_fallback` decides (block by default).
 - **Large results are slow to scan** (about 1 second per MB with the classifier on). Only that server's own messages wait; results over `max_scan_bytes` are blocked, not passed through.
@@ -56,6 +57,8 @@ Be clear about these before relying on it:
 - **Round 1 (internal):** 26 attacks on Tripline itself, including a full bypass through malformed messages. All fixed; see `tests/test_security.py`.
 - **Round 2 (independent red team):** 8 confirmed findings, including a full bypass through fields named `data` or `blob`, uninspected notifications, unmatched response ids, egress-lockdown gaps, a scanning slowdown and audit-log corruption. All fixed, each with a regression test.
 - **Round 3 (same red team, attacking the fixes):** 6 confirmed findings, including a full bypass through the handshake's `instructions` field, rewordings around the tightened rules, text disguised as binary payloads, look-alike tool names outside the confusables table, and lockdown gaps for IPs and scheme-less hosts. All fixed, each with a regression test. Every response type is now scanned by default.
+
+- **Round 4 (red team on v0.2):** 6 confirmed findings in the new features: a confirmation prompt that truncated the arguments it then forwarded in full, the Docker sandbox passing every environment secret to the server, HTTP redirects that carried auth headers to another host, destination checks skipped for tools named like readers or for URLs in content fields, secrets split into short pieces across tools, and unbounded pending prompts. All fixed, each with a regression test. Confirmations couldn't be forged or replayed, the macOS sandbox profile resisted injection, and every earlier fix held.
 
 ## Supported versions
 

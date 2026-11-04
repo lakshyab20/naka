@@ -35,6 +35,7 @@ from __future__ import annotations
 import json
 import re
 import secrets
+import time
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
@@ -63,6 +64,12 @@ TEXTUAL_MIME = ("text/", "application/json", "application/xml", "application/jav
 MAX_BINARY_PEEK = 64 * 1024
 TOOL_ERROR = -32001
 CONFIRM_PREFIX = "tripline-confirm-"
+MAX_PROMPT_ARGS = 2000      # a call bigger than this can't be shown, so it can't be approved
+MAX_OPEN_CONFIRMS = 20
+CONFIRM_TTL = 600           # seconds an unanswered prompt stays valid
+# Destination kinds that matter wherever they appear in the arguments.
+STRONG_DEST = re.compile(r"\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b|\b(?:https?|ftp|wss?)://[^\s'\"<>)\]}]+|"
+                         r"\b(?:\d{1,3}\.){3}\d{1,3}\b", re.I)
 
 # Words in a tool's name that mean it changes something (vs. only reads).
 CHANGE_WORDS = {
@@ -113,8 +120,13 @@ def destination_text(args: Any, key: str = "", depth: int = 0) -> str:
         raise Malformed("nesting too deep")
     words = name_words(key) if key else set()
     if isinstance(args, str):
-        if words & DEST_KEYS or (not words & PAYLOAD_KEYS and " " not in args.strip() and len(args) <= 200):
+        value = args.strip()
+        if words & DEST_KEYS or (not words & PAYLOAD_KEYS and " " not in value and len(value) <= 200):
             return args + "\n"
+        # A payload field whose whole value is an address or URL is being used
+        # as a destination, whatever the field is called.
+        if STRONG_DEST.fullmatch(value):
+            return value + "\n"
         return ""
     if isinstance(args, dict):
         return "".join(destination_text(v, str(k), depth + 1) for k, v in args.items())
@@ -375,9 +387,30 @@ class Firewall:
             return Decision(reply=[self._tool_error(msg.get("id"),
                 f"[tripline] Blocked '{name}': {whys} This needs the user's approval, and this app can't "
                 f"show confirmation prompts. Confirm with the user first. ({rules})")])
-        conf_id = CONFIRM_PREFIX + secrets.token_hex(8)
-        self.confirms[conf_id] = {"msg": msg, "params": params, "reasons": reasons}
-        args = d.safe_text(json.dumps(params.get("arguments") or {}, ensure_ascii=False), 300)
+        # The user must see everything that will be sent: what's shown is the
+        # exact call that gets forwarded on approval. If it's too big to show,
+        # it can't be approved.
+        shown = json.dumps(params.get("arguments") or {}, ensure_ascii=False, indent=1)
+        if len(shown) > MAX_PROMPT_ARGS:
+            for rule, why in reasons:
+                self._emit("blocked", rule, why + " (too large to show for approval)", name)
+            self.pending.pop(id_key(msg.get("id")), None)
+            return Decision(reply=[self._tool_error(msg.get("id"),
+                f"[tripline] Blocked '{name}': it needs the user's approval, but its arguments are too long "
+                f"to show in full ({len(shown)} characters). Split it into smaller calls.")])
+        now = time.monotonic()
+        for cid, entry in list(self.confirms.items()):
+            if now - entry["at"] > CONFIRM_TTL:
+                del self.confirms[cid]
+                self.pending.pop(id_key(entry["msg"].get("id")), None)
+        if len(self.confirms) >= MAX_OPEN_CONFIRMS:
+            self._emit("blocked", "too-many-prompts", "unanswered confirmation prompts", name)
+            self.pending.pop(id_key(msg.get("id")), None)
+            return Decision(reply=[self._tool_error(msg.get("id"),
+                f"[tripline] Blocked '{name}': too many confirmation prompts are waiting for the user.")])
+        conf_id = CONFIRM_PREFIX + secrets.token_hex(16)
+        self.confirms[conf_id] = {"msg": msg, "params": params, "reasons": reasons, "at": now}
+        args = d.safe_text(shown, MAX_PROMPT_ARGS * 2)
         lines = "\n".join(f"- {why[0].upper() + why[1:]}." for _, why in reasons)
         for rule, why in reasons:
             self._emit("confirm", rule, why, name)
@@ -487,17 +520,24 @@ class Firewall:
         # 4. Untrusted destination: an address, URL, account or ID that came
         #    out of an untrusted tool is being used by a tool that changes
         #    something. Wording-independent: this is how most injections cash in.
+        #    Only arguments that act as destinations count: destination-type
+        #    names, or any field whose whole value is an address or URL. An
+        #    order number or a contact list inside an email body is normal.
+        #    Tools named like readers are checked too: a reader sending data to a
+        #    host from untrusted output (a URL with something appended) is exfiltration.
         if changing:
             hit = self.session.untrusted_destination(destination_text(args))
-            if hit:
-                kind, value, src = hit
-                msg = self._decide(p.on_untrusted_destination, "untrusted-destination",
-                                   f"the {kind} {d.safe_text(value, 60)} came from the output of "
-                                   f"'{src}', not from you", name,
-                                   f"[tripline] Blocked: '{name}' would use the {kind} {d.safe_text(value, 60)}, "
-                                   f"which came from '{src}' output. Confirm with the user first.", confirm)
-                if msg:
-                    return msg
+        else:
+            hit = self.session.untrusted_host_with_data(text)
+        if hit:
+            kind, value, src = hit
+            msg = self._decide(p.on_untrusted_destination, "untrusted-destination",
+                               f"the {kind} {d.safe_text(value, 60)} came from the output of "
+                               f"'{src}', not from you", name,
+                               f"[tripline] Blocked: '{name}' would use the {kind} {d.safe_text(value, 60)}, "
+                               f"which came from '{src}' output. Confirm with the user first.", confirm)
+            if msg:
+                return msg
 
         # 5. After untrusted content: high-impact actions (money, access,
         #    deletion, execution) ask first; in strict mode, every change does.

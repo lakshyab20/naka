@@ -21,7 +21,7 @@ def home(tmp_path, monkeypatch):
 
 
 def test_bwrap_hides_home_and_keeps_toolchains(home):
-    argv = sb.wrap_command(["npx", "-y", "server"], "bwrap", [str(home / "projects/app")], home=home)
+    argv, _ = sb.wrap_command(["npx", "-y", "server"], "bwrap", [str(home / "projects/app")], home=home)
     joined = " ".join(argv)
     assert argv[0] == "bwrap" and "--tmpfs /home" in joined and "--share-net" in joined
     assert f"--ro-bind {home}/.nvm {home}/.nvm" in joined          # toolchain, read-only
@@ -32,7 +32,7 @@ def test_bwrap_hides_home_and_keeps_toolchains(home):
 
 
 def test_no_network(home):
-    assert "--share-net" not in sb.wrap_command(["node", "s.js"], "bwrap", [], network=False, home=home)
+    assert "--share-net" not in sb.wrap_command(["node", "s.js"], "bwrap", [], network=False, home=home)[0]
 
 
 def test_refuses_to_expose_home_or_credentials(home):
@@ -50,13 +50,25 @@ def test_macos_profile_denies_home_but_keeps_credentials_denied_in_allowed_paths
     assert "(deny network*)" in sb.macos_profile([], False, home)
 
 
-def test_docker(home, monkeypatch):
-    monkeypatch.setenv("GITHUB_TOKEN", "x")
-    argv = sb.wrap_command(["npx", "server"], "docker", [str(home / "projects/app")], home=home)
+def test_docker_passes_only_named_env(home, monkeypatch):
+    for k in ("GITHUB_TOKEN", "AWS_SECRET_ACCESS_KEY", "OPENAI_API_KEY", "DATABASE_URL"):
+        monkeypatch.setenv(k, "secret")
+    argv, env = sb.wrap_command(["npx", "server"], "docker", [str(home / "projects/app")], home=home,
+                                env_names=["GITHUB_TOKEN"])
     assert argv[:3] == ["docker", "run", "--rm"] and "node:22-slim" in argv
-    assert "-e" in argv and "GITHUB_TOKEN" in argv and "HOME" not in argv
-    assert f"{home}/projects/app:{home}/projects/app" in argv
-    assert "--cap-drop" in argv
+    assert argv[argv.index("-e") + 1] == "GITHUB_TOKEN" and argv.count("-e") == 1
+    for leaked in ("AWS_SECRET_ACCESS_KEY", "OPENAI_API_KEY", "DATABASE_URL", "HOME"):
+        assert leaked not in argv
+    assert f"{home}/projects/app:{home}/projects/app" in argv and "--cap-drop" in argv
+
+
+def test_bwrap_and_macos_get_minimal_env(home, monkeypatch):
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret")
+    monkeypatch.setenv("GITHUB_TOKEN", "t")
+    for mode in ("bwrap", "macos"):
+        _, env = sb.wrap_command(["node"], mode, [], home=home, env_names=["GITHUB_TOKEN"])
+        assert "AWS_SECRET_ACCESS_KEY" not in env and env["GITHUB_TOKEN"] == "t" and env["HOME"] == str(home)
+        assert "PATH" in env
 
 
 def test_unavailable_sandbox_refuses_to_run(monkeypatch, tmp_path):
@@ -71,7 +83,7 @@ def test_bwrap_really_hides_files(tmp_path):
     secret = Path.home() / ".tripline-sandbox-test"
     secret.write_text("secret")
     try:
-        argv = sb.wrap_command(["cat", str(secret)], "bwrap", [])
-        assert subprocess.run(argv, capture_output=True).returncode != 0
+        argv, env = sb.wrap_command(["cat", str(secret)], "bwrap", [])
+        assert subprocess.run(argv, capture_output=True, env=env).returncode != 0
     finally:
         secret.unlink()

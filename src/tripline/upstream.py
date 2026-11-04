@@ -27,19 +27,28 @@ PROTOCOL_HEADER = "MCP-Protocol-Version"
 SESSION_HEADER = "Mcp-Session-Id"
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Never follow redirects: a malicious server could point us at another host
+    (or a cloud metadata address) and our auth headers would go along."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code, f"redirect to {newurl} not followed", headers, fp)
+
+
 def _log(text: str) -> None:
     print(f"tripline ▸ {text}", file=sys.stderr, flush=True)
 
 
 class ProcessUpstream:
-    def __init__(self, command: list[str]):
+    def __init__(self, command: list[str], env: dict[str, str] | None = None):
         self.command = command
+        self.env = env
         self.child: subprocess.Popen | None = None
         self._lock = threading.Lock()
 
     def start(self) -> None:
-        self.child = subprocess.Popen(self.command, stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE, stderr=None, bufsize=0)
+        self.child = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                      stderr=None, bufsize=0, env=self.env)
 
     @property
     def reader(self) -> IO[bytes]:
@@ -85,6 +94,7 @@ class HttpUpstream:
         self._done = threading.Event()
         self._inflight = 0
         self._inflight_lock = threading.Condition()
+        self._opener = urllib.request.build_opener(_NoRedirect())
 
     def start(self) -> None:
         r, w = os.pipe()
@@ -139,7 +149,7 @@ class HttpUpstream:
         if self.protocol:
             headers[PROTOCOL_HEADER] = self.protocol
         req = urllib.request.Request(self.url, data=body, method=method, headers=headers)
-        return urllib.request.urlopen(req, timeout=self.timeout)
+        return self._opener.open(req, timeout=self.timeout)
 
     def _post(self, msg: dict) -> None:
         try:
@@ -161,7 +171,8 @@ class HttpUpstream:
                                 pass
                         self._emit(body)
         except urllib.error.HTTPError as exc:
-            self._error_for(msg, f"remote server returned HTTP {exc.code}")
+            reason = f": {exc.reason}" if 300 <= exc.code < 400 else ""
+            self._error_for(msg, f"remote server returned HTTP {exc.code}{reason}")
         except (urllib.error.URLError, OSError, ValueError) as exc:
             self._error_for(msg, f"could not reach the remote server: {exc}")
 

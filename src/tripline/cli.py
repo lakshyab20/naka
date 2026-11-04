@@ -45,16 +45,18 @@ def cmd_wrap(args) -> int:
         upstream = HttpUpstream(args.url, headers)
         sid = server_id(args.name, [args.url])
     else:
+        env = None
         if args.sandbox:
             from .sandbox import SandboxUnavailable, wrap_command
             try:
-                command = wrap_command(command, args.sandbox, allow=args.allow_path or [],
-                                       network=not args.no_network, image=args.image)
+                command, env = wrap_command(command, args.sandbox, allow=args.allow_path or [],
+                                            network=not args.no_network, image=args.image,
+                                            env_names=args.env or [])
             except SandboxUnavailable as exc:
                 # Never fall back to running the server unsandboxed.
                 print(f"tripline wrap: sandbox not started: {exc}", file=sys.stderr)
                 return 2
-        upstream = ProcessUpstream(command)
+        upstream = ProcessUpstream(command, env)
         sid = server_id(args.name, command)
     fw = Firewall(Policy.load(args.config), PinStore(sid), AuditLog(sid),
                   on_event=stderr_reporter(args.quiet))
@@ -182,6 +184,7 @@ def main(argv: list[str] | None = None) -> int:
     w.add_argument("--allow-path", action="append", help="folder the sandboxed server may use (repeatable)")
     w.add_argument("--no-network", action="store_true", help="sandbox: no network access")
     w.add_argument("--image", help="sandbox docker: container image (default chosen from the command)")
+    w.add_argument("--env", action="append", help="sandbox: pass this environment variable to the server (repeatable)")
     w.add_argument("command", nargs=argparse.REMAINDER)
     w.set_defaults(func=cmd_wrap)
 

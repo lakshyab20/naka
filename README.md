@@ -91,7 +91,7 @@ claude mcp add github -- tripline wrap --name github -- npx -y @modelcontextprot
 tripline wrap --name linear --url https://mcp.linear.app/mcp --header "Authorization: Bearer $LINEAR_TOKEN"
 
 # Untrusted server: hide your home folder from it (experimental)
-tripline wrap --name sketchy --sandbox auto --allow-path ~/projects/app -- npx -y some-server
+tripline wrap --name sketchy --sandbox auto --allow-path ~/projects/app --env SKETCHY_TOKEN -- npx -y some-server
 ```
 
 ```bash
@@ -121,13 +121,13 @@ See [`tripline.example.toml`](tripline.example.toml) for every option.
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). In short: Tripline relays MCP's JSON-RPC between the app and the server, local (stdio) or remote (Streamable HTTP). A pure decision engine (`firewall.py`) inspects every message, and a shared data-flow store (`flow.py`) remembers where sensitive values and destinations came from, across all servers one app runs. It fails closed: a message that can't be fully inspected is stopped, never passed through.
 
-Zero runtime dependencies. Python 3.11+. 173 tests, including attacks on Tripline itself from four rounds of security review. Tested against the official MCP Python SDK (stdio and Streamable HTTP, protocol 2025-11-25, elicitation).
+Zero runtime dependencies. Python 3.11+. 181 tests, including attacks on Tripline itself from four rounds of security review. Tested against the official MCP Python SDK (stdio and Streamable HTTP, protocol 2025-11-25, elicitation).
 
 ## Honest limitations
 
 - **Detection is bypassable.** Rewording gets past regex; the built-in classifier is a bag-of-words model and misses polite, attack-shaped requests. That's why structural rules carry the weight.
 - **Action-only injections** ("unlock the door") with no injected destination are stopped by default only for high-impact actions (63% in the replay). Strict mode stops 97% at the cost of a prompt on almost every change.
-- **Data leaving in plain prose** isn't caught unless it contains tracked secrets or goes to an injected destination. Secrets split into pieces shorter than 12 characters aren't recognised.
+- **Data leaving in plain prose** isn't caught unless it contains tracked secrets or goes to an injected destination. Secrets split into very small pieces (under 6 characters) aren't recognised.
 - **The sandbox is experimental:** the commands are tested, but run them on your OS before relying on it.
 - **Malicious local server code** can act without the model. Use `--sandbox` for servers you don't trust.
 
