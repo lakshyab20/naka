@@ -87,6 +87,10 @@ def timeline():
             plain = re.sub(r"\x1b\[[0-9;]*m", "", line)
             if re.match(r"\d\. ", plain):
                 pause = 0.9                       # step headings: give viewers time to read
+            elif "app asks you" in plain:
+                pause = 1.6                       # let viewers read the confirmation prompt
+            elif "you click" in plain:
+                pause = 1.0
             elif "BLOCKED" in plain or "Result" in plain:
                 pause = 0.7
             else:

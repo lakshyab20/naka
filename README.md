@@ -23,11 +23,13 @@ Restart the apps. Every server now runs through Tripline.
 
 ## See it
 
-![A hijacked agent vs. a malicious MCP server: 4 attacks succeed without Tripline, all are stopped with it](docs/demo.gif)
+![A hijacked agent with two MCP servers: 7 attacks succeed without Tripline, all are stopped with it](docs/demo.gif)
+
+A hijacked agent has a malicious server and an honest one. Without Tripline it runs a poisoned tool, follows hidden instructions, emails a cloud key, falls for a rug-pull, posts the key base64-encoded through the honest server, messages an attacker's address taken from an invoice and pays that invoice. With Tripline, each one is blocked, and the last two show up as a prompt in the app that the user declines. ([Full video](docs/demo.mp4))
 
 ```bash
-tripline demo --unprotected   # a hijacked agent vs. a malicious server: 4 attacks succeed
-tripline demo                 # same attack through tripline: every one is stopped
+tripline demo --unprotected   # a hijacked agent, two servers: 7 attacks succeed
+tripline demo                 # the same agent through tripline: every one is stopped
 ```
 
 ## What it stops

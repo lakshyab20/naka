@@ -390,7 +390,7 @@ class Firewall:
         # The user must see everything that will be sent: what's shown is the
         # exact call that gets forwarded on approval. If it's too big to show,
         # it can't be approved.
-        shown = json.dumps(params.get("arguments") or {}, ensure_ascii=False, indent=1)
+        shown = json.dumps(params.get("arguments") or {}, ensure_ascii=False, separators=(", ", ": "))
         if len(shown) > MAX_PROMPT_ARGS:
             for rule, why in reasons:
                 self._emit("blocked", rule, why + " (too large to show for approval)", name)

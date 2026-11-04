@@ -1,8 +1,10 @@
 """End to end: real processes, real stdio, the malicious demo server."""
 
 import json
+import os
 import subprocess
 import sys
+import tempfile
 
 import pytest
 
@@ -63,3 +65,15 @@ def test_unknown_methods_pass_through(session):
     rpc, _ = session
     reply = rpc("resources/list")
     assert reply["error"]["code"] == -32601  # the server's answer, untouched
+
+
+def test_demo_end_to_end():
+    """The README demo: every attack lands without Tripline, none with it."""
+    def run(*args):
+        env = dict(os.environ, TRIPLINE_HOME=tempfile.mkdtemp())
+        return subprocess.run([sys.executable, "-m", "tripline", "demo", *args], capture_output=True,
+                              text=True, env=env, timeout=60, check=True).stdout
+    assert "7 attack(s) succeeded" in run("--unprotected")
+    out = run()
+    assert "every attack was stopped" in out
+    assert out.count("you click ▸ Decline") == 2 and "BLOCKED tainted-flow post_comment" in out
