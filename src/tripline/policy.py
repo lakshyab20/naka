@@ -12,6 +12,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 ACTIONS = {"block", "warn"}
+# Rules where asking the user is a valid action (needs MCP elicitation support).
+CONFIRMABLE = {"on_egress_after_injection", "on_untrusted_destination", "on_tainted_flow"}
 
 # Tool names that look like they move data out of the machine. Used for
 # lockdown after untrusted content has reached the model.
@@ -34,7 +36,27 @@ class Policy:
     on_secret_in_response: str = "warn"   # tool output contains a credential
     on_pii_in_args: str = "warn"
     on_tainted_flow: str = "block"        # value read from tool A is sent out via tool B
-    on_egress_after_injection: str = "block"
+    on_egress_after_injection: str = "confirm"
+    on_untrusted_destination: str = "confirm"  # an address/URL/ID from untrusted output used to change something
+    # When the app can't show confirmation prompts: "block" or "warn".
+    confirm_fallback: str = "block"
+    # Strict mode (CaMeL-like): any tool that changes something needs
+    # confirmation once untrusted content has been read this session.
+    confirm_after_untrusted: bool = False
+    # Balanced default: only high-impact actions (payments, access, deletion,
+    # execution...) need confirmation after untrusted content.
+    confirm_sensitive_after_untrusted: bool = True
+    # "trust": pin tools the first time a server lists them (trust on first
+    # use). "confirm": list them, but ask the user before each tool's first call.
+    on_first_use: str = "trust"
+    trusted_tools: list[str] = field(default_factory=list)    # outputs never mark values as untrusted
+    read_only_tools: list[str] = field(default_factory=list)  # never treated as changing something
+    # Second-opinion ML classifier: "off", "builtin", or a path to a model file.
+    classifier: str = "off"
+    classifier_action: str = "warn"    # "warn": label + lockdown; "block": withhold the output
+    classifier_threshold: float | None = None   # None: the model's own (1% false alarms on validation)
+    # Share data-flow state with the other servers started by the same app.
+    shared_session: bool = True
     threshold: int = 3
     # Text larger than this in one message is blocked rather than scanned, to
     # bound the work a hostile server can force (scanning is ~1 s per MB).
@@ -66,7 +88,13 @@ class Policy:
                 raise ValueError(f"Unknown policy key: {key}")
             if key == "lockdown_scope" and value not in ("egress", "all"):
                 raise ValueError("lockdown_scope must be 'egress' or 'all'")
-            if key.startswith("on_") and value not in ACTIONS:
+            if key == "on_first_use" and value not in ("trust", "confirm"):
+                raise ValueError("on_first_use must be 'trust' or 'confirm'")
+            elif key in ("confirm_fallback", "classifier_action") and value not in ACTIONS:
                 raise ValueError(f"{key} must be one of {sorted(ACTIONS)}, got {value!r}")
+            elif key.startswith("on_") and key != "on_first_use":
+                allowed = ACTIONS | ({"confirm"} if key in CONFIRMABLE else set())
+                if value not in allowed:
+                    raise ValueError(f"{key} must be one of {sorted(allowed)}, got {value!r}")
             setattr(policy, key, value)
         return policy

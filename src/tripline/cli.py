@@ -4,6 +4,7 @@
     tripline pins list|approve|reset --name NAME [TOOL ...] [--all]
     tripline scan [FILE]           scan text (or stdin) for injection and secrets
     tripline log [-n N]            show recent decisions
+    tripline bench [--agent]       measure every layer on public datasets
     tripline demo [--unprotected]  run the attack demo
 """
 
@@ -110,6 +111,24 @@ def cmd_log(args) -> int:
     return 0
 
 
+def cmd_bench(args) -> int:
+    from . import bench
+    rc = 0
+    if not args.agent_only:
+        rc |= bench.main(args.json)
+    if args.agent or args.agent_only:
+        print()
+        report = bench.agent_eval(bench.fetch(["InjecAgent"]))
+        print(bench.render_agent(report))
+        if args.json:
+            import pathlib
+            path = pathlib.Path(args.json)
+            data = json.loads(path.read_text()) if path.exists() else {}
+            data["agent"] = report
+            path.write_text(json.dumps(data, indent=2))
+    return rc
+
+
 def cmd_demo(args) -> int:
     from .demo.run_demo import main as demo_main
     return demo_main(unprotected=args.unprotected)
@@ -143,6 +162,12 @@ def main(argv: list[str] | None = None) -> int:
     lg = sub.add_parser("log", help="show recent firewall decisions")
     lg.add_argument("-n", type=int, default=20)
     lg.set_defaults(func=cmd_log)
+
+    b = sub.add_parser("bench", help="measure detection and data-flow rules on public datasets")
+    b.add_argument("--agent", action="store_true", help="also replay InjecAgent attacks end to end")
+    b.add_argument("--agent-only", action="store_true", help="only the end-to-end replay")
+    b.add_argument("--json", help="also write the results to this file")
+    b.set_defaults(func=cmd_bench)
 
     dm = sub.add_parser("demo", help="run the attack demo")
     dm.add_argument("--unprotected", action="store_true", help="run the same attack without tripline")

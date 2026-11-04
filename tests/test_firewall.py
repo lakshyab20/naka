@@ -105,8 +105,18 @@ def test_tainted_flow_blocked():
     assert any(e.rule == "tainted-flow" for e in events)
 
 
-def test_email_addresses_are_not_tainted():
+def test_address_from_tool_output_needs_confirmation():
+    # Replying to an address you just read looks exactly like an injected
+    # "send it to attacker@..." - only the user can tell them apart.
     fw, _ = make_fw()
+    list_tools(fw, [READ, SEND])
+    call(fw, "read_page", {}, result_text="From: priya@example.com - can you send the deck?")
+    res = call(fw, "send_email", {"to": "priya@example.com", "body": "Here it is"}, rid=11)
+    assert res["isError"] and "Confirm with the user" in res["content"][0]["text"]
+
+
+def test_email_addresses_are_not_secrets():
+    fw, _ = make_fw(on_untrusted_destination="warn")
     list_tools(fw, [READ, SEND])
     call(fw, "read_page", {}, result_text="From: priya@example.com - can you send the deck?")
     res = call(fw, "send_email", {"to": "priya@example.com", "body": "Here it is"}, rid=11)
