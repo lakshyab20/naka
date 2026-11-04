@@ -1,9 +1,12 @@
 """Command-line interface.
 
-    tripline wrap [--name NAME] [--config FILE] -- <server command...>
+    tripline wrap [--name NAME] [--config FILE] [--sandbox auto] -- <server command...>
+    tripline wrap [--name NAME] --url https://server/mcp [--header "K: V"]
     tripline pins list|approve|reset --name NAME [TOOL ...] [--all]
     tripline scan [FILE]           scan text (or stdin) for injection and secrets
     tripline log [-n N]            show recent decisions
+    tripline install [--dry-run]   protect every MCP server in Claude, Cursor...
+    tripline uninstall             put the original configs back
     tripline bench [--agent]       measure every layer on public datasets
     tripline demo [--unprotected]  run the attack demo
 """
@@ -12,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from . import __version__
@@ -23,16 +27,38 @@ from .store import AuditLog, PinStore, home, server_id
 
 
 def cmd_wrap(args) -> int:
+    from .upstream import HttpUpstream, ProcessUpstream
     command = args.command
     if command and command[0] == "--":
         command = command[1:]
-    if not command:
-        print("tripline wrap: give the server command after --", file=sys.stderr)
+    if bool(command) == bool(args.url):
+        print("tripline wrap: give either a server command after --, or --url", file=sys.stderr)
         return 2
-    sid = server_id(args.name, command)
+    if args.url:
+        headers = {}
+        for h in args.header or []:
+            key, sep, value = h.partition(":")
+            if not sep:
+                print(f"tripline wrap: --header must look like 'Name: value', got {h!r}", file=sys.stderr)
+                return 2
+            headers[key.strip()] = os.path.expandvars(value.strip())
+        upstream = HttpUpstream(args.url, headers)
+        sid = server_id(args.name, [args.url])
+    else:
+        if args.sandbox:
+            from .sandbox import SandboxUnavailable, wrap_command
+            try:
+                command = wrap_command(command, args.sandbox, allow=args.allow_path or [],
+                                       network=not args.no_network, image=args.image)
+            except SandboxUnavailable as exc:
+                # Never fall back to running the server unsandboxed.
+                print(f"tripline wrap: sandbox not started: {exc}", file=sys.stderr)
+                return 2
+        upstream = ProcessUpstream(command)
+        sid = server_id(args.name, command)
     fw = Firewall(Policy.load(args.config), PinStore(sid), AuditLog(sid),
                   on_event=stderr_reporter(args.quiet))
-    return StdioProxy(command, fw).run()
+    return StdioProxy(upstream, fw).run()
 
 
 def cmd_pins(args) -> int:
@@ -129,6 +155,11 @@ def cmd_bench(args) -> int:
     return rc
 
 
+def cmd_install(args, uninstall=False) -> int:
+    from . import install
+    return install.run(args.app, args.project, args.dry_run, args.yes, uninstall, args.config)
+
+
 def cmd_demo(args) -> int:
     from .demo.run_demo import main as demo_main
     return demo_main(unprotected=args.unprotected)
@@ -144,6 +175,13 @@ def main(argv: list[str] | None = None) -> int:
     w.add_argument("--name", help="stable name for this server (used for pins)")
     w.add_argument("--config", help="policy TOML file")
     w.add_argument("--quiet", action="store_true", help="only log blocks and warnings")
+    w.add_argument("--url", help="remote MCP server (Streamable HTTP) instead of a command")
+    w.add_argument("--header", action="append", help="HTTP header for --url, e.g. 'Authorization: Bearer $TOKEN'")
+    w.add_argument("--sandbox", choices=["auto", "bwrap", "macos", "docker"],
+                   help="run the server isolated from your home folder (experimental)")
+    w.add_argument("--allow-path", action="append", help="folder the sandboxed server may use (repeatable)")
+    w.add_argument("--no-network", action="store_true", help="sandbox: no network access")
+    w.add_argument("--image", help="sandbox docker: container image (default chosen from the command)")
     w.add_argument("command", nargs=argparse.REMAINDER)
     w.set_defaults(func=cmd_wrap)
 
@@ -162,6 +200,18 @@ def main(argv: list[str] | None = None) -> int:
     lg = sub.add_parser("log", help="show recent firewall decisions")
     lg.add_argument("-n", type=int, default=20)
     lg.set_defaults(func=cmd_log)
+
+    for name, helptext, un in (("install", "wrap every MCP server in your apps' configs", False),
+                               ("uninstall", "restore your apps' original MCP configs", True)):
+        ins = sub.add_parser(name, help=helptext)
+        ins.add_argument("--app", action="append",
+                         choices=["claude-desktop", "claude-code", "cursor", "windsurf", "vscode"],
+                         help="only this app (repeatable); default: every app found")
+        ins.add_argument("--project", help="also handle this project folder's .mcp.json, .cursor/ and .vscode/")
+        ins.add_argument("--config", help="a specific config file instead")
+        ins.add_argument("--dry-run", action="store_true", help="show the changes without writing")
+        ins.add_argument("--yes", action="store_true", help="don't ask for confirmation")
+        ins.set_defaults(func=lambda a, _un=un: cmd_install(a, _un))
 
     b = sub.add_parser("bench", help="measure detection and data-flow rules on public datasets")
     b.add_argument("--agent", action="store_true", help="also replay InjecAgent attacks end to end")

@@ -13,13 +13,13 @@ from __future__ import annotations
 
 import json
 import signal
-import subprocess
 import sys
 import threading
 from typing import IO
 
 from . import detectors as d
 from .firewall import Event, Firewall
+from .upstream import ProcessUpstream
 
 # One message larger than this is dropped. Stops a server from exhausting
 # memory with a never-ending line. Generous: real tool results are far smaller.
@@ -51,34 +51,33 @@ def _log(text: str) -> None:
 
 
 class StdioProxy:
-    def __init__(self, command: list[str], firewall: Firewall,
+    """Relays between the client (our stdin/stdout) and an upstream server."""
+
+    def __init__(self, upstream, firewall: Firewall,
                  client_in: IO[bytes] | None = None, client_out: IO[bytes] | None = None):
-        self.command = command
+        if isinstance(upstream, list):  # backwards compatible: a command line
+            upstream = ProcessUpstream(upstream)
+        self.upstream = upstream
         self.fw = firewall
         self.client_in = client_in or sys.stdin.buffer
         self.client_out = client_out or sys.stdout.buffer
         self._out_lock = threading.Lock()
-        self._in_lock = threading.Lock()
-        self.child: subprocess.Popen | None = None
 
-    # Writing ----------------------------------------------------------------
-    def _write(self, stream: IO[bytes], lock: threading.Lock, msgs: list) -> None:
-        if not msgs:
-            return
-        with lock:
-            for m in msgs:
-                data = m if isinstance(m, bytes) else json.dumps(m, ensure_ascii=False).encode()
-                stream.write(data + b"\n")
-            stream.flush()
+    @staticmethod
+    def _encode(msgs: list) -> list[bytes]:
+        return [m if isinstance(m, bytes) else json.dumps(m, ensure_ascii=False).encode() for m in msgs]
 
     def to_client(self, msgs: list) -> None:
-        self._write(self.client_out, self._out_lock, msgs)
+        if not msgs:
+            return
+        with self._out_lock:
+            for line in self._encode(msgs):
+                self.client_out.write(line + b"\n")
+            self.client_out.flush()
 
     def to_server(self, msgs: list) -> None:
-        try:
-            self._write(self.child.stdin, self._in_lock, msgs)
-        except (BrokenPipeError, ValueError):
-            pass
+        if msgs:
+            self.upstream.send(self._encode(msgs))
 
     # Pumps ------------------------------------------------------------------
     @staticmethod
@@ -125,19 +124,15 @@ class StdioProxy:
             reply(rep)
 
     def run(self) -> int:
-        self.child = subprocess.Popen(self.command, stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE, stderr=None, bufsize=0)
+        self.upstream.start()
 
         def client_loop():
             self._pump(self.client_in, self.fw.from_client, self.to_server, self.to_client)
-            # Client hung up: close the server's stdin so it can exit cleanly.
-            try:
-                self.child.stdin.close()
-            except Exception:
-                pass
+            # Client hung up: let the server finish and exit cleanly.
+            self.upstream.close()
 
         def server_loop():
-            self._pump(self.child.stdout, self.fw.from_server, self.to_client, self.to_server)
+            self._pump(self.upstream.reader, self.fw.from_server, self.to_client, self.to_server)
 
         t_client = threading.Thread(target=client_loop, daemon=True)
         t_server = threading.Thread(target=server_loop, daemon=True)
@@ -145,8 +140,7 @@ class StdioProxy:
         t_server.start()
 
         def _terminate(signum, frame):
-            if self.child and self.child.poll() is None:
-                self.child.terminate()
+            self.upstream.terminate()
 
         for sig in (signal.SIGTERM, signal.SIGINT):
             try:
@@ -154,6 +148,6 @@ class StdioProxy:
             except ValueError:
                 pass  # not in main thread (tests)
 
-        code = self.child.wait()
+        code = self.upstream.wait()
         t_server.join(timeout=2)
         return code
