@@ -1,0 +1,25 @@
+name: Bug
+description: Something doesn't work as documented.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: Commands, config and the MCP server involved. Remove any real secrets.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      placeholder: "tripline --version, OS, Python, MCP app (Claude Desktop 1.x, Cursor...)"
+    validations:
+      required: true

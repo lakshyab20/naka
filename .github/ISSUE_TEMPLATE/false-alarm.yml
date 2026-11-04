@@ -1,0 +1,24 @@
+name: False alarm
+description: Tripline blocked or asked about something that was fine.
+labels: [false-alarm]
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: What were you doing?
+      placeholder: "Asked Claude to reply to a customer email..."
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: What Tripline said
+      description: The message, or the line from `tripline log`. Remove any real secrets or personal data.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      placeholder: "tripline --version, MCP app, MCP server"

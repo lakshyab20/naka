@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Tripline">
+  <title>Tripline</title>
+  <rect x="0" y="0" width="64" height="64" rx="15.00" fill="#0B1220"/>
+  <line x1="10.00" y1="32.00" x2="24.00" y2="32.00" stroke="#E6EDF7" stroke-width="4.50" stroke-linecap="round"/>
+  <line x1="40.00" y1="32.00" x2="54.00" y2="32.00" stroke="#E6EDF7" stroke-width="4.50" stroke-linecap="round"/>
+  <rect x="25.50" y="25.50" width="13.00" height="13.00" rx="3.00" transform="rotate(45 32.00 32.00)" fill="#FF6B35"/>
+</svg>

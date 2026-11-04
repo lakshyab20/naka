@@ -1,0 +1,19 @@
+name: New attack scenario
+description: An attack (already public, or already stopped) that the eval suites should cover.
+labels: [eval]
+body:
+  - type: markdown
+    attributes:
+      value: "**If Tripline does not stop this attack, report it privately instead:** Security → Report a vulnerability."
+  - type: textarea
+    id: attack
+    attributes:
+      label: The attack
+      description: What the attacker controls, what the agent does, and what harm results. Link to a write-up if there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: twin
+    attributes:
+      label: Its everyday twin
+      description: A normal task with the same tools that a good guard must let through.
