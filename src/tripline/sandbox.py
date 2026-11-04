@@ -1,4 +1,7 @@
-"""Run an MCP server sandboxed from your home folder (experimental).
+"""Run an MCP server sandboxed from your home folder.
+
+The macOS mode is verified on a real Mac; the Linux and Docker modes are
+experimental (their commands are tested, the sandboxes themselves not yet).
 
 Tripline inspects what a server *says*. A local server is also a program
 running with your permissions: a malicious one could read ~/.ssh directly, or

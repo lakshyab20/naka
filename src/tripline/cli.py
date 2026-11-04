@@ -181,7 +181,7 @@ def main(argv: list[str] | None = None) -> int:
     w.add_argument("--url", help="remote MCP server (Streamable HTTP) instead of a command")
     w.add_argument("--header", action="append", help="HTTP header for --url, e.g. 'Authorization: Bearer $TOKEN'")
     w.add_argument("--sandbox", choices=["auto", "bwrap", "macos", "docker"],
-                   help="run the server isolated from your home folder (experimental)")
+                   help="run the server isolated from your home folder (Linux and Docker modes are experimental)")
     w.add_argument("--allow-path", action="append", help="folder the sandboxed server may use (repeatable)")
     w.add_argument("--no-network", action="store_true", help="sandbox: no network access")
     w.add_argument("--image", help="sandbox docker: container image (default chosen from the command)")

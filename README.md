@@ -92,7 +92,7 @@ claude mcp add github -- tripline wrap --name github -- npx -y @modelcontextprot
 # Remote server (Streamable HTTP); $VARS in headers are read from the environment
 tripline wrap --name linear --url https://mcp.linear.app/mcp --header "Authorization: Bearer $LINEAR_TOKEN"
 
-# Untrusted server: hide your home folder from it (experimental)
+# Untrusted server: hide your home folder from it
 tripline wrap --name sketchy --sandbox auto --allow-path ~/projects/app --env SKETCHY_TOKEN -- npx -y some-server
 ```
 
@@ -130,7 +130,7 @@ Zero runtime dependencies. Python 3.11+. 181 tests, including attacks on Triplin
 - **Detection is bypassable.** Rewording gets past regex; the built-in classifier is a bag-of-words model and misses polite, attack-shaped requests. That's why structural rules carry the weight.
 - **Action-only injections** ("unlock the door") with no injected destination are stopped by default only for high-impact actions (63% in the replay). Strict mode stops 97% at the cost of a prompt on almost every change.
 - **Data leaving in plain prose** isn't caught unless it contains tracked secrets or goes to an injected destination. Secrets split into very small pieces (under 6 characters) aren't recognised.
-- **The sandbox is experimental:** the commands are tested, but run them on your OS before relying on it.
+- **The sandbox is tested on macOS only.** On a real Mac (macOS 26, Apple silicon) it hid the home folder, `~/.ssh`, `~/.aws` and the Keychains, kept allowed folders, environment secrets and `--no-network` working as intended, and ran node, npm, npx, Python and a real MCP server. The Linux (bubblewrap) and Docker modes are still experimental: their commands are tested, but run them on your system before relying on them.
 - **Malicious local server code** can act without the model. Use `--sandbox` for servers you don't trust.
 
 See [SECURITY.md](SECURITY.md) for the threat model, review history and how to report a vulnerability.

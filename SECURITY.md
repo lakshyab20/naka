@@ -42,7 +42,7 @@ Tripline assumes the **MCP server is malicious** and the **model may already be 
 
 Be clear about these before relying on it:
 
-- **A malicious server's own code, outside a sandbox.** A stdio MCP server is a program running with your permissions. It can read your files, open network connections, or edit Tripline's state files directly, without going through the model. `--sandbox` hides your home folder from it. The sandbox is experimental: its commands are tested, but verify it on your OS.
+- **A malicious server's own code, outside a sandbox.** A stdio MCP server is a program running with your permissions. It can read your files, open network connections, or edit Tripline's state files directly, without going through the model. `--sandbox` hides your home folder from it. The macOS sandbox has been verified on a real Mac (21 checks, including home-folder, credential, environment and network isolation). The Linux (bubblewrap) and Docker modes are still experimental: their commands are tested, but verify them on your system.
 - **Rewording.** Detection is pattern-based (plus an optional bag-of-words classifier). Rewording, unusual languages or novel encodings can get past it. Pinning, data-flow rules and confirmations don't depend on wording, which is why they carry the weight.
 - **Action-only injections** with no injected destination ("unlock the door") are stopped by default only when the action is high-impact (63% of InjecAgent's direct-harm cases in `tripline bench --agent`). Strict mode (`confirm_after_untrusted`) stops 97%, at the cost of a prompt for nearly every change.
 - **Data leaving in plain prose.** Secrets are tracked, and so are destinations. Ordinary text (a summary of your emails) sent to a destination you supplied isn't blocked. Secrets split into pieces are caught once the pieces sent (6+ characters each, across any tools) cover 75% of the secret; smaller pieces aren't recognised.
@@ -59,6 +59,8 @@ Be clear about these before relying on it:
 - **Round 3 (same red team, attacking the fixes):** 6 confirmed findings, including a full bypass through the handshake's `instructions` field, rewordings around the tightened rules, text disguised as binary payloads, look-alike tool names outside the confusables table, and lockdown gaps for IPs and scheme-less hosts. All fixed, each with a regression test. Every response type is now scanned by default.
 
 - **Round 4 (red team on v0.2):** 6 confirmed findings in the new features: a confirmation prompt that truncated the arguments it then forwarded in full, the Docker sandbox passing every environment secret to the server, HTTP redirects that carried auth headers to another host, destination checks skipped for tools named like readers or for URLs in content fields, secrets split into short pieces across tools, and unbounded pending prompts. All fixed, each with a regression test. Confirmations couldn't be forged or replayed, the macOS sandbox profile resisted injection, and every earlier fix held.
+
+- **macOS sandbox test (real hardware):** 21 checks on macOS 26 (Apple silicon). Found one bug: a sandboxed server started in the caller's folder, which the sandbox hides, so npm and npx crashed. Fixed by starting servers in an allowed folder or the temp folder. All 21 checks pass.
 
 ## Supported versions
 
