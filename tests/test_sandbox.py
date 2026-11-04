@@ -87,3 +87,9 @@ def test_bwrap_really_hides_files(tmp_path):
         assert subprocess.run(argv, capture_output=True, env=env).returncode != 0
     finally:
         secret.unlink()
+
+
+def test_server_starts_outside_the_hidden_home(home):
+    # npm crashes if it can't read its working directory, so never start in the caller's folder.
+    assert sb.start_dir([str(home / "projects/app")], home=home) == str((home / "projects/app").resolve())
+    assert not Path(sb.start_dir([], home=home)).is_relative_to(home)

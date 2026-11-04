@@ -28,6 +28,7 @@ from __future__ import annotations
 import os
 import platform
 import shutil
+import tempfile
 from pathlib import Path
 
 # Under $HOME: needed to *run* common servers. Read-only.
@@ -151,6 +152,15 @@ def docker_args(command: list[str], allow: list[Path], network: bool, image: str
     if allow:
         args += ["-w", str(allow[0])]
     return args + [image or default_image(command), *command]
+
+
+def start_dir(allow: list[str], home: Path | None = None) -> str:
+    """Where a sandboxed server starts. Not the caller's folder: that's usually
+    inside home, which the sandbox hides, and tools like npm crash when they
+    can't read their own working directory."""
+    home = (home or Path.home()).resolve()
+    paths = _allowed(allow, home)
+    return str(paths[0]) if paths else tempfile.gettempdir()
 
 
 def wrap_command(command: list[str], mode: str, allow: list[str], network: bool = True,

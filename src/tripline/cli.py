@@ -45,10 +45,11 @@ def cmd_wrap(args) -> int:
         upstream = HttpUpstream(args.url, headers)
         sid = server_id(args.name, [args.url])
     else:
-        env = None
+        env = cwd = None
         if args.sandbox:
-            from .sandbox import SandboxUnavailable, wrap_command
+            from .sandbox import SandboxUnavailable, start_dir, wrap_command
             try:
+                cwd = start_dir(args.allow_path or [])
                 command, env = wrap_command(command, args.sandbox, allow=args.allow_path or [],
                                             network=not args.no_network, image=args.image,
                                             env_names=args.env or [])
@@ -56,7 +57,7 @@ def cmd_wrap(args) -> int:
                 # Never fall back to running the server unsandboxed.
                 print(f"tripline wrap: sandbox not started: {exc}", file=sys.stderr)
                 return 2
-        upstream = ProcessUpstream(command, env)
+        upstream = ProcessUpstream(command, env, cwd)
         sid = server_id(args.name, command)
     fw = Firewall(Policy.load(args.config), PinStore(sid), AuditLog(sid),
                   on_event=stderr_reporter(args.quiet))

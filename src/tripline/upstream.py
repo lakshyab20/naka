@@ -40,15 +40,16 @@ def _log(text: str) -> None:
 
 
 class ProcessUpstream:
-    def __init__(self, command: list[str], env: dict[str, str] | None = None):
+    def __init__(self, command: list[str], env: dict[str, str] | None = None, cwd: str | None = None):
         self.command = command
         self.env = env
+        self.cwd = cwd
         self.child: subprocess.Popen | None = None
         self._lock = threading.Lock()
 
     def start(self) -> None:
         self.child = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                      stderr=None, bufsize=0, env=self.env)
+                                      stderr=None, bufsize=0, env=self.env, cwd=self.cwd)
 
     @property
     def reader(self) -> IO[bytes]:
