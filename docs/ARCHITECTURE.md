@@ -7,17 +7,19 @@ An AI agent treats everything it reads as possible instructions. With MCP, it re
 ## Where Tripline sits
 
 ```
- ┌──────────────┐  stdin/stdout  ┌─────────────────────────────┐  stdin/stdout  ┌──────────────┐
- │  MCP client  │ ─────────────▶ │          tripline           │ ─────────────▶ │  MCP server  │
- │ Claude/Cursor│ ◀───────────── │  proxy.py  →  firewall.py   │ ◀───────────── │ (child proc) │
- └──────────────┘                └──────────────┬──────────────┘                └──────────────┘
-                                                │ stderr: live log
-                                                ▼
-                                   ~/.tripline/pins/*.json  (tool pins)
-                                   ~/.tripline/audit.jsonl  (every decision)
+ ┌──────────────┐  stdin/stdout  ┌───────────────────────────────┐  stdio (child process,
+ │  MCP client  │ ─────────────▶ │           tripline            │  optionally sandboxed)
+ │ Claude/Cursor│ ◀───────────── │ proxy.py → firewall.py        │ ─────────▶ local MCP server
+ └──────┬───────┘   elicitation  │              ↕ flow.py        │
+        │ ◀── "allow this?" ──── │ upstream.py                   │  Streamable HTTP
+        ▼                        └──────────────┬────────────────┘ ─────────▶ remote MCP server
+     the user                                   │
+                       ~/.tripline/pins/*.json     tool pins
+                       ~/.tripline/audit.jsonl     every decision
+                       ~/.tripline/sessions/*.jsonl  data-flow state shared by the app's servers
 ```
 
-The client launches `tripline wrap -- <server command>` as if it were the server. Tripline launches the real server as a child process and relays messages both ways. Neither side knows it's there, so it works with any MCP client and any stdio MCP server without changes to either.
+The client launches `tripline wrap -- <server command>` (or `--url`) as if it were the server. Tripline starts or connects to the real server and relays messages both ways. Neither side has to know it's there, so it works with any MCP client and server. `tripline install` does that rewrite in the apps' config files for you.
 
 ## Modules
 
@@ -28,10 +30,16 @@ The client launches `tripline wrap -- <server command>` as if it were the server
 | `detectors.py` | Pure text functions: injection, hidden Unicode, base64, secrets, PII. | no |
 | `store.py` | Tool pins (trust on first use) and the JSONL audit log. | disk |
 | `policy.py` | Which rules block and which only warn. TOML. | reads config |
-| `cli.py` | `wrap`, `pins`, `scan`, `log`, `demo`. | yes |
+| `flow.py` | Data-flow state: hashed secrets and destinations seen in tool output, shared through a session file by every Tripline process the same app started. | disk |
+| `classifier.py` | Optional built-in ML classifier (logistic regression over hashed word n-grams, sliding windows). | no |
+| `upstream.py` | Where the server lives: a child process, or a remote URL over Streamable HTTP. | yes |
+| `sandbox.py` | Builds bwrap / sandbox-exec / docker commands that hide the home folder from a server. | no |
+| `install.py` | Rewrites Claude/Cursor/Windsurf/VS Code configs to wrap every server, and restores them. | disk |
+| `bench.py` | Detection benchmark and end-to-end InjecAgent replay. | network (datasets), disk |
+| `cli.py` | `wrap`, `install`, `uninstall`, `pins`, `scan`, `log`, `bench`, `demo`. | yes |
 | `demo/` | A deliberately malicious MCP server and a scripted hijacked agent. | yes |
 
-Transport and decisions are separate so the same engine can sit behind Streamable HTTP later, and so every rule can be unit-tested without processes.
+Transport and decisions are separate, so the same engine serves local and remote servers, and every rule can be unit-tested without processes.
 
 ## Message flow
 
@@ -58,6 +66,18 @@ Three main checkpoints, plus resources, prompts, error messages and server-initi
    - Record secrets and PII (except email addresses) as tainted values, keyed to the source tool. These are kept in memory only.
    - Scan for injection. In block mode, replace the result with a "withheld" message. In warn mode, prepend a warning label ("spotlighting"), strip hidden characters, and set `injection_seen_from`, which turns on egress lockdown.
 
+## Data flow and confirmations
+
+Detection asks "does this text look like an attack?", which wording can always defeat. The data-flow rules ask questions wording can't change:
+
+- **Did this value come from a tool's output?** `flow.py` records the secrets (credentials, PAN, Aadhaar, cards) and destinations (emails, URLs, hosts, IPs, phone, account numbers, IDs) in every result, as keyed hashes. Secrets are also recorded in their base64, hex, base32, reversed and canonical (lowercase, no separators) forms, and as 12-character pieces, so re-encoding or splitting doesn't hide them.
+- **Is it now deciding where something goes?** `destination_text()` reads only destination-like arguments (`to`, `recipient`, `url`, `account`, `guest`...), not payloads like an email body. If a destination there came from untrusted output, and the tool changes something (`changes_something()`), the user is asked.
+- **Is this a high-impact action after untrusted content?** Payments, unlocking, access grants, deletion and execution ask first. Strict mode asks before every change.
+
+The state is shared across servers: every Tripline process started by the same app (same parent process, or the same `TRIPLINE_SESSION`) appends to one file, so a key read through the GitHub server is recognised when the Gmail server tries to send it.
+
+**Confirmations** use MCP elicitation. When a rule's action is `confirm` and the client declared the elicitation capability, the firewall holds the `tools/call`, sends the client an `elicitation/create` request with a random id (`tripline-confirm-<hex>`), and forwards the held call only if the answer is accept with `allow: true`. The model can't answer it: only the client produces JSON-RPC responses, and the id is unguessable and single-use. Without elicitation, `confirm_fallback` decides.
+
 ## Why these choices
 
 - **Proxy over SDK plug-in.** A wrapper works with every client and server in every language today. A library would only protect apps that adopt it.
@@ -67,7 +87,9 @@ Three main checkpoints, plus resources, prompts, error messages and server-initi
 - **Fail closed.** Every message comes from an untrusted party, so if Tripline can't fully inspect one (malformed shape, bad JSON, extreme nesting, oversized), it stops it: requests get an error reply, responses are replaced with an error. An earlier version passed such messages through to avoid breaking the agent. That let a malicious server bypass every check by adding one malformed item, so it was changed. Well-formed traffic is never affected.
 - **Scan every string.** Inspection walks the whole message (titles, output schemas, resource links, structured content, error text), so unexpected fields can't carry instructions past the scanner.
 - **Never log secrets.** Findings carry redacted excerpts. Raw tainted values exist only in memory for the session.
-- **Zero dependencies.** `pip install` and done. Nothing to audit but this repo, which matters for a security tool.
+- **Zero dependencies.** `pip install` and done. Nothing to audit but this repo, which matters for a security tool. Even the classifier is pure Python.
+- **Measure before trusting.** `tripline bench` showed regex catching ~1% of realistic embedded attacks, and a prompt-trained classifier flagging 96% of harmless tool output. Both findings changed the design: structure first, detection second, every layer scored on held-out data.
+- **Ask, don't guess.** Replying to an address you just read and an injected "send it to attacker@..." look identical structurally. A confirmation turns an unsolvable classification problem into a one-click decision for the person who knows.
 
 ## Extending
 

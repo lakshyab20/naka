@@ -20,8 +20,21 @@ on_secret_in_response = "warn"
 on_pii_in_args = "warn"
 # A sensitive value read from tool A is sent through tool B.
 on_tainted_flow = "block"
-# After injected content reached the model, block tools that can send data out.
-on_egress_after_injection = "block"
+# After an injection attempt this session, tools that can send data out.
+# "confirm" asks you in the app (MCP elicitation); see confirm_fallback.
+on_egress_after_injection = "confirm"
+# An address, URL, account or ID that came from untrusted tool output, used
+# to decide where a state-changing tool sends or acts. block | warn | confirm
+on_untrusted_destination = "confirm"
+# Apps that can't show confirmation prompts: "block" or "warn".
+confirm_fallback = "block"
+# After untrusted content, ask before high-impact actions (payments, access,
+# deletion, execution...). Strict mode asks before every state change.
+confirm_sensitive_after_untrusted = true
+confirm_after_untrusted = false
+# "trust": pin each server's tools the first time it lists them.
+# "confirm": ask before each tool's first call.
+on_first_use = "trust"
 
 # Injection score needed to flag text (high-severity rules score 3).
 threshold = 3
@@ -33,6 +46,17 @@ max_scan_bytes = 8000000
 # "all" blocks every tool call that isn't allow-listed.
 lockdown_scope = "egress"
 
+# Optional ML classifier: "off", "builtin", or a path to a model file.
+# "warn" labels flagged content and turns on lockdown; "block" withholds it.
+classifier = "off"
+classifier_action = "warn"
+# Share data-flow state with the other servers the same app starts.
+shared_session = true
+
+# Tools whose output may decide destinations (e.g. your own contacts lookup).
+trusted_tools = []
+# Tools never treated as changing anything.
+read_only_tools = []
 # Tools that move data out, in addition to name-based guesses
 # (send, post, email, upload, webhook, http, comment, message...).
 egress_tools = []

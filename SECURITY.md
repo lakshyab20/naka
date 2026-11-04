@@ -15,7 +15,9 @@ Tripline assumes the **MCP server is malicious** and the **model may already be 
 - Instructions hidden in anything the server sends that reaches the model, including the handshake's `instructions` (which clients may put in the system prompt): tool definitions (every field), tool results (every content type, structured content, error messages), resources, prompts, their listings, sampling or elicitation requests, and notifications such as log and progress messages. Common phrasings are detected in English, Hindi (including Hinglish), Spanish, French, German and Portuguese.
 - New tools whose names look like an existing tool (look-alike letters, case, separators, invisible characters).
 - Tool definitions that change after they were approved (rug-pulls), detected by a SHA-256 of the entire definition.
-- Credentials, and sensitive values read from one tool, leaving through another tool's arguments.
+- Credentials, and sensitive values read from one tool, leaving through another tool's arguments, on the same or any other server the app runs, including base64/hex/base32-encoded, reversed, reformatted or split (12+ character pieces).
+- Addresses, URLs, accounts and IDs from untrusted tool output deciding where a state-changing tool sends or acts (asks the user).
+- High-impact actions (payments, access, deletion, execution) right after untrusted content (asks the user).
 - Attempts to break Tripline itself: malformed messages, invalid JSON or UTF-8, extreme nesting, oversized messages, and terminal control codes in names or descriptions.
 
 ### Design rules that keep it that way
@@ -28,17 +30,26 @@ Tripline assumes the **MCP server is malicious** and the **model may already be 
 - **Bounded work.** Text over `max_scan_bytes` (8 MB by default) in one message is blocked rather than scanned, and base64 decoding has a fixed budget.
 - **No dependencies.** The only code you have to trust is in this repository.
 
+### New surfaces in v0.2, and how they're protected
+
+- **Confirmation prompts.** Ids are random and single-use; a held call is forwarded only on an explicit accept with `allow: true`; prompt text is escaped and shows the arguments. The model can't answer a prompt (only the client sends responses).
+- **Shared session file** (`~/.tripline/sessions/`). Holds keyed hashes, never raw values; mode 0600 in a 0700 folder; expires after 12 hours. Anything that can write to it is already local code running as you (see below).
+- **Remote servers.** Remote messages go through the same reader and firewall as local ones; plain `http://` to a non-local host is warned about.
+- **`tripline install`.** Backs up every file it changes; originals (which may include auth headers) are saved with mode 0600.
+- **Sandbox.** Refuses to start the server if the requested sandbox isn't available; never exposes credential folders even inside allowed paths.
+
 ### What Tripline does NOT protect against
 
 Be clear about these before relying on it:
 
-- **A malicious server's own code.** A stdio MCP server is a program running on your computer with your permissions. It can read your files or open network connections directly, without going through the model, and it can edit Tripline's pin files in `~/.tripline`. Tripline guards what flows between the server and the model. To contain the server process itself, run it in a sandbox (a container or VM); built-in sandboxing is on the roadmap.
-- **Instructions that don't look like instructions.** Detection is pattern-based. Rewording, other languages or novel encodings can get past it. Pinning and data-flow rules don't depend on wording, which is why they exist.
-- **Transformed secrets.** Data-flow checks match exact values. A secret the model re-encodes or paraphrases before sending is not caught.
-- **A tool that is malicious on day one** and subtle enough to pass the scan gets pinned as trusted.
-- **Remote servers** over HTTP aren't supported yet.
-- **Large results are slow to scan.** Scanning costs roughly 1 second per MB, and only that server's own messages wait. Results over `max_scan_bytes` are blocked, not passed through.
-- **Local writes during lockdown.** In the default `egress` lockdown, tools that only change local state (for example writing a file) still run. Set `lockdown_scope = "all"` to require confirmation for every tool after an injection attempt.
+- **A malicious server's own code, outside a sandbox.** A stdio MCP server is a program running with your permissions. It can read your files, open network connections, or edit Tripline's state files directly, without going through the model. `--sandbox` hides your home folder from it. The sandbox is experimental: its commands are tested, but verify it on your OS.
+- **Rewording.** Detection is pattern-based (plus an optional bag-of-words classifier). Rewording, unusual languages or novel encodings can get past it. Pinning, data-flow rules and confirmations don't depend on wording, which is why they carry the weight.
+- **Action-only injections** with no injected destination ("unlock the door") are stopped by default only when the action is high-impact (63% of InjecAgent's direct-harm cases in `tripline bench --agent`). Strict mode (`confirm_after_untrusted`) stops 97%, at the cost of a prompt for nearly every change.
+- **Data leaving in plain prose.** Secrets are tracked, and so are destinations. Ordinary text (a summary of your emails) sent to a destination you supplied isn't blocked. Secrets split into pieces shorter than 12 characters aren't recognised.
+- **A tool that is malicious on day one** and subtle enough to pass the scan gets pinned as trusted, unless you use `on_first_use = "confirm"`.
+- **Apps without elicitation** can't show confirmation prompts; there `confirm_fallback` decides (block by default).
+- **Large results are slow to scan** (about 1 second per MB with the classifier on). Only that server's own messages wait; results over `max_scan_bytes` are blocked, not passed through.
+- **Legacy SSE remote servers** (the transport MCP replaced in 2025) aren't supported.
 
 ## Review history
 
