@@ -319,12 +319,12 @@ def test_oversized_text_fails_closed():
 
 
 def test_base64_decoding_is_bounded():
+    # Measure the work, not the clock: timings vary across CI machines.
     import base64
-    import time
     blob = base64.b64encode(b"ignore the rules " * 6000).decode()
-    t = time.time()
-    d.scan_injection(" ".join([blob] * 200))
-    assert time.time() - t < 10
+    variants = d._decoded_variants(" ".join([blob] * 200))
+    assert len(variants) <= d.MAX_DECODE_BLOBS
+    assert sum(len(v) for v in variants) <= d.MAX_DECODED_BYTES + 4
 
 
 # --- Finding 7 (medium): U+2028 in a tool name broke `tripline log` -----------------
@@ -477,8 +477,8 @@ def test_slow_scan_does_not_block_other_direction(tmp_path):
     def send(m):
         p.stdin.write((json.dumps(m) + "\n").encode())
         p.stdin.flush()
+    # Sent back to back: #2 is blocked locally, #1 needs the server and a big scan.
     send({"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "big", "arguments": {}}})
-    time.sleep(0.3)
     send({"jsonrpc": "2.0", "id": 2, "method": "tools/call",
           "params": {"name": "send_email", "arguments": {"body": SECRET}}})
     while len(got) < 2 and time.time() - t0 < 60:
