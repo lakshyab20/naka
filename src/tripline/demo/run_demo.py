@@ -69,6 +69,11 @@ class Client:
         time.sleep(0.05)
         while not self.logs.empty():
             line = self.logs.get()
+            # Colour tripline's decisions so blocks stand out from the narration.
+            for word, color in (("BLOCKED", RED), ("WARNED", YELLOW), ("PINNED", CYAN)):
+                if f" {word} " in line:
+                    line = line.replace(f" {word} ", f" {BOLD}{color}{word}{RESET}{DIM} ", 1)
+                    break
             print(f"    {DIM}{line}{RESET}")
 
     def close(self):

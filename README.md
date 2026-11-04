@@ -13,6 +13,8 @@ Scanners check a tool before you install it. Red-teaming tools test an agent bef
 
 ## See it
 
+![A hijacked agent vs. a malicious MCP server: 4 attacks succeed without Tripline, all are stopped with it](docs/demo.gif)
+
 ```bash
 pip install -e .
 tripline demo --unprotected   # a hijacked agent vs. a malicious server: 4 attacks succeed
