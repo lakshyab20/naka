@@ -36,6 +36,8 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 
+SERVER = str(Path(__file__).with_name("server.py"))
+
 TIMEOUT = 20.0
 
 
@@ -255,7 +257,9 @@ def run_one(sc: Scenario, guard: Guard) -> Result:
             spec.write_text(json.dumps({"name": name, "tools": tools}))
             log.touch()
             logs[name] = log
-            cmd = guard.wrap([sys.executable, "-m", "tripline.evals.server", str(spec), str(log)], name, run_dir)
+            # Run the server by file path (it only needs the standard library), so guards that
+            # strip the environment (PYTHONPATH etc.) before starting a server still work.
+            cmd = guard.wrap([sys.executable, "-I", SERVER, str(spec), str(log)], name, run_dir)
             conns[name] = c = Conn(cmd, env, accept_prompts=not attack, cwd=str(run_dir),
                                   stderr_path=run_dir / f"{name}.stderr")
             c.request("initialize", {"protocolVersion": "2025-06-18", "capabilities": {"elicitation": {}},
