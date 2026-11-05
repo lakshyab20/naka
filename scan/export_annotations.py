@@ -9,7 +9,7 @@ import gzip
 import json
 import sys
 
-CHUNK = 8000
+CHUNK = 4000  # GitHub cuts annotation messages at 4,096 characters
 
 scan = json.load(open(sys.argv[1]))
 picked = {s["package"]: s for s in json.load(open(sys.argv[2]))["servers"]} if len(sys.argv) > 2 else {}
@@ -28,8 +28,10 @@ for s in scan["servers"]:
     })
 blob = base64.b64encode(gzip.compress(json.dumps({"date": scan["date"], "naka": scan["naka"], "rows": rows}).encode())).decode()
 parts = [blob[i:i + CHUNK] for i in range(0, len(blob), CHUNK)]
-if len(parts) > 10:
-    print(f"::warning::scan export is {len(blob)} characters, too large for annotations")
-    parts = parts[:10]
+# A step may post 10 notices and 10 warnings: 20 parts, about 80,000 characters.
+if len(parts) > 20:
+    print(f"::error::scan export is {len(blob)} characters, too large for annotations")
+    parts = parts[:20]
 for i, part in enumerate(parts, 1):
-    print(f"::notice title=naka-scan {i}/{len(parts)}::{part}")
+    level = "notice" if i <= 10 else "warning"
+    print(f"::{level} title=naka-scan {i}/{len(parts)}::{part}")
