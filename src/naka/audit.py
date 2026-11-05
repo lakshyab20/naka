@@ -24,6 +24,7 @@ GitHub Actions).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import queue
@@ -125,6 +126,7 @@ class ToolReport:
     notes: list[str] = field(default_factory=list)
     chars: int = 0
     description: str = ""
+    fingerprint: str = ""   # hash of the whole definition, to spot changes between versions
 
 
 @dataclass
@@ -143,6 +145,7 @@ class ServerReport:
     context_tokens: int = 0
     annotated: int = 0
     seconds: float = 0.0
+    meta: dict = field(default_factory=dict)   # package, version, rank... from the servers file
 
     @property
     def poisoned(self) -> bool:
@@ -256,7 +259,9 @@ def analyse(rep: ServerReport, init: dict, tools: list, prompts: list, resources
             continue
         tr = ToolReport(name=tool["name"], caps=sorted(tool_caps(tool, rep.name)),
                         findings=_findings(tool), chars=len(json.dumps(tool, ensure_ascii=False)),
-                        description=d.strip_hidden(str(tool.get("description") or ""))[:2000])
+                        description=d.strip_hidden(str(tool.get("description") or ""))[:2000],
+                        fingerprint=hashlib.sha256(json.dumps(tool, sort_keys=True, ensure_ascii=False)
+                                                   .encode()).hexdigest()[:16])
         ann = tool.get("annotations") if isinstance(tool.get("annotations"), dict) else None
         if ann:
             rep.annotated += 1
@@ -286,7 +291,9 @@ def analyse(rep: ServerReport, init: dict, tools: list, prompts: list, resources
 
 def run_one(entry: dict, timeout: float = 90) -> ServerReport:
     cmd = entry["command"]
-    rep = ServerReport(name=entry.get("name") or " ".join(cmd)[:60], command=cmd)
+    rep = ServerReport(name=entry.get("name") or " ".join(cmd)[:60], command=cmd,
+                       meta={k: v for k, v in entry.items() if k in ("package", "version", "of", "kind", "rank",
+                                                                      "weekly_downloads")})
     start = time.monotonic()
     with tempfile.TemporaryDirectory(prefix="naka-audit-") as home:
         env = {k: os.environ[k] for k in ("PATH", "LANG", "TERM", "TZ", "SYSTEMROOT", "COMSPEC",
@@ -439,10 +446,11 @@ def load_entries(path: str) -> list[dict]:
         e = dict(e)
         if "command" not in e:
             pkg = e["package"]
+            spec = f"{pkg}@{e['version']}" if e.get("version") else pkg
             if e.get("kind", "npm") == "npm":
-                e["command"] = ["npx", "-y", pkg, *e.get("args", [])]
+                e["command"] = ["npx", "-y", spec, *e.get("args", [])]
             else:
-                e["command"] = ["uvx", pkg, *e.get("args", [])]
+                e["command"] = ["uvx", spec, *e.get("args", [])]
         e["env"] = {**shared, **(e.get("env") or {})}
         e.setdefault("name", e.get("package") or " ".join(e["command"]))
         out.append(e)

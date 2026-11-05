@@ -2,6 +2,12 @@
 
 All notable changes to Naka. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- The MCP server scan is now a website, [lakshyab20.github.io/naka](https://lakshyab20.github.io/naka/), rebuilt every Monday by GitHub Actions with no commits: each server's last few releases are compared tool by tool (added, removed and changed tools, new reach such as sending data out, new findings), and each week is compared with the previous one.
+- `naka audit` records a fingerprint of every tool definition and accepts pinned versions in server lists.
+
 ## [0.4.0] - 2026-11-05
 
 ### Added
