@@ -55,12 +55,13 @@ jobs:
         run: |
           python scan/history.py results/scan.json scan-servers.json --versions 3 \
             --out history-servers.json --map results/versions.json
+          echo "$(python -c 'import json;print(len(json.load(open("history-servers.json"))["servers"]))') earlier releases to audit"
           naka audit --servers history-servers.json --workers 6 --timeout 150 \
-            --json results/history.json || true
+            --json results/history.json || echo "::warning title=naka-history-audit::naka audit exited with $?"
           python scan/compare.py --latest results/scan.json --history results/history.json \
             --versions results/versions.json --picked results/scan-servers.json --out preview/data.json > stats.json
           echo "::notice title=naka-scan-stats::$(cat stats.json)"
-          python scan/export_changes.py preview/data.json
+          python scan/export_changes.py preview/data.json results/history.json
         env:
           npm_config_cache: ${{ runner.temp }}/npm
           UV_CACHE_DIR: ${{ runner.temp }}/uv
