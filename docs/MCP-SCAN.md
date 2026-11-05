@@ -1,5 +1,7 @@
 # The MCP server scan
 
+**The live, weekly-updated version is at [lakshyab20.github.io/naka](https://lakshyab20.github.io/naka/)**, with what changed between each server's recent releases and since the previous week. This page is the first scan, kept as a record.
+
 We started the most downloaded MCP servers and read what they tell an AI about themselves. **None of the 75 servers that started hid instructions for the AI. But 12 of them give a single injected message everything it needs to steal data on its own, including the official GitHub, Slack and Notion servers.**
 
 Scanned on 5 November 2026 with `naka audit` (119 servers tried: the 100 most downloaded MCP servers on npm, plus 19 popular Python servers; 75 started and listed their tools). Raw results: [`scan/2026-11-05.json`](scan/2026-11-05.json). The scan reruns every Monday in [GitHub Actions](../.github/workflows/mcp-scan.yml), on a throwaway machine with placeholder settings only.

@@ -1,0 +1,6 @@
+{
+  "next-devtools-mcp": {
+    "verdict": "false alarm",
+    "note": "A tool description contains \"[IMPORTANT] If auto-discovery returns no servers: ...\". It's ordinary guidance for the AI, written in the style attackers use, which is why matching patterns alone can't be the whole defence."
+  }
+}
