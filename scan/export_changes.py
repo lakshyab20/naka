@@ -15,6 +15,14 @@ for s in data["servers"]:
                          [[f["tool"], f["rule"]] for f in r.get("new_findings", [])][:3]])
     if s.get("releases"):
         rows.append([s["name"], "versions", [r["version"] for r in s["releases"]], [r.get("started") for r in s["releases"]]])
+if len(sys.argv) > 2:  # how the earlier releases went, to spot a broken run
+    import collections, os
+    if os.path.exists(sys.argv[2]):
+        hist = json.load(open(sys.argv[2]))["servers"]
+        print("::notice title=naka-history::" + json.dumps({"statuses": collections.Counter(h["status"] for h in hist),
+              "errors": [[h["name"], h["error"][:160]] for h in hist if h["status"] != "ok"][:6]}).replace("\n", " "))
+    else:
+        print("::notice title=naka-history::no history.json")
 blob = base64.b64encode(gzip.compress(json.dumps(rows).encode())).decode()
 for i in range(0, min(len(blob), 40000), 4000):
     print(f"::warning title=naka-changes {i // 4000 + 1}::{blob[i:i + 4000]}")
