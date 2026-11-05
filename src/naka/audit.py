@@ -45,31 +45,41 @@ from .policy import Policy
 PROTOCOL = "2025-11-25"
 THRESHOLD = Policy().threshold
 
-# Words in a tool's name (split on _ - . and camelCase) that suggest what it does.
-UNTRUSTED_IN = {"fetch", "browse", "browser", "navigate", "scrape", "crawl", "search", "web", "url",
-                "page", "webpage", "website", "screenshot", "snapshot", "email", "emails", "inbox", "mail",
-                "gmail", "message", "messages", "issue", "issues", "comment", "comments", "pull", "pr",
-                "ticket", "tickets", "feed", "rss", "transcript", "tweet", "tweets", "history",
-                "conversation", "conversations", "thread", "threads", "notification", "notifications",
-                "event", "events", "error", "errors", "review", "reviews", "post", "posts", "chat",
-                "channel", "dm", "replies", "html", "markdown", "scrape", "extract", "youtube", "reddit"}
-PRIVATE = {"file", "files", "directory", "directories", "dir", "folder", "database", "query", "sql",
-           "table", "tables", "db", "drive", "doc", "docs", "document", "documents", "note", "notes",
-           "calendar", "contact", "contacts", "repo", "repository", "repositories", "secret", "secrets",
-           "env", "customer", "customers", "payment", "payments", "invoice", "invoices", "balance",
-           "account", "accounts", "memory", "memories", "entities", "bucket", "buckets", "object",
-           "objects", "log", "logs", "credential", "credentials", "key", "keys", "vault", "user", "users",
-           "record", "records", "collection", "collections", "spreadsheet", "sheet", "sheets", "code"}
-EXEC = {"exec", "execute", "shell", "command", "commands", "terminal", "bash", "eval", "evaluate",
-        "script", "spawn", "process", "powershell", "cmd", "sandbox", "interpreter", "repl"}
+# What a tool does is read from its name as verb + object ("get_inbox",
+# "send_message", "navigate_page"). A rough guide, not a verdict.
+READ_VERBS = {"get", "read", "list", "search", "query", "fetch", "view", "show", "find", "open", "download",
+              "export", "retrieve", "select", "describe", "lookup", "cat", "load", "browse", "scan", "check"}
+SEND_VERBS = {"send", "post", "upload", "publish", "share", "reply", "forward", "notify", "invite", "tweet",
+              "submit", "webhook", "http", "request", "curl", "wget", "email", "mail", "dm"}
+CREATE_VERBS = {"create", "add", "new", "write", "comment", "push", "open"}
+# Places strangers can write: web pages, email, issues, chat, tickets, reviews.
+OUTSIDE = {"email", "emails", "mail", "gmail", "inbox", "message", "messages", "issue", "issues", "comment",
+           "comments", "pr", "prs", "pull", "ticket", "tickets", "replies", "channel",
+           "conversation", "conversations", "post", "posts", "tweet", "tweets", "review", "reviews", "feed",
+           "rss", "chat", "dm", "dms", "notification", "notifications", "mention", "mentions"}
+WEB = {"browse", "browser", "navigate", "scrape", "crawl", "webpage", "website", "web", "html"}
+URL_READERS = {"fetch", "open", "read", "scrape", "browse", "load", "visit", "goto"}
+PAGE_OPENERS = {"navigate", "new", "open", "goto", "visit", "load"}
+PRIVATE = {"file", "files", "directory", "directories", "folder", "folders", "database", "databases", "db", "sql",
+           "table", "tables", "drive", "note", "notes", "calendar",
+           "event", "events", "contact", "contacts", "repo", "repos", "repository", "secret", "secrets", "env",
+           "customer", "customers", "payment", "payments", "invoice", "invoices", "account", "accounts",
+           "bucket", "buckets", "log", "logs", "credential", "credentials", "vault", "memory", "memories",
+           "profile", "profiles", "user", "users", "email", "emails", "inbox", "dm", "dms", "history",
+           "record", "records", "spreadsheet", "sheet", "sheets", "vault", "graph", "entities", "transactions"}
+SEND_TARGETS = {"message", "messages", "email", "mail", "issue", "comment", "comments", "pr", "pull", "post",
+                "tweet", "reply", "webhook", "page", "gist", "dm", "chat", "invite", "ticket"}
+EXEC = {"exec", "execute", "shell", "command", "commands", "terminal", "bash", "eval", "evaluate", "script",
+        "spawn", "process", "powershell", "cmd", "interpreter", "repl"}
 DESTRUCTIVE = {"delete", "remove", "drop", "destroy", "truncate", "purge", "kill", "terminate", "wipe",
-               "rm", "uninstall", "revoke", "cancel", "refund", "archive", "reset", "erase", "clear"}
+               "rm", "uninstall", "revoke", "cancel", "refund", "erase"}
 WRITE = {"write", "create", "update", "edit", "set", "put", "insert", "add", "move", "rename", "modify",
          "patch", "upsert", "merge", "commit", "push", "deploy", "upload", "save", "append", "replace",
-         "apply", "install"} | DESTRUCTIVE
-SEND = {"send", "post", "email", "mail", "upload", "webhook", "publish", "share", "comment", "reply",
-        "forward", "message", "notify", "invite", "tweet", "push", "submit", "http", "request", "fetch",
-        "navigate", "browse", "open", "url", "curl", "wget", "create_issue", "dm", "chat"}
+         "install", "send", "post"} | DESTRUCTIVE
+# Words in a server's name that mean its search and read tools reach the web.
+WEB_SERVERS = {"search", "brave", "tavily", "exa", "serper", "duckduckgo", "firecrawl", "fetch", "browser",
+               "playwright", "puppeteer", "web", "crawl", "scrape", "perplexity", "apify", "browserbase",
+               "jina", "kagi", "google", "bing", "wikipedia", "reddit", "youtube", "hackernews", "arxiv"}
 
 _SPLIT = re.compile(r"[^a-z0-9]+")
 _CAMEL = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
@@ -79,26 +89,31 @@ def words(name: str) -> set[str]:
     return {w for w in _SPLIT.split(_CAMEL.sub("_", name).lower()) if w}
 
 
-def tool_caps(tool: dict) -> set[str]:
-    """Rough capabilities of one tool, from its name and annotations."""
-    name = str(tool.get("name", ""))
-    w = words(name)
+def tool_caps(tool: dict, server: str = "") -> set[str]:
+    """Rough capabilities of one tool, from its name (verb + object) and annotations."""
+    w = words(str(tool.get("name", "")))
+    sw = words(server)
     caps = set()
-    if w & UNTRUSTED_IN:
+    reads = bool(w & READ_VERBS) or not (w & (WRITE | SEND_VERBS | CREATE_VERBS))
+    web_server = bool(sw & WEB_SERVERS)
+    # A web read: browsing words, opening a page or URL, or "fetch" on its own or on a web server.
+    web = bool(w & WEB) or ("page" in w and w & PAGE_OPENERS) or (w & {"url", "urls", "link"} and w & URL_READERS) \
+        or w == {"fetch"} or ("fetch" in w and (web_server or w & {"page", "pages", "website", "webpage", "html", "site"}))
+    if (web and not w & {"close", "resize"}) or (reads and w & OUTSIDE and not w & SEND_VERBS) \
+            or (reads and web_server and w & {"search", "fetch", "get", "read", "query"}):
         caps.add("reads-outside-content")
-    if w & PRIVATE:
+    if (reads and w & PRIVATE and not web) or (w & {"sql", "database", "db"} and not web_server):
         caps.add("reads-private-data")
-    if w & SEND or Policy().is_egress(name):
+    if (w & SEND_VERBS and not w & READ_VERBS) or (w & CREATE_VERBS and w & SEND_TARGETS) or web \
+            or w & {"navigate", "browse"}:
         caps.add("sends-out")
-    if w & EXEC or ("run" in w and w & {"code", "script", "shell", "command", "python", "js"}):
+    if w & EXEC or ("run" in w and w & {"code", "script", "shell", "command", "python", "js", "javascript"}):
         caps.add("runs-commands")
     ann = tool.get("annotations") if isinstance(tool.get("annotations"), dict) else {}
-    if w & DESTRUCTIVE or ann.get("destructiveHint") is True and ann.get("readOnlyHint") is not True:
+    if w & DESTRUCTIVE or (ann.get("destructiveHint") is True and ann.get("readOnlyHint") is not True):
         caps.add("deletes")
     if w & WRITE:
         caps.add("changes-things")
-    if ann.get("openWorldHint") is True:
-        caps.add("reads-outside-content")
     return caps
 
 
@@ -239,13 +254,14 @@ def analyse(rep: ServerReport, init: dict, tools: list, prompts: list, resources
     for tool in tools:
         if not isinstance(tool, dict) or not isinstance(tool.get("name"), str):
             continue
-        tr = ToolReport(name=tool["name"], caps=sorted(tool_caps(tool)),
+        tr = ToolReport(name=tool["name"], caps=sorted(tool_caps(tool, rep.name)),
                         findings=_findings(tool), chars=len(json.dumps(tool, ensure_ascii=False)),
                         description=d.strip_hidden(str(tool.get("description") or ""))[:2000])
         ann = tool.get("annotations") if isinstance(tool.get("annotations"), dict) else None
         if ann:
             rep.annotated += 1
-            if ann.get("readOnlyHint") is True and words(tool["name"]) & WRITE:
+            if ann.get("readOnlyHint") is True and words(tool["name"]) & WRITE and not words(tool["name"]) & READ_VERBS \
+                    and not words(tool["name"]) & {"reader", "fields", "preview", "dry", "validate", "draft"}:
                 tr.notes.append("labelled read-only, but its name says it changes things")
         hidden = d.HIDDEN_UNICODE.findall(json.dumps(tool, ensure_ascii=False))
         if [c for c in hidden if c not in d.BENIGN_INVISIBLE]:
@@ -314,7 +330,7 @@ def cross_shadowing(reports: list[ServerReport]) -> None:
     owners: dict[str, set[str]] = {}
     for rep in reports:
         for t in rep.tools:
-            if len(t.name) >= 6 and ("_" in t.name or "-" in t.name):
+            if len(t.name) >= 8 and "_" in t.name:
                 owners.setdefault(t.name, set()).add(rep.name)
     for rep in reports:
         own = {t.name for t in rep.tools}
