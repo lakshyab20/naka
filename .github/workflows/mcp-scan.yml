@@ -57,6 +57,10 @@ jobs:
             --out history-servers.json --map results/versions.json
           naka audit --servers history-servers.json --workers 6 --timeout 150 \
             --json results/history.json || true
+          python scan/compare.py --latest results/scan.json --history results/history.json \
+            --versions results/versions.json --picked results/scan-servers.json --out preview/data.json > stats.json
+          echo "::notice title=naka-scan-stats::$(cat stats.json)"
+          python scan/export_changes.py preview/data.json
         env:
           npm_config_cache: ${{ runner.temp }}/npm
           UV_CACHE_DIR: ${{ runner.temp }}/uv
