@@ -10,6 +10,7 @@ Stops poisoned tools, rug-pulls, data theft, AI worms and memory poisoning in th
 
 <p align="center">
   <a href="https://github.com/lakshyab20/naka/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/lakshyab20/naka/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://pypi.org/project/naka/"><img alt="PyPI" src="https://img.shields.io/pypi/v/naka"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
   <img alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11%2B-blue">
   <img alt="Zero dependencies" src="https://img.shields.io/badge/dependencies-0-brightgreen">
@@ -50,7 +51,7 @@ It fails closed, has zero dependencies, and sets up with one command.
 ## Get started
 
 ```bash
-pip install git+https://github.com/lakshyab20/naka   # PyPI release coming
+pip install naka
 naka install --dry-run   # see which servers in Claude/Cursor/VS Code/... would be protected
 naka install             # protect them (backs up each config; `naka uninstall` restores)
 ```
@@ -189,7 +190,7 @@ See [SECURITY.md](SECURITY.md) for the threat model, review history and how to r
 
 ## Roadmap
 
-- PyPI release and a one-click installer
+- A one-click installer
 - Transformer classifier backend (Prompt Guard 2 / PIGuard via ONNX), measured with `naka bench`
 - Run Naka on [agent-egress-bench](https://github.com/luckyPipewrench/agent-egress-bench) and more public benchmarks
 - Per-tool policies and argument schemas (CaMeL-style capabilities)
