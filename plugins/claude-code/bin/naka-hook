@@ -1,0 +1,10 @@
+#!/bin/sh
+# Runs `naka hook claude-code`: the installed naka if there is one, else via uvx.
+if command -v naka >/dev/null 2>&1; then
+  exec naka hook claude-code "$@"
+fi
+if command -v uvx >/dev/null 2>&1; then
+  exec uvx --quiet --from 'naka>=0.4' naka hook claude-code "$@"
+fi
+printf '%s' '{"systemMessage": "Naka is not protecting this session: install it with `pip install naka` (or install uv)."}'
+exit 0

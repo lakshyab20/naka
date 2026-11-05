@@ -258,6 +258,11 @@ def main(argv: list[str] | None = None) -> int:
     ev.add_argument("--keep", help="save every run (messages, guard log, tool calls) in this folder")
     ev.set_defaults(func=lambda a: __import__("naka.evals.cli", fromlist=["main"]).main(a))
 
+    hk = sub.add_parser("hook", help="check Claude Code's built-in tools (used by the Claude Code plugin)")
+    hk.add_argument("client", choices=["claude-code"])
+    hk.add_argument("--config", help="policy TOML file")
+    hk.set_defaults(func=lambda a: __import__("naka.hook", fromlist=["main"]).main(a))
+
     ca = sub.add_parser("canary", help="decoy credentials that catch a hijacked agent")
     ca.add_argument("action", choices=["plant", "show"])
     ca.add_argument("path", nargs="?", default=".env.backup", help="file to create (plant)")
