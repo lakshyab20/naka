@@ -290,3 +290,62 @@ def lookalike(eco: str, name: str) -> str | None:
         if eco == "npm" and flat == re.sub(r"[-_.]", "", p):
             return p
     return None
+
+
+# ------------------------------------------------------ archived MCP servers
+# MCPhantom (Glow Labs, Nov 2026): coding agents install the archived
+# @modelcontextprotocol reference servers from training data. They get no
+# security fixes (the Puppeteer one lets a web page start any program).
+ARCHIVED_SERVERS = {
+    "@modelcontextprotocol/server-github": "GitHub's own server (github/github-mcp-server)",
+    "@modelcontextprotocol/server-gitlab": "GitLab's own MCP server",
+    "@modelcontextprotocol/server-slack": "Slack's own MCP server",
+    "@modelcontextprotocol/server-puppeteer": "@playwright/mcp",
+    "@modelcontextprotocol/server-brave-search": "@brave/brave-search-mcp-server",
+    "@modelcontextprotocol/server-google-maps": "a maintained Google Maps server",
+    "@modelcontextprotocol/server-postgres": "a maintained Postgres server",
+    "@modelcontextprotocol/server-redis": "a maintained Redis server",
+    "@modelcontextprotocol/server-gdrive": "a maintained Google Drive server",
+    "@modelcontextprotocol/server-aws-kb-retrieval": "AWS's own MCP servers (awslabs)",
+    "@modelcontextprotocol/server-everart": "a maintained server",
+    "@modelcontextprotocol/create-server": "the MCP SDK's current docs",
+    "mcp-server-sentry": "Sentry's own MCP server",
+    "mcp-server-sqlite": "a maintained SQLite server",
+}
+_ARCHIVED = re.compile(r"(?<![\w@/.-])(" + "|".join(re.escape(k) for k in ARCHIVED_SERVERS) + r")(?![\w/-])", re.I)
+
+
+def archived_servers(text: str) -> list[str]:
+    """Archived, unpatched MCP reference servers named in text (a command or a config)."""
+    out: list[str] = []
+    for m in _ARCHIVED.finditer(text):
+        name = m.group(1).lower()
+        if name not in out:
+            out.append(name)
+    return out
+
+
+# ------------------------------------------------------ browser launch hijack
+# Browser tools that pass model-chosen launch options to Chrome (the archived
+# Puppeteer server's launchOptions) can be told to start any program, or to
+# run a command for every renderer. Real browsers only.
+BROWSER_EXE = re.compile(r"(?:^|[/\\])(?:google[ -]chrome[\w-]*|chrome(?:-headless-shell|_headless_shell)?|"
+                         r"chromium(?:-browser)?|headless_shell|msedge|microsoft[ -]edge[\w-]*|brave(?:-browser)?|"
+                         r"brave browser|firefox|thorium|vivaldi|opera)(?:\.exe|\.app(?:/.*)?)?$", re.I)
+EXE_KEYS = {"executablepath", "executable_path", "executable", "browserpath", "browser_path", "chromepath",
+            "chrome_path", "binary", "binarypath", "browserexecutable"}
+LAUNCH_FLAGS = re.compile(r"--(?:renderer|utility|gpu|ppapi|plugin|nacl|zygote)-(?:cmd-prefix|launcher)|"
+                          r"--browser-subprocess-path|--(?:renderer|gpu)-startup-dialog-cmd", re.I)
+
+
+def browser_launch(pairs: list[tuple[str, str]]) -> str | None:
+    """Why these (key, value) arguments would make a browser tool start another program."""
+    for key, value in pairs:
+        k = re.sub(r"[\s-]", "", key).lower()
+        v = value.strip()
+        if k in EXE_KEYS and v and not BROWSER_EXE.search(v.rstrip("/\\")):
+            return f"it sets the browser program to {d.safe_text(v, 60)}, which isn't a browser"
+        m = LAUNCH_FLAGS.search(v)
+        if m:
+            return f"it passes {m.group(0)}, a Chrome flag that runs a command"
+    return None

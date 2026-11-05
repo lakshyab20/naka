@@ -171,3 +171,78 @@ def test_normal_installs_pass():
     # Installs mentioned in an email body aren't commands.
     assert not blocked(call(fw, "send_email", {"to": "a@b.co", "body": "run pip install reqeusts"}, rid=13))
     assert not any(e.rule in ("install-after-untrusted", "lookalike-package") for e in events)
+
+
+# ------------------------------------------------------------- MCPhantom
+NAV = {"name": "puppeteer_navigate", "description": "Navigate to a URL.", "inputSchema": {"type": "object"}}
+WRITE = {"name": "write_file", "description": "Writes a file.", "inputSchema": {"type": "object"}}
+
+
+def make_fw2(**policy):
+    events = []
+    fw = Firewall(Policy(**policy), PinStore("t"), AuditLog("t"), on_event=events.append)
+    fw.from_client({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
+    fw.from_server({"jsonrpc": "2.0", "id": 1, "result": {"tools": [SHELL, BASH, NAV, WRITE, SEND]}})
+    return fw, events
+
+
+def test_archived_server_names():
+    assert guards.archived_servers("npx -y @modelcontextprotocol/server-github") == [
+        "@modelcontextprotocol/server-github"]
+    assert guards.archived_servers("uvx mcp-server-sqlite --db-path x.db") == ["mcp-server-sqlite"]
+    assert guards.archived_servers("npx -y @modelcontextprotocol/server-filesystem ~/src") == []
+    assert guards.archived_servers("npx -y @modelcontextprotocol/server-github-v2") == []
+    assert guards.archived_servers("npx -y @acme/server-github") == []
+
+
+def test_installing_an_archived_server_asks_first():
+    fw, events = make_fw2()
+    r = call(fw, "bash", {"command": "claude mcp add github -- npx -y @modelcontextprotocol/server-github"})
+    assert blocked(r) and any(e.rule == "archived-server" for e in events)
+    assert "github-mcp-server" in r["content"][0]["text"]
+
+
+def test_archived_server_in_an_mcp_config_asks_first():
+    fw, events = make_fw2()
+    cfg = '{"mcpServers": {"web": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-puppeteer"]}}}'
+    r = call(fw, "write_file", {"path": ".cursor/mcp.json", "content": cfg})
+    assert blocked(r) and any(e.rule == "archived-server" for e in events)
+
+
+def test_maintained_servers_and_mentions_pass():
+    fw, events = make_fw2()
+    assert not blocked(call(fw, "bash", {"command": "npx -y @modelcontextprotocol/server-filesystem ~/src"}))
+    assert not blocked(call(fw, "bash", {"command": "npx -y @playwright/mcp@latest"}, rid=11))
+    assert not blocked(call(fw, "send_email", {"to": "a@b.co",
+                                               "body": "We dropped @modelcontextprotocol/server-github."}, rid=12))
+    assert not blocked(call(fw, "write_file", {"path": "notes.md",
+                                               "content": "old: @modelcontextprotocol/server-slack"}, rid=13))
+    assert not any(e.rule == "archived-server" for e in events)
+
+
+@pytest.mark.parametrize("opts", [
+    {"executablePath": "/usr/bin/python3", "args": ["-c", "import os"]},
+    {"executablePath": "/bin/sh"},
+    {"executablePath": "C:\\Windows\\System32\\cmd.exe"},
+    {"args": ["--renderer-cmd-prefix=sh -c 'id > /tmp/x'"]},
+    {"args": ["--gpu-launcher=/tmp/payload"]},
+    {"args": ["--utility-cmd-prefix", "/tmp/payload"]},
+])
+def test_browser_launch_hijack_is_blocked(opts):
+    fw, events = make_fw2()
+    r = call(fw, "puppeteer_navigate", {"url": "https://example.com", "launchOptions": opts})
+    assert blocked(r) and any(e.rule == "browser-launch" for e in events)
+
+
+@pytest.mark.parametrize("opts", [
+    {"headless": False, "args": ["--window-size=1280,800", "--no-first-run"]},
+    {"executablePath": "/usr/bin/google-chrome-stable"},
+    {"executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"},
+    {"executablePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"},
+    {"executablePath": "/usr/bin/chromium-browser"},
+    {"executablePath": "/home/u/.cache/ms-playwright/chromium_headless_shell-1169/chrome-linux/headless_shell"},
+])
+def test_real_browser_launches_pass(opts):
+    fw, events = make_fw2()
+    assert not blocked(call(fw, "puppeteer_navigate", {"url": "https://example.com", "launchOptions": opts}))
+    assert not any(e.rule == "browser-launch" for e in events)

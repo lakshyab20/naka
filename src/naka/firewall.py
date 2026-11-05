@@ -635,6 +635,12 @@ class Firewall:
         if msg:
             return msg
 
+        # 2c. MCPhantom: archived MCP reference servers, and browser launch
+        #     options that start another program instead of the browser.
+        msg = self._check_mcphantom(name, args, text, confirm)
+        if msg:
+            return msg
+
         changing = changes_something(name, self.tool_meta.get(name), p)
 
         # 3. Lockdown: once a tool has tried to inject instructions, the model
@@ -756,6 +762,34 @@ class Firewall:
                                    f"'{outside}'. Confirm with the user first.", confirm)
                 if msg:
                     return msg
+        return None
+
+    def _check_mcphantom(self, name: str, args: Any, text: str, confirm: list[tuple[str, str]]) -> str | None:
+        p = self.policy
+        pairs = self._keyed_strings(args)
+        why = guards.browser_launch(pairs)
+        if why:
+            msg = self._decide(p.on_browser_launch, "browser-launch", f"'{name}' would start a program: {why}",
+                               name, f"[naka] Blocked: '{name}' would start another program instead of a "
+                               f"browser ({why}).", confirm)
+            if msg:
+                return msg
+        # Only commands and tool-server configs install a server; a message
+        # that names one doesn't.
+        runs = (name_words(name) & SHELL_WORDS
+                or any(name_words(k) & guards.COMMAND_KEYS for k, _ in pairs)
+                or any(RUNS_CODE_FILE.search(norm_path(s[:2000])) for _, s in pairs))
+        if not runs:
+            return None
+        for pkg in guards.archived_servers(text):
+            instead = guards.ARCHIVED_SERVERS[pkg]
+            msg = self._decide(p.on_archived_server, "archived-server",
+                               f"'{pkg}' is an archived MCP reference server that gets no security fixes; "
+                               f"use {instead} instead", name,
+                               f"[naka] Blocked: '{pkg}' is archived and unpatched. Use {instead} instead, "
+                               f"or confirm with the user.", confirm)
+            if msg:
+                return msg
         return None
 
     def _instruction_surface(self, name: str, args: Any) -> tuple[str, bool, bool] | None:

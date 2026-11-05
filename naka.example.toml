@@ -37,6 +37,10 @@ on_elicitation_phishing = "block"
 on_install_after_untrusted = "confirm"
 # Installing a package one letter off a popular one (typo-squatting).
 on_lookalike_package = "confirm"
+# Installing an archived MCP reference server that gets no security fixes (MCPhantom).
+on_archived_server = "confirm"
+# Browser launch options that start a program other than a browser.
+on_browser_launch = "block"
 # Apps that can't show confirmation prompts: "block" or "warn".
 confirm_fallback = "block"
 # After untrusted content, ask before high-impact actions (payments, access,

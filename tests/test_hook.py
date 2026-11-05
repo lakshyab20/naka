@@ -84,3 +84,9 @@ def test_unreadable_input_fails_closed(tmp_path):
                        env={"NAKA_HOME": str(tmp_path), "PATH": "/usr/bin:/bin",
                             "PYTHONPATH": str(__import__("pathlib").Path(__file__).parents[1] / "src")})
     assert json.loads(p.stdout)["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+
+def test_archived_mcp_server_asks(run):
+    out = run("PreToolUse", "Bash", {"command": "claude mcp add github -- npx -y @modelcontextprotocol/server-github"})
+    assert decision(out) == "ask"
+    assert run("PreToolUse", "Bash", {"command": "claude mcp add fs -- npx -y @modelcontextprotocol/server-filesystem ."}) is None
