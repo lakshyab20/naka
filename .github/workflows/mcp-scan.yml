@@ -1,0 +1,49 @@
+name: mcp-scan
+# The public MCP server scan: the most downloaded MCP servers, audited by `naka audit`.
+# Servers are strangers' code, so this job runs on a throwaway machine with no
+# secrets, read-only repository access and placeholder settings only. It never
+# calls a tool: it only reads each server's lists.
+on:
+  workflow_dispatch:
+    inputs:
+      top:
+        description: "How many npm servers (by weekly downloads)"
+        default: "100"
+  schedule:
+    - cron: "17 3 * * 1"   # every Monday
+  push:
+    branches: [mcp-scan]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e . uv
+      - name: Pick servers
+        run: python scan/discover.py --top "${TOP:-100}" --out scan-servers.json
+        env:
+          TOP: ${{ inputs.top }}
+      - name: Audit them
+        run: |
+          mkdir -p results
+          naka audit --servers scan-servers.json --workers 6 --timeout 150 \
+            --json results/scan.json --md results/scan.md || true
+          cp scan-servers.json results/
+          cat results/scan.md >> "$GITHUB_STEP_SUMMARY"
+        env:
+          npm_config_cache: ${{ runner.temp }}/npm
+          UV_CACHE_DIR: ${{ runner.temp }}/uv
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mcp-scan
+          path: results/
