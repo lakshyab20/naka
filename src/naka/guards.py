@@ -299,7 +299,7 @@ def lookalike(eco: str, name: str) -> str | None:
 ARCHIVED_SERVERS = {
     "@modelcontextprotocol/server-github": "GitHub's own server (github/github-mcp-server)",
     "@modelcontextprotocol/server-gitlab": "GitLab's own MCP server",
-    "@modelcontextprotocol/server-slack": "Slack's own MCP server",
+    "@modelcontextprotocol/server-slack": "a maintained Slack server",
     "@modelcontextprotocol/server-puppeteer": "@playwright/mcp",
     "@modelcontextprotocol/server-brave-search": "@brave/brave-search-mcp-server",
     "@modelcontextprotocol/server-google-maps": "a maintained Google Maps server",
@@ -338,12 +338,25 @@ LAUNCH_FLAGS = re.compile(r"--(?:renderer|utility|gpu|ppapi|plugin|nacl|zygote)-
                           r"--browser-subprocess-path|--(?:renderer|gpu)-startup-dialog-cmd", re.I)
 
 
-def browser_launch(pairs: list[tuple[str, str]]) -> str | None:
-    """Why these (key, value) arguments would make a browser tool start another program."""
+BROWSER_WORDS = {"browser", "puppeteer", "playwright", "chrome", "chromium", "launch", "headless", "navigate",
+                 "selenium", "webdriver", "page", "screenshot"}
+
+
+def browser_launch(pairs: list[tuple[str, str]], tool: str = "") -> str | None:
+    """Why these (key, value) arguments would make a browser tool start another program.
+
+    The program-path check only applies to browser tools (named like one, or
+    passing launch options): a debugger's or runner's "executable" is normal.
+    The Chrome flags that run a command are suspicious anywhere.
+    """
+    words = set(re.split(r"[^a-z0-9]+", re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", tool).lower()))
+    keys = {re.sub(r"[^a-z]", "", k.lower()) for k, _ in pairs}
+    browser = bool(words & BROWSER_WORDS) or any(
+        w in k for k in keys for w in ("launch", "headless", "browser", "puppeteer", "chrome"))
     for key, value in pairs:
         k = re.sub(r"[\s-]", "", key).lower()
         v = value.strip()
-        if k in EXE_KEYS and v and not BROWSER_EXE.search(v.rstrip("/\\")):
+        if browser and k in EXE_KEYS and v and not BROWSER_EXE.search(v.rstrip("/\\")):
             return f"it sets the browser program to {d.safe_text(v, 60)}, which isn't a browser"
         m = LAUNCH_FLAGS.search(v)
         if m:
