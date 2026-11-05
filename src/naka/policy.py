@@ -14,7 +14,8 @@ from pathlib import Path
 ACTIONS = {"block", "warn"}
 # Rules where asking the user is a valid action (needs MCP elicitation support).
 CONFIRMABLE = {"on_egress_after_injection", "on_untrusted_destination", "on_tainted_flow", "on_spread",
-               "on_memory_poisoning", "on_memory_write", "on_install_after_untrusted", "on_lookalike_package"}
+               "on_memory_poisoning", "on_memory_write", "on_install_after_untrusted", "on_lookalike_package",
+               "on_archived_server"}
 
 # Tool names that look like they move data out of the machine. Used for
 # lockdown after untrusted content has reached the model.
@@ -42,6 +43,8 @@ class Policy:
     on_elicitation_phishing: str = "block"  # a server's pop-up form asks for a password, code, key or card
     on_install_after_untrusted: str = "confirm"  # install or download-and-run after reading outside content
     on_lookalike_package: str = "confirm"  # installing a package one letter off a popular one
+    on_archived_server: str = "confirm"   # installing an archived, unpatched MCP reference server
+    on_browser_launch: str = "block"      # browser launch options that start another program
     on_untrusted_destination: str = "confirm"  # an address/URL/ID from untrusted output used to change something
     on_spread: str = "block"              # a note from untrusted output, asking to be passed on, copied into a message
     on_memory_poisoning: str = "block"    # text from untrusted output written into the AI's memory or instructions
