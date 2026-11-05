@@ -13,6 +13,7 @@ on:
     - cron: "17 3 * * 1"   # every Monday
   push:
     branches: [mcp-scan]
+    paths: ["scan/**", "src/naka/audit.py", ".github/workflows/mcp-scan.yml"]
 
 permissions:
   contents: read
@@ -40,6 +41,7 @@ jobs:
             --json results/scan.json --md results/scan.md || true
           cp scan-servers.json results/
           cat results/scan.md >> "$GITHUB_STEP_SUMMARY"
+          python scan/export_annotations.py results/scan.json results/scan-servers.json
         env:
           npm_config_cache: ${{ runner.temp }}/npm
           UV_CACHE_DIR: ${{ runner.temp }}/uv
