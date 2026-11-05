@@ -75,7 +75,7 @@ naka demo                 # the same agent through Naka: every one is stopped
 
 ## The MCP server scan
 
-We started the 100 most downloaded MCP servers and read what they tell the AI. None hid instructions, but 12 of the 75 that started (including the official GitHub, Slack and Notion servers) let one injected message read your private data and send it out on its own. [Live results](https://lakshyab20.github.io/naka/), updated every Monday, including what changed between each server's releases. Check any server yourself with `naka audit -- <command>` (it starts the server, so run unknown ones somewhere disposable).
+We started the 100 most downloaded MCP servers and read what they tell the AI. None hid instructions, but 12 of the 75 that started (including the official GitHub, Slack and Notion servers) let one injected message read your private data and send it out on its own. We also run real attacks on the real servers (the official filesystem, fetch and memory servers, Desktop Commander, the archived Puppeteer server): with no protection all 7 happened, from a stolen key reaching an attacker to a script running; Naka stopped all 7 and interrupted none of 6 everyday tasks. And all 75 servers run through Naka with no tool hidden by mistake. [Live results](https://lakshyab20.github.io/naka/), updated every Monday, including what changed between each server's releases. Check any server yourself with `naka audit -- <command>` (it starts the server, so run unknown ones somewhere disposable).
 
 ## In plain words
 

@@ -33,6 +33,10 @@ Run on macOS 26 (Apple silicon). Raw results: [`scoreboard/2026-11-04.json`](sco
 
 Per-kind results and caveats: [SCOREBOARD.md](SCOREBOARD.md). Naka's authors wrote these suites, so read them with that in mind, and add your own.
 
+## Real servers
+
+The suites above use fake servers so every guard sees exactly the same thing. `naka eval-real` adds attacks on real, popular MCP servers, judged by real side effects (what a local attacker server received, what landed in memory or CLAUDE.md, whether a program ran). It needs npx, uvx and network access and starts servers that run commands, so run it on a throwaway machine. Results, updated weekly: [lakshyab20.github.io/naka](https://lakshyab20.github.io/naka/).
+
 ## Add your guard
 
 ```bash
