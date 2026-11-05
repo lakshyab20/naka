@@ -2,7 +2,7 @@
 
 All notable changes to Naka. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.4.0] - 2026-11-05
 
 ### Added
 - `naka audit`: start an MCP server, read only its lists, and report hidden instructions, cross-server mentions, "lethal trifecta" capability mixes, mislabelled read-only tools and context cost. Useful before installing any server.

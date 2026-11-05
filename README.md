@@ -75,7 +75,7 @@ naka demo                 # the same agent through Naka: every one is stopped
 
 ## The MCP server scan
 
-We started the 100 most downloaded MCP servers and read what they tell the AI. None hid instructions, but 12 of the 75 that started (including the official GitHub, Slack and Notion servers) let one injected message read your private data and send it out on its own. [Full results](docs/MCP-SCAN.md), rerun every week. Check any server yourself with `naka audit -- <command>`.
+We started the 100 most downloaded MCP servers and read what they tell the AI. None hid instructions, but 12 of the 75 that started (including the official GitHub, Slack and Notion servers) let one injected message read your private data and send it out on its own. [Full results](docs/MCP-SCAN.md), rerun every week. Check any server yourself with `naka audit -- <command>` (it starts the server, so run unknown ones somewhere disposable).
 
 ## In plain words
 
@@ -172,7 +172,7 @@ naka pins list                        # what is pinned, what is waiting for revi
 naka pins approve --name github add   # accept a changed definition after reading it
 naka log                              # recent decisions
 naka scan suspicious.txt              # scan any text; exit code 1 if flagged (CI-friendly)
-naka audit -- npx -y some-mcp-server  # check a server's definitions before you install it
+naka audit -- npx -y some-mcp-server  # check a server's definitions (it starts the server: use a spare machine for unknown ones)
 naka canary plant .env.backup         # leave decoy keys that catch a hijacked agent
 naka eval -v                          # run the attack suites through Naka
 ```

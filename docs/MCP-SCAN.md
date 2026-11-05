@@ -163,4 +163,4 @@ pip install naka
 naka audit -- npx -y @modelcontextprotocol/server-github
 ```
 
-`naka audit` only reads a server's lists: it never calls a tool. To stop the attacks, not just spot the risk, put the server behind Naka: `naka install`.
+`naka audit` only reads a server's lists and never calls a tool, but it does start the server, which runs its code. Run unknown servers somewhere disposable (a container, a VM, or a GitHub Actions job like ours). To stop the attacks, not just spot the risk, put the server behind Naka: `naka install`.
