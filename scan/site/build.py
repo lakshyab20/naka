@@ -30,7 +30,9 @@ def pkg_link(r) -> str:
     name = r["name"]
     url = (f"https://www.npmjs.com/package/{name}" if r.get("kind", "npm") == "npm"
            else f"https://pypi.org/project/{name}/")
-    return f'<a href="{e(url)}" rel="noopener">{e(name)}</a>'
+    tag = (f' <span class="pill bad" title="Archived: gets no security fixes. Use {e(r["archived"])} instead.">'
+           f'archived</span>' if r.get("archived") else "")
+    return f'<a href="{e(url)}" rel="noopener">{e(name)}</a>{tag}'
 
 
 def table(head: list[str], rows: list[list[str]], cls: str = "") -> str:
@@ -111,6 +113,13 @@ def build(data: dict) -> str:
                   code([c["tool"] for c in r["since_last_scan"]["changed"]], 4),
                   ", ".join(e(CAP_LABEL[c]) for c in r["since_last_scan"]["gained"]) or "—"] for r in week]
     reviewed = [r for r in ok if r.get("review")]
+    arch = sorted([r for r in servers if r.get("archived")], key=lambda r: -(r.get("downloads") or 0))
+    archived_html = ("" if not arch else
+        "<h2>Still popular, no longer maintained</h2><p>These official reference servers were archived in 2025 and get no "
+        "security fixes, yet AI coding agents still install them from memory "
+        "(<a href=\"https://www.glow.io/blogs/mcphantom-ai-coding-agents-are-installing-vulnerable-deprecated-mcp-servers-from-training-data\">MCPhantom</a>). "
+        "Naka asks before an agent installs one.</p>"
+        + table(["Server", "Weekly downloads", "Use instead"], [[pkg_link(r), dl(r), e(r["archived"])] for r in arch]))
 
     all_rows = []
     for r in sorted(servers, key=lambda r: (r.get("rank") or 999, r["name"])):
@@ -155,6 +164,7 @@ footer{{margin-top:56px;font-size:14px;color:var(--muted)}}
 <div class="tiles">{tiles_html}</div>
 <p class="muted">We start each server with placeholder settings, read only what it tells the AI about itself (its tools, prompts and instructions) and never call a tool. Capabilities are read from tool names as verb + object, so treat them as a guide and check the tools listed.</p>
 
+{archived_html}
 <h2>One message is enough: the lethal trifecta</h2>
 <p>An agent that reads content strangers wrote, can reach your private data and can send data out can be made to leak that data by anyone who can write to what it reads (<a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/">the lethal trifecta</a>). These servers have all three in one install. None of this is a bug: reading issues and posting comments is what a GitHub server is for. It's why a firewall has to sit between the agent and its tools.</p>
 {table(["Server", "Weekly downloads", "Reads outside content", "Reads private data", "Sends data out"], tri_rows)}

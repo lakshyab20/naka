@@ -767,7 +767,7 @@ class Firewall:
     def _check_mcphantom(self, name: str, args: Any, text: str, confirm: list[tuple[str, str]]) -> str | None:
         p = self.policy
         pairs = self._keyed_strings(args)
-        why = guards.browser_launch(pairs)
+        why = guards.browser_launch(pairs, name)
         if why:
             msg = self._decide(p.on_browser_launch, "browser-launch", f"'{name}' would start a program: {why}",
                                name, f"[naka] Blocked: '{name}' would start another program instead of a "

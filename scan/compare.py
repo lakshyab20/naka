@@ -13,10 +13,16 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 import time
 from pathlib import Path
 
 HERE = Path(__file__).parent
+sys.path.insert(0, str(HERE.parent / "src"))
+try:
+    from naka.guards import ARCHIVED_SERVERS
+except ImportError:  # pragma: no cover - the page still builds without the label
+    ARCHIVED_SERVERS = {}
 LEGS = ("reads-outside-content", "reads-private-data", "sends-out", "runs-commands")
 
 
@@ -93,6 +99,7 @@ def main() -> int:
             "downloads": meta.get("weekly_downloads"), "status": s["status"],
             "version": vinfo.get("latest") or (s.get("server_info") or {}).get("version"),
             "error": s.get("error", "")[:160] if s["status"] != "ok" else "",
+            "archived": ARCHIVED_SERVERS.get(s["name"].lower()),
         }
         if s["status"] == "ok":
             caps = caps_of(s)
@@ -143,6 +150,7 @@ def main() -> int:
         "lethal_trifecta": sum("lethal-trifecta" in r["flags"] for r in ok),
         "injection_to_command": sum("injection-to-command" in r["flags"] for r in ok),
         "annotated": sum(r["annotated"] > 0 for r in ok),
+        "archived": sum(bool(r.get("archived")) for r in servers),
         "compared": len(compared),
         "releases_compared": sum(sum(1 for x in r["releases"] if x.get("started")) for r in compared),
         "changed_descriptions": sum(any(x.get("changed") for x in r["releases"]) for r in compared),

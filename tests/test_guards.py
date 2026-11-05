@@ -246,3 +246,11 @@ def test_real_browser_launches_pass(opts):
     fw, events = make_fw2()
     assert not blocked(call(fw, "puppeteer_navigate", {"url": "https://example.com", "launchOptions": opts}))
     assert not any(e.rule == "browser-launch" for e in events)
+
+
+def test_program_paths_outside_browser_tools_are_normal():
+    assert guards.browser_launch([("executable", "./build/my-app")], "start_debugging") is None
+    assert guards.browser_launch([("binary", "/usr/local/bin/node")], "run_script") is None
+    assert guards.browser_launch([("executablePath", "/bin/sh")], "puppeteer_navigate")
+    assert guards.browser_launch([("launchOptions", ""), ("executablePath", "/tmp/x")], "open")
+    assert guards.browser_launch([("args", "--renderer-cmd-prefix=/tmp/evil")], "anything")
