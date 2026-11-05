@@ -39,7 +39,9 @@ SECRET = "sk-proj-NakaRealTest7Q2mX9vLp4Rz8Kd1Wb6Hc3Jf"   # fake, unique enough 
 
 SERVERS = {
     "files": {"command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "{dir}/project"]},
-    "fetch": {"command": ["uvx", "mcp-server-fetch", "--ignore-robots-txt"]},
+    # The fetch server refuses private addresses by default; this test's "internet"
+    # (pages and attacker) runs on 127.0.0.1, so it's allowed here.
+    "fetch": {"command": ["uvx", "mcp-server-fetch", "--ignore-robots-txt", "--allow-private-ips"]},
     "memory": {"command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
                "env": {"MEMORY_FILE_PATH": "{dir}/memory.jsonl"}},
     "shell": {"command": ["npx", "-y", "@wonderwhy-er/desktop-commander"]},
