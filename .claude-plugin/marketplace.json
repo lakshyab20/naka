@@ -1,0 +1,11 @@
+{
+  "name": "naka",
+  "owner": {"name": "Lakshya Bhardwaj", "url": "https://github.com/lakshyab20"},
+  "plugins": [
+    {
+      "name": "naka",
+      "source": "./plugins/claude-code",
+      "description": "Runtime firewall for Claude Code's own tools: blocks data theft, AI worms, memory poisoning and agentjacking in Bash, file edits and web fetches."
+    }
+  ]
+}

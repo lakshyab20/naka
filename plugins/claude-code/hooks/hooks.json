@@ -1,0 +1,17 @@
+{
+  "description": "Naka checks Claude Code's built-in tools before they run, and their output after.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit|WebFetch|WebSearch",
+        "hooks": [{"type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/naka-hook", "timeout": 30}]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|PowerShell|WebFetch|WebSearch|Read|Grep",
+        "hooks": [{"type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/naka-hook", "timeout": 30}]
+      }
+    ]
+  }
+}

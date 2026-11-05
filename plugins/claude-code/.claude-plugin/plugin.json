@@ -1,0 +1,10 @@
+{
+  "name": "naka",
+  "version": "0.4.0",
+  "description": "Runtime firewall for Claude Code's own tools: blocks data theft, AI worms, memory poisoning and agentjacking in Bash, file edits and web fetches.",
+  "author": {"name": "Lakshya Bhardwaj"},
+  "homepage": "https://github.com/lakshyab20/naka",
+  "repository": "https://github.com/lakshyab20/naka",
+  "license": "Apache-2.0",
+  "keywords": ["security", "prompt-injection", "mcp", "firewall"]
+}

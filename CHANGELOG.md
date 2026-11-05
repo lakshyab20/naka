@@ -10,6 +10,7 @@ All notable changes to Naka. The format follows [Keep a Changelog](https://keepa
 - Canary keys: `naka canary plant` leaves decoy credentials; sending one anywhere blocks the call and locks the session (`canary`, `hijacked-session`).
 - Elicitation phishing: server pop-up forms asking for passwords, codes, keys or cards, or impersonating Naka, are declined (`elicitation-phishing`).
 - Agentjacking: install and download-and-run commands after outside content ask first (`install-after-untrusted`), script links from that content are blocked (`untrusted-install`), and typo-squatted package names ask first (`lookalike-package`).
+- Claude Code plugin (`/plugin install naka@naka`) and `naka hook claude-code`: Naka's rules for Claude Code's built-in tools. Calls are denied, or Claude Code asks with Naka's reason, before Bash, file writes and web fetches run; outputs are remembered and scanned after.
 - `agentjacking` eval suite: 4 attacks modelled on the 2026 Sentry agentjacking reports, plus 3 everyday installs.
 
 ## [0.3.0] - 2026-11-04

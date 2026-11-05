@@ -56,7 +56,16 @@ naka install --dry-run   # see which servers in Claude/Cursor/VS Code/... would 
 naka install             # protect them (backs up each config; `naka uninstall` restores)
 ```
 
-Restart the apps. Every MCP server now runs through Naka. To see it work first:
+Restart the apps. Every MCP server now runs through Naka.
+
+**Using Claude Code?** Its own tools (Bash, file edits, web fetch) don't go through MCP. Protect them too with the plugin:
+
+```
+/plugin marketplace add lakshyab20/naka
+/plugin install naka@naka
+```
+
+To see it work first:
 
 ```bash
 naka demo --unprotected   # a hijacked agent, two servers: 7 attacks succeed
