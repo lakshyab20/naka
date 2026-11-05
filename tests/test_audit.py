@@ -55,9 +55,17 @@ def test_servers_that_fail_or_hang_are_not_findings():
 def test_capabilities_from_names():
     caps = audit.tool_caps
     assert caps({"name": "fetch_url"}) >= {"reads-outside-content", "sends-out"}
+    assert caps({"name": "navigate_page"}) >= {"reads-outside-content", "sends-out"}
+    assert caps({"name": "get_inbox"}) >= {"reads-outside-content", "reads-private-data"}
+    assert caps({"name": "send_message"}) == {"sends-out", "changes-things"}
+    assert caps({"name": "create_issue"}) >= {"sends-out"}
+    assert caps({"name": "read_file"}) == {"reads-private-data"}
+    assert caps({"name": "search_files"}) == {"reads-private-data"}
+    assert caps({"name": "search"}, "brave-search-mcp") == {"reads-outside-content"}
     assert "runs-commands" in caps({"name": "execute_command"})
     assert "deletes" in caps({"name": "deleteRecord"})
     assert caps({"name": "get_time"}) == set()
+    assert "sends-out" not in caps({"name": "get_network_request"})
 
 
 def test_entries_get_shared_placeholders(tmp_path):

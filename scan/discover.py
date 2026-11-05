@@ -20,12 +20,29 @@ from pathlib import Path
 HERE = Path(__file__).parent
 SEARCHES = ["keywords:mcp-server", "keywords:mcp", "keywords:modelcontextprotocol",
             "keywords:model-context-protocol", "mcp server"]
+# Well-known servers that are always considered, whatever npm search returns.
+KNOWN = ["@playwright/mcp", "@upstash/context7-mcp", "firecrawl-mcp", "@modelcontextprotocol/server-github",
+         "@modelcontextprotocol/server-brave-search", "@modelcontextprotocol/server-puppeteer",
+         "@modelcontextprotocol/server-slack", "@modelcontextprotocol/server-postgres",
+         "@modelcontextprotocol/server-gdrive", "@modelcontextprotocol/server-google-maps",
+         "@modelcontextprotocol/server-filesystem", "@modelcontextprotocol/server-memory",
+         "@modelcontextprotocol/server-sequential-thinking", "@modelcontextprotocol/server-everything",
+         "@notionhq/notion-mcp-server", "figma-developer-mcp", "@executeautomation/playwright-mcp-server",
+         "@wonderwhy-er/desktop-commander", "tavily-mcp", "exa-mcp-server", "@browserbasehq/mcp-server-browserbase",
+         "@stripe/mcp", "@sentry/mcp-server", "@heroku/mcp-server", "@21st-dev/magic", "@agentdeskai/browser-tools-mcp",
+         "@hubspot/mcp-server", "@shopify/dev-mcp", "@azure/mcp", "@circleci/mcp-server-circleci",
+         "@benborla29/mcp-server-mysql", "mongodb-mcp-server", "@elastic/mcp-server-elasticsearch",
+         "@neondatabase/mcp-server-neon", "@gongrzhe/server-gmail-autoauth-mcp", "@apify/actors-mcp-server",
+         "@openbnb/mcp-server-airbnb", "@kimtaeyoon83/mcp-server-youtube-transcript", "mcp-server-kubernetes",
+         "@auth0/auth0-mcp-server", "chrome-devtools-mcp", "@supabase/mcp-server-supabase", "@cloudflare/mcp-server-cloudflare",
+         "@modelcontextprotocol/server-pdf", "@vercel/mcp", "@linear/mcp", "@atlassian/mcp", "@github/github-mcp-server"]
 # Libraries, clients and tools around MCP rather than servers you'd install.
 NOT_SERVERS = re.compile(
     r"(^@modelcontextprotocol/(sdk|inspector|create-server|ext-apps)$|sdk|inspector|^mcp-remote$|"
     r"framework|^fastmcp$|client|types?$|eslint|typescript|-cli$|^create-|gateway|proxy|"
     r"^@smithery/|^@mastra/|^ai$|langchain|^@ai-sdk/|^@vercel/mcp-adapter|^use-mcp|^mcp-handler|"
-    r"bridge|test(ing)?-|^@types/)", re.I)
+    r"bridge|test(ing)?-|^@types/|-(?:linux|darwin|win32|windows)-|-(?:core|base|logging|telemetry|setup|ui)$|"
+    r"^@mongodb-js/mcp-(?!server)|lib-mcp|plugin-mcp)", re.I)
 
 
 def get(url: str) -> dict:
@@ -62,6 +79,12 @@ def candidates() -> dict[str, dict]:
     return found
 
 
+def has_program(name: str) -> bool:
+    """Only packages with a command to run can be started with npx."""
+    data = get("https://registry.npmjs.org/" + urllib.parse.quote(name, safe="@") + "/latest")
+    return bool(data.get("bin"))
+
+
 def weekly(name: str) -> int:
     data = get("https://api.npmjs.org/downloads/point/last-week/" + urllib.parse.quote(name, safe="@"))
     return int(data.get("downloads") or 0)
@@ -78,13 +101,20 @@ def main() -> int:
     overrides = {e["package"]: e for e in curated if e.get("kind", "npm") == "npm"}
     found = candidates()
     print(f"{len(found)} npm candidates", file=sys.stderr)
-    # Look up downloads for the most popular few hundred by npm's own score.
+    # Look up downloads for the most popular few hundred by npm's own score, plus the known servers.
     shortlist = sorted(found, key=lambda n: -(found[n].get("score") or 0))[: max(400, args.top * 4)]
     found = {n: found[n] for n in shortlist}
+    for name in KNOWN:
+        found.setdefault(name, {"weekly": None})
     for name, info in found.items():
         if not info.get("weekly"):
             info["weekly"] = weekly(name)
-    ranked = sorted(found, key=lambda n: -found[n]["weekly"])[: args.top]
+    ranked = []
+    for name in sorted(found, key=lambda n: -found[n]["weekly"]):
+        if len(ranked) >= args.top:
+            break
+        if found[name]["weekly"] and has_program(name):
+            ranked.append(name)
     servers = []
     for rank, name in enumerate(ranked, 1):
         entry = dict(overrides.get(name, {"package": name}), kind="npm",
