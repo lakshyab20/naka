@@ -121,6 +121,27 @@ def cmd_scan(args) -> int:
     return 1 if total >= args.threshold or any(f.category == "secret" for f in findings) else 0
 
 
+def cmd_canary(args) -> int:
+    from . import guards
+    if args.action == "plant":
+        try:
+            path = guards.plant(args.path)
+        except FileExistsError as exc:
+            print(exc, file=sys.stderr)
+            return 1
+        print(f"Planted decoy credentials in {path}.")
+        print("Nothing legitimate will ever use them. If an agent sends one anywhere, Naka blocks the call,")
+        print("locks the session and logs 'canary'. Keep the file out of git (add it to .gitignore).")
+        return 0
+    canaries = guards.load_canaries()
+    if not canaries:
+        print("No canaries yet. Plant some with: naka canary plant .env.backup")
+        return 0
+    for c in canaries:
+        print(f"{c['name']}={c['value'][:6]}...")
+    return 0
+
+
 def cmd_log(args) -> int:
     path = home() / "audit.jsonl"
     if not path.exists():
@@ -236,6 +257,11 @@ def main(argv: list[str] | None = None) -> int:
     ev.add_argument("--json", help="also write full results to this file")
     ev.add_argument("--keep", help="save every run (messages, guard log, tool calls) in this folder")
     ev.set_defaults(func=lambda a: __import__("naka.evals.cli", fromlist=["main"]).main(a))
+
+    ca = sub.add_parser("canary", help="decoy credentials that catch a hijacked agent")
+    ca.add_argument("action", choices=["plant", "show"])
+    ca.add_argument("path", nargs="?", default=".env.backup", help="file to create (plant)")
+    ca.set_defaults(func=cmd_canary)
 
     au = sub.add_parser("audit", help="check MCP servers' definitions before you trust them")
     au.add_argument("--servers", help="JSON list of servers to audit (see scan/servers.json)")

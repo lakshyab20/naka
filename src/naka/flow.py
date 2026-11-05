@@ -115,6 +115,7 @@ class SessionState:
         self.injection_from: str | None = None
         self.untrusted_from: str | None = None
         self.external_from: str | None = None
+        self.outside_from: str | None = None  # clearly outside: web, email, issues, chat...
         self.path: Path | None = None
         self._offset = 0
         if shared:
@@ -191,6 +192,8 @@ class SessionState:
             self.untrusted_from = self.untrusted_from or r["src"]
         elif t == "ext":
             self.external_from = self.external_from or r["src"]
+        elif t == "out":
+            self.outside_from = self.outside_from or r["src"]
 
     def refresh(self) -> None:
         """Pick up records other Naka processes in this session wrote."""
@@ -212,7 +215,8 @@ class SessionState:
                     continue
 
     # ------------------------------------------------------------- recording
-    def record_output(self, text: str, tool: str, trusted: bool, external: bool = True) -> None:
+    def record_output(self, text: str, tool: str, trusted: bool, external: bool = True,
+                      outside: bool = False) -> None:
         src = f"{self.server}/{tool}"
         whole, chunks, sizes = set(), set(), set()
         for finding, value in d.find_secrets(text) + d.find_pii(text):
@@ -239,6 +243,8 @@ class SessionState:
             self._append({"t": "unt", "src": src})
         if not trusted and external and not self.external_from and text.strip():
             self._append({"t": "ext", "src": src})
+        if not trusted and outside and not self.outside_from and text.strip():
+            self._append({"t": "out", "src": src})
         if not trusted:
             for kind, c in destinations(text):
                 self._append({"t": "dst", "h": self._h(c).hex(), "kind": kind, "src": src})
@@ -376,6 +382,11 @@ class SessionState:
         """First untrusted source from outside the user's workspace (web, email, issues...), if any."""
         self.refresh()
         return self.external_from
+
+    def outside_seen(self) -> str | None:
+        """First untrusted source that is clearly from outside (a web page, an email, an issue...)."""
+        self.refresh()
+        return self.outside_from
 
     def injection_source(self) -> str | None:
         self.refresh()
