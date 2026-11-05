@@ -26,6 +26,17 @@ on_egress_after_injection = "confirm"
 # An address, URL, account or ID that came from untrusted tool output, used
 # to decide where a state-changing tool sends or acts. block | warn | confirm
 on_untrusted_destination = "confirm"
+# A decoy credential from `naka canary plant` is sent anywhere. The session is
+# then locked: nothing that changes something or sends data out is allowed.
+on_canary = "block"
+# A server's pop-up form (MCP elicitation) asks for a password, one-time code,
+# API key, card number or similar, or pretends to be one of Naka's prompts.
+on_elicitation_phishing = "block"
+# An install or download-and-run command (npm/pip/uvx/npx/curl | sh...) after
+# the session read outside content: web pages, issues, emails, tickets.
+on_install_after_untrusted = "confirm"
+# Installing a package one letter off a popular one (typo-squatting).
+on_lookalike_package = "confirm"
 # Apps that can't show confirmation prompts: "block" or "warn".
 confirm_fallback = "block"
 # After untrusted content, ask before high-impact actions (payments, access,

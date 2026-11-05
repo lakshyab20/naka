@@ -46,4 +46,4 @@ testpaths = ["tests"]
 pythonpath = ["."]
 
 [tool.setuptools.package-data]
-naka = ["models/*.gz", "models/*.md", "data/*.json"]
+naka = ["models/*.gz", "models/*.md", "data/*.json", "data/*.txt"]

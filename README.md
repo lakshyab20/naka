@@ -99,6 +99,9 @@ naka eval --guard naka --guard "yourguard=yourguard proxy -- {cmd}" -v
 | **Memory poisoning** | The note is written into CLAUDE.md, AGENTS.md, Cursor/Cline/Windsurf rules, skills, a memory server, an MCP config, a git hook or a CI workflow, so it comes back every session | `memory-poisoning` / `memory-write`: copied text with a link, command or AI-directed request is blocked; other outside text asks first. Text from your own project files is fine |
 | **Credential leaks** | API keys, tokens or private keys in tool-call arguments | `secret-in-args` |
 | **Look-alike tools** | A new tool named `send_emaіl` (Cyrillic і) shadows `send_email` | `shadow-tool` |
+| **Agentjacking** *(new)* | An error report, issue, doc page or ticket tells a coding agent to `npx` a package or `curl … \| bash` a script, the 2026 attack on Claude Code, Cursor and Codex | `install-after-untrusted` asks first; `untrusted-install` blocks a script link that came from that content; `lookalike-package` flags `reqeusts`-style typo-squats |
+| **Hijacked agents** *(new)* | Whatever trick got in, the agent starts sending your secrets somewhere | `canary`: `naka canary plant` leaves decoy keys; if one is ever sent, in any encoding, the call is blocked and the session locked |
+| **Phishing pop-ups** *(new)* | A server uses MCP's in-app forms to ask for your password, one-time code, API key or card, or fakes a Naka prompt | `elicitation-phishing`: the form is declined before you see it |
 
 Detection covers hidden Unicode, base64, look-alike letters, English plus Hindi/Hinglish, Spanish, French, German and Portuguese phrasings, common credentials, and India-aware PII (PAN, Aadhaar, Luhn-checked card numbers).
 
@@ -155,6 +158,8 @@ naka pins list                        # what is pinned, what is waiting for revi
 naka pins approve --name github add   # accept a changed definition after reading it
 naka log                              # recent decisions
 naka scan suspicious.txt              # scan any text; exit code 1 if flagged (CI-friendly)
+naka audit -- npx -y some-mcp-server  # check a server's definitions before you install it
+naka canary plant .env.backup         # leave decoy keys that catch a hijacked agent
 naka eval -v                          # run the attack suites through Naka
 ```
 
