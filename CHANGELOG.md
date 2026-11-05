@@ -6,6 +6,9 @@ All notable changes to Naka. The format follows [Keep a Changelog](https://keepa
 
 ### Added
 - The MCP server scan is now a website, [lakshyab20.github.io/naka](https://lakshyab20.github.io/naka/), rebuilt every Monday by GitHub Actions with no commits: each server's last few releases are compared tool by tool (added, removed and changed tools, new reach such as sending data out, new findings), and each week is compared with the previous one.
+- `naka eval-real`: real attacks on real MCP servers (filesystem, fetch, memory, Desktop Commander, the archived Puppeteer server), judged by what actually happened. Run weekly and published: unprotected, all 7 attacks happened; Naka stopped 7/7 and interrupted 0 of 6 everyday tasks.
+- `naka audit --through-naka`: every scanned server run behind Naka's firewall, to count tools Naka would hide by mistake (first run: 0 of 75 servers).
+- A bare `[IMPORTANT]` in a tool description no longer quarantines the tool on its own (it is ordinary emphasis in Vercel's next-devtools-mcp); with other signals it still does.
 - `naka audit` records a fingerprint of every tool definition and accepts pinned versions in server lists.
 - MCPhantom ([Glow Labs](https://www.glow.io/blogs/mcphantom-ai-coding-agents-are-installing-vulnerable-deprecated-mcp-servers-from-training-data), Nov 2026): installing an archived, unpatched `@modelcontextprotocol` reference server (server-github, server-puppeteer, server-slack...) from a command or an MCP config asks first and names the maintained replacement (`archived-server`); browser launch options that start another program, such as a non-browser `executablePath` or `--renderer-cmd-prefix`, are blocked (`browser-launch`). Two attacks and two everyday twins added to the `agentjacking` eval suite. The browser check applies to browser tools only, so a debugger's or script runner's `executable` stays allowed. The scan page labels archived servers and names their replacements.
 
