@@ -1,0 +1,6804 @@
+{
+ "date": "2026-11-05",
+ "naka": "0.3.0",
+ "rows": [
+  {
+   "n": "@playwright/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 1,
+   "dl": 10188231,
+   "kind": "npm",
+   "info": {
+    "name": "Playwright",
+    "version": "1.65.0-alpha-2026-10-30"
+   },
+   "fl": [
+    "injection-to-command"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 25,
+   "tok": 5517,
+   "ann": 25,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "browser_close": [
+     "deletes",
+     "sends-out"
+    ],
+    "browser_resize": [
+     "deletes",
+     "sends-out"
+    ],
+    "browser_console_messages": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_handle_dialog": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_emulate_media": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_evaluate": [
+     "deletes",
+     "reads-outside-content",
+     "runs-commands",
+     "sends-out"
+    ],
+    "browser_file_upload": [
+     "changes-things",
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_drop": [
+     "changes-things",
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_find": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_fill_form": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_press_key": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_type": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_navigate": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_navigate_back": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_network_requests": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_network_request": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_run_code_unsafe": [
+     "deletes",
+     "reads-outside-content",
+     "runs-commands",
+     "sends-out"
+    ],
+    "browser_take_screenshot": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_snapshot": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_click": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_drag": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_hover": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_select_option": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_tabs": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "browser_wait_for": [
+     "reads-outside-content",
+     "sends-out"
+    ]
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-pdf",
+   "st": "timeout",
+   "e": "no reply to initialize. brary is no longer maintained.\\x0a[pdf-server] Ready (1 URL(s) configured)\\x0a[pdf-server] Client roots are ignored (default for remote ",
+   "rank": 2,
+   "dl": 2278311,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "chrome-devtools-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 3,
+   "dl": 1876272,
+   "kind": "npm",
+   "info": {
+    "name": "chrome_devtools",
+    "version": "1.12.0"
+   },
+   "fl": [
+    "injection-to-command"
+   ],
+   "caps": [
+    "changes-things",
+    "reads-outside-content",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 32,
+   "tok": 7758,
+   "ann": 32,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "click": [],
+    "close_page": [],
+    "drag": [],
+    "emulate": [],
+    "evaluate_script": [
+     "runs-commands"
+    ],
+    "fill": [],
+    "fill_form": [],
+    "get_console_message": [
+     "reads-outside-content"
+    ],
+    "get_css_styles": [],
+    "get_network_request": [],
+    "handle_dialog": [],
+    "hover": [],
+    "lighthouse_audit": [],
+    "list_console_messages": [
+     "reads-outside-content"
+    ],
+    "list_network_requests": [],
+    "list_pages": [],
+    "navigate_page": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "new_page": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "performance_analyze_insight": [],
+    "performance_start_trace": [],
+    "performance_stop_trace": [],
+    "press_key": [],
+    "resize_page": [],
+    "screencast_start": [],
+    "screencast_stop": [],
+    "select_page": [],
+    "take_heapsnapshot": [],
+    "take_screenshot": [],
+    "take_snapshot": [],
+    "type_text": [],
+    "upload_file": [
+     "changes-things",
+     "sends-out"
+    ],
+    "wait_for": []
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-filesystem",
+   "st": "ok",
+   "e": "",
+   "rank": 4,
+   "dl": 1294151,
+   "kind": "npm",
+   "info": {
+    "name": "secure-filesystem-server",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 14,
+   "tok": 3443,
+   "ann": 14,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "read_file": [
+     "reads-private-data"
+    ],
+    "read_text_file": [
+     "reads-private-data"
+    ],
+    "read_media_file": [
+     "reads-private-data"
+    ],
+    "read_multiple_files": [
+     "reads-private-data"
+    ],
+    "write_file": [
+     "changes-things",
+     "deletes"
+    ],
+    "edit_file": [
+     "changes-things",
+     "deletes"
+    ],
+    "create_directory": [
+     "changes-things"
+    ],
+    "list_directory": [
+     "reads-private-data"
+    ],
+    "list_directory_with_sizes": [
+     "reads-private-data"
+    ],
+    "directory_tree": [
+     "reads-private-data"
+    ],
+    "move_file": [
+     "changes-things",
+     "deletes"
+    ],
+    "search_files": [
+     "reads-private-data"
+    ],
+    "get_file_info": [
+     "reads-private-data"
+    ],
+    "list_allowed_directories": [
+     "reads-private-data"
+    ]
+   }
+  },
+  {
+   "n": "@upstash/context7-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 5,
+   "dl": 741246,
+   "kind": "npm",
+   "info": {
+    "name": "Context7",
+    "version": "4.5.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 2,
+   "tok": 1321,
+   "ann": 2,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "resolve-library-id": [],
+    "query-docs": []
+   }
+  },
+  {
+   "n": "@wonderwhy-er/desktop-commander",
+   "st": "ok",
+   "e": "",
+   "rank": 6,
+   "dl": 724305,
+   "kind": "npm",
+   "info": {
+    "name": "desktop-commander",
+    "version": "0.3.1"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data",
+    "runs-commands"
+   ],
+   "tools": 25,
+   "tok": 13538,
+   "ann": 25,
+   "pr": 0,
+   "res": 2,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "get_config": [],
+    "set_config_value": [
+     "changes-things",
+     "deletes"
+    ],
+    "read_file": [
+     "reads-private-data"
+    ],
+    "read_multiple_files": [
+     "reads-private-data"
+    ],
+    "write_file": [
+     "changes-things",
+     "deletes"
+    ],
+    "write_pdf": [
+     "changes-things",
+     "deletes"
+    ],
+    "create_directory": [
+     "changes-things"
+    ],
+    "list_directory": [
+     "reads-private-data"
+    ],
+    "move_file": [
+     "changes-things",
+     "deletes"
+    ],
+    "start_search": [],
+    "get_more_search_results": [],
+    "stop_search": [],
+    "list_searches": [],
+    "get_file_info": [
+     "reads-private-data"
+    ],
+    "edit_block": [
+     "changes-things",
+     "deletes"
+    ],
+    "start_process": [
+     "deletes",
+     "runs-commands"
+    ],
+    "read_process_output": [
+     "runs-commands"
+    ],
+    "interact_with_process": [
+     "deletes",
+     "runs-commands"
+    ],
+    "force_terminate": [
+     "changes-things",
+     "deletes"
+    ],
+    "list_sessions": [],
+    "list_processes": [],
+    "kill_process": [
+     "changes-things",
+     "deletes",
+     "runs-commands"
+    ],
+    "get_usage_stats": [],
+    "get_recent_tool_calls": [],
+    "give_feedback_to_desktop_commander": []
+   }
+  },
+  {
+   "n": "@notionhq/notion-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 7,
+   "dl": 387210,
+   "kind": "npm",
+   "info": {
+    "name": "Notion API",
+    "version": "1.0.0"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 24,
+   "tok": 20473,
+   "ann": 24,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "API-get-user": [
+     "reads-private-data"
+    ],
+    "API-get-users": [
+     "reads-private-data"
+    ],
+    "API-get-self": [],
+    "API-post-search": [
+     "changes-things",
+     "deletes"
+    ],
+    "API-get-block-children": [],
+    "API-patch-block-children": [
+     "changes-things",
+     "deletes"
+    ],
+    "API-retrieve-a-block": [],
+    "API-update-a-block": [
+     "changes-things",
+     "deletes"
+    ],
+    "API-delete-a-block": [
+     "changes-things",
+     "deletes"
+    ],
+    "API-retrieve-a-page": [],
+    "API-patch-page": [
+     "changes-things",
+     "deletes"
+    ],
+    "API-post-page": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "API-retrieve-a-page-property": [],
+    "API-retrieve-a-comment": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "API-create-a-comment": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "API-query-data-source": [
+     "deletes"
+    ],
+    "API-retrieve-a-data-source": [],
+    "API-update-a-data-source": [
+     "changes-things",
+     "deletes"
+    ],
+    "API-create-a-data-source": [
+     "changes-things",
+     "deletes"
+    ],
+    "API-list-data-source-templates": [],
+    "API-retrieve-a-database": [
+     "reads-private-data"
+    ],
+    "API-move-page": [
+     "changes-things",
+     "deletes"
+    ],
+    "API-retrieve-page-markdown": [],
+    "API-update-page-markdown": [
+     "changes-things",
+     "deletes"
+    ]
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-everything",
+   "st": "ok",
+   "e": "",
+   "rank": 8,
+   "dl": 315517,
+   "kind": "npm",
+   "info": {
+    "name": "mcp-servers/everything",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content",
+    "reads-private-data"
+   ],
+   "tools": 13,
+   "tok": 2024,
+   "ann": 13,
+   "pr": 4,
+   "res": 7,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "echo": [],
+    "get-annotated-message": [
+     "reads-outside-content"
+    ],
+    "get-env": [
+     "reads-private-data"
+    ],
+    "get-resource-links": [],
+    "get-resource-reference": [],
+    "get-structured-content": [],
+    "get-sum": [],
+    "get-tiny-image": [],
+    "gzip-file-as-resource": [
+     "reads-private-data"
+    ],
+    "toggle-simulated-logging": [],
+    "toggle-subscriber-updates": [],
+    "trigger-long-running-operation": [],
+    "simulate-research-query": []
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-memory",
+   "st": "ok",
+   "e": "",
+   "rank": 9,
+   "dl": 297809,
+   "kind": "npm",
+   "info": {
+    "name": "memory-server",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 9,
+   "tok": 2952,
+   "ann": 9,
+   "pr": 0,
+   "res": 1,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "create_entities": [
+     "changes-things"
+    ],
+    "create_relations": [
+     "changes-things"
+    ],
+    "add_observations": [
+     "changes-things"
+    ],
+    "delete_entities": [
+     "changes-things",
+     "deletes"
+    ],
+    "delete_observations": [
+     "changes-things",
+     "deletes"
+    ],
+    "delete_relations": [
+     "changes-things",
+     "deletes"
+    ],
+    "read_graph": [
+     "reads-private-data"
+    ],
+    "search_nodes": [],
+    "open_nodes": []
+   }
+  },
+  {
+   "n": "@sentry/mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 10,
+   "dl": 237679,
+   "kind": "npm",
+   "info": {
+    "name": "Sentry MCP",
+    "version": "0.42.0"
+   },
+   "fl": [
+    "injection-to-command"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "runs-commands"
+   ],
+   "tools": 9,
+   "tok": 6763,
+   "ann": 9,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "find_organizations": [],
+    "find_projects": [],
+    "update_issue": [
+     "changes-things",
+     "deletes"
+    ],
+    "search_events": [
+     "reads-private-data"
+    ],
+    "analyze_issue_with_seer": [
+     "reads-outside-content"
+    ],
+    "search_issues": [
+     "reads-outside-content"
+    ],
+    "get_sentry_resource": [],
+    "search_sentry_tools": [],
+    "execute_sentry_tool": [
+     "deletes",
+     "runs-commands"
+    ]
+   }
+  },
+  {
+   "n": "@pandacss/mcp",
+   "st": "failed",
+   "e": "server exited. 2fa/node_modules/@pandacss/mcp/dist/cli.js:311:11)\\x0a    at runCommand (file:///home/runner/work/_temp/npm/_npx/584defa63ab412fa/node_modules/ci",
+   "rank": 11,
+   "dl": 219155,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@supabase/mcp-server-supabase",
+   "st": "ok",
+   "e": "",
+   "rank": 12,
+   "dl": 205830,
+   "kind": "npm",
+   "info": {
+    "name": "supabase",
+    "version": "0.15.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 31,
+   "tok": 6275,
+   "ann": 31,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "search_docs": [],
+    "list_organizations": [],
+    "get_organization": [],
+    "list_projects": [],
+    "get_project": [],
+    "get_cost": [],
+    "confirm_cost": [],
+    "create_project": [
+     "changes-things"
+    ],
+    "pause_project": [],
+    "restore_project": [],
+    "list_tables": [
+     "reads-private-data"
+    ],
+    "list_extensions": [],
+    "list_migrations": [],
+    "apply_migration": [
+     "deletes"
+    ],
+    "execute_sql": [
+     "deletes",
+     "reads-private-data",
+     "runs-commands"
+    ],
+    "query_logs": [
+     "reads-private-data"
+    ],
+    "get_advisors": [],
+    "get_project_url": [],
+    "get_publishable_keys": [],
+    "generate_typescript_types": [],
+    "list_edge_functions": [],
+    "get_edge_function": [],
+    "deploy_edge_function": [
+     "changes-things",
+     "deletes"
+    ],
+    "create_branch": [
+     "changes-things"
+    ],
+    "list_branches": [],
+    "delete_branch": [
+     "changes-things",
+     "deletes"
+    ],
+    "merge_branch": [
+     "changes-things",
+     "deletes"
+    ],
+    "reset_branch": [
+     "deletes"
+    ],
+    "rebase_branch": [
+     "deletes"
+    ],
+    "submit_feedback": [
+     "sends-out"
+    ],
+    "delete_feedback": [
+     "changes-things",
+     "deletes"
+    ]
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-github",
+   "st": "ok",
+   "e": "",
+   "rank": 13,
+   "dl": 189189,
+   "kind": "npm",
+   "info": {
+    "name": "github-mcp-server",
+    "version": "0.6.2"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 26,
+   "tok": 4229,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "create_or_update_file": [
+     "changes-things"
+    ],
+    "search_repositories": [],
+    "create_repository": [
+     "changes-things"
+    ],
+    "get_file_contents": [
+     "reads-private-data"
+    ],
+    "push_files": [
+     "changes-things"
+    ],
+    "create_issue": [
+     "changes-things",
+     "sends-out"
+    ],
+    "create_pull_request": [
+     "changes-things",
+     "sends-out"
+    ],
+    "fork_repository": [
+     "reads-private-data"
+    ],
+    "create_branch": [
+     "changes-things"
+    ],
+    "list_commits": [],
+    "list_issues": [
+     "reads-outside-content"
+    ],
+    "update_issue": [
+     "changes-things"
+    ],
+    "add_issue_comment": [
+     "changes-things",
+     "sends-out"
+    ],
+    "search_code": [],
+    "search_issues": [
+     "reads-outside-content"
+    ],
+    "search_users": [
+     "reads-private-data"
+    ],
+    "get_issue": [
+     "reads-outside-content"
+    ],
+    "get_pull_request": [],
+    "list_pull_requests": [
+     "reads-outside-content"
+    ],
+    "create_pull_request_review": [
+     "changes-things",
+     "sends-out"
+    ],
+    "merge_pull_request": [
+     "changes-things",
+     "sends-out"
+    ],
+    "get_pull_request_files": [
+     "reads-private-data"
+    ],
+    "get_pull_request_status": [],
+    "update_pull_request_branch": [
+     "changes-things",
+     "sends-out"
+    ],
+    "get_pull_request_comments": [],
+    "get_pull_request_reviews": []
+   }
+  },
+  {
+   "n": "mongodb-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 14,
+   "dl": 186455,
+   "kind": "npm",
+   "info": {
+    "name": "MongoDB MCP Server",
+    "version": "3.2.2"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 31,
+   "tok": 20966,
+   "ann": 31,
+   "pr": 0,
+   "res": 2,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "aggregate-db": [
+     "reads-private-data"
+    ],
+    "aggregate": [],
+    "collection-indexes": [],
+    "collection-schema": [],
+    "collection-storage-size": [],
+    "connect": [],
+    "count": [],
+    "create-collection": [
+     "changes-things"
+    ],
+    "create-index": [
+     "changes-things"
+    ],
+    "db-stats": [
+     "reads-private-data"
+    ],
+    "delete-many": [
+     "changes-things",
+     "deletes"
+    ],
+    "disconnect": [],
+    "drop-collection": [
+     "changes-things",
+     "deletes"
+    ],
+    "drop-database": [
+     "changes-things",
+     "deletes",
+     "reads-private-data"
+    ],
+    "drop-index": [
+     "changes-things",
+     "deletes"
+    ],
+    "explain": [],
+    "export": [],
+    "find": [],
+    "insert-many": [
+     "changes-things"
+    ],
+    "list-collections": [],
+    "list-connections": [],
+    "list-databases": [
+     "reads-private-data"
+    ],
+    "mongodb-logs": [
+     "reads-private-data"
+    ],
+    "rename-collection": [
+     "changes-things",
+     "deletes"
+    ],
+    "update-many": [
+     "changes-things",
+     "deletes"
+    ],
+    "atlas-local-create-deployment": [
+     "changes-things"
+    ],
+    "atlas-local-list-deployments": [],
+    "atlas-local-delete-deployment": [
+     "changes-things",
+     "deletes"
+    ],
+    "atlas-local-connect-deployment": [],
+    "search-knowledge": [],
+    "list-knowledge-sources": []
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-slack",
+   "st": "ok",
+   "e": "",
+   "rank": 15,
+   "dl": 185396,
+   "kind": "npm",
+   "info": {
+    "name": "Slack MCP Server",
+    "version": "1.0.0"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 8,
+   "tok": 818,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "slack_list_channels": [],
+    "slack_post_message": [
+     "changes-things",
+     "sends-out"
+    ],
+    "slack_reply_to_thread": [
+     "sends-out"
+    ],
+    "slack_add_reaction": [
+     "changes-things"
+    ],
+    "slack_get_channel_history": [
+     "reads-outside-content",
+     "reads-private-data"
+    ],
+    "slack_get_thread_replies": [
+     "reads-outside-content"
+    ],
+    "slack_get_users": [
+     "reads-private-data"
+    ],
+    "slack_get_user_profile": [
+     "reads-private-data"
+    ]
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-sequential-thinking",
+   "st": "ok",
+   "e": "",
+   "rank": 16,
+   "dl": 183170,
+   "kind": "npm",
+   "info": {
+    "name": "sequential-thinking-server",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 1,
+   "tok": 1191,
+   "ann": 1,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "sequentialthinking": []
+   }
+  },
+  {
+   "n": "@azure/mcp",
+   "st": "failed",
+   "e": "server exited. Required command was not provided.\\x0a\\x0a",
+   "rank": 17,
+   "dl": 161645,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "figma-developer-mcp",
+   "st": "timeout",
+   "e": "no reply to initialize. Usage telemetry enabled. Disable: FRAMELINK_TELEMETRY=off or DO_NOT_TRACK=1\\x0a[INFO] HTTP server listening on port 3333\\x0a[INFO] Strea",
+   "rank": 18,
+   "dl": 159735,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "next-devtools-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 19,
+   "dl": 159006,
+   "kind": "npm",
+   "info": {
+    "name": "next-devtools-mcp",
+    "version": "0.4.0"
+   },
+   "fl": [
+    "hidden-instructions",
+    "injection-to-command"
+   ],
+   "caps": [
+    "reads-outside-content",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 4,
+   "tok": 1435,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [
+    [
+     "nextjs_index",
+     "fake-system-tag",
+     "c tools.  [IMPORTANT] If auto-discovery returns no servers: "
+    ]
+   ],
+   "notes": [],
+   "tc": {
+    "browser_eval": [
+     "reads-outside-content",
+     "runs-commands",
+     "sends-out"
+    ],
+    "nextjs_docs": [],
+    "nextjs_index": [],
+    "nextjs_call": []
+   }
+  },
+  {
+   "n": "agentation-mcp",
+   "st": "failed",
+   "e": "server exited. npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are availa",
+   "rank": 20,
+   "dl": 156862,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@modelcontextprotocol/server-postgres",
+   "st": "ok",
+   "e": "",
+   "rank": 21,
+   "dl": 155598,
+   "kind": "npm",
+   "info": {
+    "name": "example-servers/postgres",
+    "version": "0.1.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 1,
+   "tok": 34,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "query": []
+   }
+  },
+  {
+   "n": "firecrawl-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 22,
+   "dl": 147462,
+   "kind": "npm",
+   "info": {
+    "name": "firecrawl-fastmcp",
+    "version": "3.37.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "sends-out"
+   ],
+   "tools": 28,
+   "tok": 25475,
+   "ann": 28,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "firecrawl_scrape": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "firecrawl_map": [],
+    "firecrawl_search": [
+     "reads-outside-content"
+    ],
+    "firecrawl_find_tools": [],
+    "firecrawl_search_feedback": [
+     "reads-outside-content"
+    ],
+    "firecrawl_feedback": [],
+    "firecrawl_crawl": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "firecrawl_check_crawl_status": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "firecrawl_agent": [],
+    "firecrawl_agent_status": [],
+    "firecrawl_interact": [],
+    "firecrawl_interact_stop": [
+     "deletes"
+    ],
+    "firecrawl_parse": [],
+    "firecrawl_monitor_create": [
+     "changes-things"
+    ],
+    "firecrawl_monitor_list": [],
+    "firecrawl_monitor_get": [
+     "reads-outside-content"
+    ],
+    "firecrawl_monitor_update": [
+     "changes-things",
+     "deletes"
+    ],
+    "firecrawl_monitor_delete": [
+     "changes-things",
+     "deletes"
+    ],
+    "firecrawl_monitor_run": [],
+    "firecrawl_monitor_checks": [],
+    "firecrawl_monitor_check": [],
+    "firecrawl_research_search_papers": [
+     "reads-outside-content"
+    ],
+    "firecrawl_research_inspect_paper": [],
+    "firecrawl_research_related_papers": [],
+    "firecrawl_research_read_paper": [
+     "reads-outside-content"
+    ],
+    "firecrawl_developer_search": [
+     "reads-outside-content"
+    ],
+    "firecrawl_gov_search": [
+     "reads-outside-content"
+    ],
+    "firecrawl_credit_usage": []
+   }
+  },
+  {
+   "n": "@azure-devops/mcp",
+   "st": "failed",
+   "e": "server exited.                       \"interactive\"]\\x0a  -t, --tenant          Azure tenant ID (optional, applied when using\\x0a                        'interac",
+   "rank": 23,
+   "dl": 146490,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@sap-ux/fiori-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 24,
+   "dl": 128468,
+   "kind": "npm",
+   "info": {
+    "name": "fiori-mcp",
+    "version": "1.15.24"
+   },
+   "fl": [],
+   "caps": [
+    "deletes",
+    "runs-commands"
+   ],
+   "tools": 9,
+   "tok": 8113,
+   "ann": 9,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "search_docs": [],
+    "list_fiori_apps": [],
+    "list_sap_systems": [],
+    "download_odata_service_metadata": [],
+    "generate_fiori_app_odata": [
+     "deletes"
+    ],
+    "generate_fiori_app_cap": [
+     "deletes"
+    ],
+    "list_functionality": [],
+    "get_functionality_details": [],
+    "execute_functionality": [
+     "deletes",
+     "runs-commands"
+    ]
+   }
+  },
+  {
+   "n": "@shopify/dev-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 25,
+   "dl": 80037,
+   "kind": "npm",
+   "info": {
+    "name": "shopify-dev-mcp",
+    "version": "1.18.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 5,
+   "tok": 6733,
+   "ann": 0,
+   "pr": 1,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "feedback": [],
+    "learn_shopify_api": [],
+    "search_docs_chunks": [],
+    "validate": [],
+    "validate_theme": []
+   }
+  },
+  {
+   "n": "exa-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 26,
+   "dl": 76410,
+   "kind": "npm",
+   "info": {
+    "name": "exa-search-server",
+    "version": "3.4.3"
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content",
+    "sends-out"
+   ],
+   "tools": 3,
+   "tok": 1735,
+   "ann": 3,
+   "pr": 2,
+   "res": 3,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "web_search_exa": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "web_fetch_exa": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "agent_run": []
+   }
+  },
+  {
+   "n": "@cap-js/mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 27,
+   "dl": 75069,
+   "kind": "npm",
+   "info": {
+    "name": "cds-mcp",
+    "version": "0.1.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 2,
+   "tok": 584,
+   "ann": 2,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "search_model": [],
+    "search_docs": []
+   }
+  },
+  {
+   "n": "scryfall-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 28,
+   "dl": 73446,
+   "kind": "npm",
+   "info": {
+    "name": "mcp-server/scryfall",
+    "version": "0.1.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 7,
+   "tok": 581,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "search_cards": [],
+    "get_card_by_id": [],
+    "get_card_by_name": [],
+    "random_card": [],
+    "get_rulings": [],
+    "get_prices_by_id": [],
+    "get_prices_by_name": []
+   }
+  },
+  {
+   "n": "@zencoderai/slack-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 29,
+   "dl": 64576,
+   "kind": "npm",
+   "info": {
+    "name": "Slack MCP Server",
+    "version": "1.0.0"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 8,
+   "tok": 1075,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "slack_list_channels": [],
+    "slack_post_message": [
+     "changes-things",
+     "sends-out"
+    ],
+    "slack_reply_to_thread": [
+     "sends-out"
+    ],
+    "slack_add_reaction": [
+     "changes-things"
+    ],
+    "slack_get_channel_history": [
+     "reads-outside-content",
+     "reads-private-data"
+    ],
+    "slack_get_thread_replies": [
+     "reads-outside-content"
+    ],
+    "slack_get_users": [
+     "reads-private-data"
+    ],
+    "slack_get_user_profile": [
+     "reads-private-data"
+    ]
+   }
+  },
+  {
+   "n": "@browsermcp/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 30,
+   "dl": 59872,
+   "kind": "npm",
+   "info": {
+    "name": "Browser MCP",
+    "version": "2.4.0"
+   },
+   "fl": [],
+   "caps": [
+    "deletes",
+    "reads-outside-content",
+    "sends-out"
+   ],
+   "tools": 1,
+   "tok": 292,
+   "ann": 1,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "browser": [
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ]
+   }
+  },
+  {
+   "n": "@netlify/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 31,
+   "dl": 54818,
+   "kind": "npm",
+   "info": {
+    "name": "netlify-mcp",
+    "version": "1.21.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 10,
+   "tok": 5746,
+   "ann": 10,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "netlify-coding-rules": [],
+    "netlify-user-services-reader": [
+     "reads-private-data"
+    ],
+    "netlify-deploy-services-reader": [
+     "changes-things"
+    ],
+    "netlify-deploy-services-updater": [
+     "changes-things",
+     "deletes"
+    ],
+    "netlify-team-services-reader": [],
+    "netlify-project-services-reader": [],
+    "netlify-project-services-updater": [
+     "deletes"
+    ],
+    "netlify-extension-services-reader": [],
+    "netlify-extension-services-updater": [
+     "deletes"
+    ],
+    "netlify-observability-services-reader": []
+   }
+  },
+  {
+   "n": "@statelyai/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 32,
+   "dl": 47695,
+   "kind": "npm",
+   "info": {
+    "name": "stately",
+    "version": "0.1.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "reads-outside-content",
+    "reads-private-data"
+   ],
+   "tools": 20,
+   "tok": 16122,
+   "ann": 20,
+   "pr": 0,
+   "res": 2,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "list_machines": [],
+    "get_machine": [],
+    "visualize_machines": [],
+    "read_visualization_workspace": [],
+    "update_visualization_workspace": [
+     "changes-things"
+    ],
+    "validate_machine": [],
+    "convert_machine": [],
+    "diff_machines": [],
+    "apply_machine_patches": [],
+    "review_machine_implementation": [
+     "reads-outside-content"
+    ],
+    "generate_graph_paths": [
+     "reads-private-data"
+    ],
+    "simulate_machine": [],
+    "visualize_machine": [],
+    "extract_machines_from_code": [],
+    "report_visualization_rendered": [],
+    "visualize_stately_machine": [],
+    "list_stately_projects": [],
+    "get_stately_project": [],
+    "list_stately_project_machines": [],
+    "get_stately_machine": []
+   }
+  },
+  {
+   "n": "@hubspot/mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 33,
+   "dl": 45299,
+   "kind": "npm",
+   "info": {
+    "name": "hubspot-mcp-server",
+    "version": "0.4.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "reads-private-data"
+   ],
+   "tools": 21,
+   "tok": 10407,
+   "ann": 21,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "hubspot-get-user-details": [
+     "reads-private-data"
+    ],
+    "hubspot-list-objects": [],
+    "hubspot-search-objects": [],
+    "hubspot-batch-create-associations": [
+     "changes-things"
+    ],
+    "hubspot-get-association-definitions": [],
+    "hubspot-list-associations": [],
+    "hubspot-batch-create-objects": [
+     "changes-things"
+    ],
+    "hubspot-batch-update-objects": [
+     "changes-things"
+    ],
+    "hubspot-batch-read-objects": [],
+    "hubspot-list-properties": [],
+    "hubspot-get-property": [],
+    "hubspot-create-property": [
+     "changes-things"
+    ],
+    "hubspot-update-property": [
+     "changes-things"
+    ],
+    "hubspot-create-engagement": [
+     "changes-things"
+    ],
+    "hubspot-get-engagement": [],
+    "hubspot-update-engagement": [
+     "changes-things"
+    ],
+    "hubspot-generate-feedback-link": [],
+    "hubspot-get-schemas": [],
+    "hubspot-get-link": [],
+    "hubspot-list-workflows": [],
+    "hubspot-get-workflow": []
+   }
+  },
+  {
+   "n": "@winor30/mcp-server-datadog",
+   "st": "failed",
+   "e": "server exited. _KEY must be set\\x0a    at file:///home/runner/work/_temp/npm/_npx/9c62c66c6702adf2/node_modules/@winor30/mcp-server-datadog/build/index.js:1138:",
+   "rank": 34,
+   "dl": 43611,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@metamask/device-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 35,
+   "dl": 42796,
+   "kind": "npm",
+   "info": {
+    "name": "@metamask/device-mcp",
+    "version": "0.0.0"
+   },
+   "fl": [],
+   "caps": [
+    "reads-private-data"
+   ],
+   "tools": 29,
+   "tok": 4625,
+   "ann": 10,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "device_snapshot": [],
+    "device_screenshot": [],
+    "device_info": [],
+    "device_tap_element": [],
+    "device_tap_coordinates": [],
+    "device_type": [],
+    "device_swipe": [],
+    "device_long_press": [],
+    "device_wait_for": [],
+    "device_app_state": [],
+    "device_open_app": [],
+    "device_close_app": [],
+    "device_press_button": [],
+    "device_dismiss_keyboard": [],
+    "device_dismiss_alert": [],
+    "device_logs": [
+     "reads-private-data"
+    ],
+    "device_scroll_to_element": [],
+    "device_get_alert_text": [],
+    "device_get_window_size": [],
+    "device_context": [],
+    "device_clipboard": [],
+    "device_screen_recording": [],
+    "device_generate_locators": [],
+    "device_get_element_text": [],
+    "device_list_devices": [],
+    "device_select_device": [],
+    "hermes_cdp": [],
+    "hermes_targets": [],
+    "webview_cdp": []
+   }
+  },
+  {
+   "n": "replicate-mcp",
+   "st": "failed",
+   "e": "server exited. odule._compile (node:internal/modules/cjs/loader:1781:14)\\x0a    at Object..js (node:internal/modules/cjs/loader:1913:10)\\x0a    at Module.load (",
+   "rank": 36,
+   "dl": 37760,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@apify/actors-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 37,
+   "dl": 31362,
+   "kind": "npm",
+   "info": {
+    "name": "apify-mcp-server",
+    "version": "0.20.2"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 12,
+   "tok": 14256,
+   "ann": 12,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "search-actors": [
+     "reads-outside-content"
+    ],
+    "fetch-actor-details": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "call-actor": [
+     "deletes"
+    ],
+    "get-actor-run": [
+     "reads-outside-content"
+    ],
+    "get-dataset-items": [
+     "reads-outside-content"
+    ],
+    "get-key-value-store-record": [
+     "reads-outside-content",
+     "reads-private-data"
+    ],
+    "abort-actor-run": [
+     "deletes"
+    ],
+    "fetch-actor-mcp-tool-list": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "call-actor-mcp-tool": [
+     "deletes"
+    ],
+    "search-apify-docs": [
+     "reads-outside-content"
+    ],
+    "fetch-apify-docs": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "report-problem": []
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-brave-search",
+   "st": "ok",
+   "e": "",
+   "rank": 38,
+   "dl": 30371,
+   "kind": "npm",
+   "info": {
+    "name": "example-servers/brave-search",
+    "version": "0.1.0"
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content",
+    "sends-out"
+   ],
+   "tools": 2,
+   "tok": 374,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "brave_web_search": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "brave_local_search": [
+     "reads-outside-content"
+    ]
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-puppeteer",
+   "st": "ok",
+   "e": "",
+   "rank": 39,
+   "dl": 29827,
+   "kind": "npm",
+   "info": {
+    "name": "example-servers/puppeteer",
+    "version": "0.1.0"
+   },
+   "fl": [
+    "injection-to-command"
+   ],
+   "caps": [
+    "reads-outside-content",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 7,
+   "tok": 645,
+   "ann": 0,
+   "pr": 0,
+   "res": 1,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "puppeteer_navigate": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "puppeteer_screenshot": [],
+    "puppeteer_click": [],
+    "puppeteer_fill": [],
+    "puppeteer_select": [],
+    "puppeteer_hover": [],
+    "puppeteer_evaluate": [
+     "runs-commands"
+    ]
+   }
+  },
+  {
+   "n": "mcp-server-kubernetes",
+   "st": "ok",
+   "e": "",
+   "rank": 40,
+   "dl": 29714,
+   "kind": "npm",
+   "info": {
+    "name": "kubernetes",
+    "version": "4.2.1"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 23,
+   "tok": 6293,
+   "ann": 22,
+   "pr": 1,
+   "res": 5,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "cleanup": [
+     "deletes"
+    ],
+    "kubectl_get": [],
+    "kubectl_describe": [],
+    "kubectl_apply": [
+     "deletes"
+    ],
+    "kubectl_delete": [
+     "changes-things",
+     "deletes"
+    ],
+    "kubectl_create": [
+     "changes-things"
+    ],
+    "kubectl_logs": [
+     "reads-private-data"
+    ],
+    "kubectl_scale": [
+     "deletes"
+    ],
+    "kubectl_patch": [
+     "changes-things",
+     "deletes"
+    ],
+    "kubectl_rollout": [
+     "deletes"
+    ],
+    "kubectl_context": [],
+    "kubectl_reconnect": [],
+    "explain_resource": [],
+    "install_helm_chart": [
+     "changes-things",
+     "deletes"
+    ],
+    "upgrade_helm_chart": [
+     "deletes"
+    ],
+    "uninstall_helm_chart": [
+     "changes-things",
+     "deletes"
+    ],
+    "node_management": [
+     "deletes"
+    ],
+    "port_forward": [
+     "sends-out"
+    ],
+    "stop_port_forward": [
+     "sends-out"
+    ],
+    "exec_in_pod": [
+     "deletes",
+     "runs-commands"
+    ],
+    "list_api_resources": [],
+    "kubectl_generic": [
+     "deletes"
+    ],
+    "ping": []
+   }
+  },
+  {
+   "n": "vercel-mcp",
+   "st": "failed",
+   "e": "server exited. Error: Missing Vercel API key\\x0aUsage: node script.js VERCEL_API_KEY=<YOUR_API_KEY>\\x0a",
+   "rank": 41,
+   "dl": 28558,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@angelogiacco/elevenlabs-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 42,
+   "dl": 28234,
+   "kind": "npm",
+   "info": {
+    "name": "elevenlabs-mcp-server",
+    "version": "1.0.1"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 513,
+   "tok": 87730,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "List_Generated_Items": [],
+    "Get_History_Item": [
+     "reads-private-data"
+    ],
+    "Delete_History_Item": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Audio_From_History_Item": [
+     "reads-private-data"
+    ],
+    "Download_History_Items": [
+     "reads-private-data"
+    ],
+    "Sound_Generation": [],
+    "Audio_Isolation": [],
+    "Get_Audio_Isolation_History": [
+     "reads-private-data"
+    ],
+    "Delete_Audio_Isolation_History_Item": [
+     "changes-things",
+     "deletes"
+    ],
+    "Audio_Isolation_Stream": [],
+    "Get_Audio_Effects_Catalog": [],
+    "Delete_Sample": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Audio_From_Sample": [],
+    "Text_To_Speech": [],
+    "Text_To_Speech_With_Timestamps": [],
+    "Text_To_Speech_Streaming": [],
+    "Text_To_Speech_Streaming_With_Timestamps": [],
+    "Text_To_Dialogue_Multi-Voice_": [],
+    "Text_To_Dialogue_Multi-Voice_Streaming": [],
+    "Text_To_Dialogue_Streaming_With_Timestamps": [],
+    "Text_To_Dialogue_With_Timestamps": [],
+    "Voice_Changer": [],
+    "Voice_Changer_Streaming": [],
+    "_Deprecated_Generate_A_Voice_Preview_From_Description": [],
+    "Create_A_New_Voice_From_Voice_Preview": [
+     "changes-things"
+    ],
+    "Design_A_Voice_": [],
+    "Remix_A_Voice_": [],
+    "Text_To_Voice_Preview_Streaming": [],
+    "Get_User_Info": [
+     "reads-private-data"
+    ],
+    "Get_User_Subscription_Info": [
+     "reads-private-data"
+    ],
+    "List_Voice_Collections": [],
+    "Create_Voice_Collection": [
+     "changes-things"
+    ],
+    "Get_Voice_Collection": [],
+    "Update_Voice_Collection": [
+     "changes-things"
+    ],
+    "Delete_Voice_Collection": [
+     "changes-things",
+     "deletes"
+    ],
+    "Add_Voice_To_Collection": [
+     "changes-things"
+    ],
+    "Remove_Voice_From_Collection": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Default_Voice_Settings_": [],
+    "Get_Voice_Settings": [],
+    "Edit_Voice_Settings": [
+     "changes-things"
+    ],
+    "Get_Voice_Accents": [],
+    "List_Voices": [],
+    "Get_Voice": [],
+    "Delete_Voice": [
+     "changes-things",
+     "deletes"
+    ],
+    "Edit_Voice": [
+     "changes-things"
+    ],
+    "Get_Voices_V2": [],
+    "Replicate_Voice_To_Isolated_Environment": [],
+    "Add_Voice": [
+     "changes-things"
+    ],
+    "Add_Shared_Voice": [
+     "changes-things"
+    ],
+    "Create_Podcast": [
+     "changes-things"
+    ],
+    "Create_Pronunciation_Dictionaries": [
+     "changes-things"
+    ],
+    "List_Studio_Projects": [],
+    "Create_Studio_Project": [
+     "changes-things"
+    ],
+    "Update_Studio_Project": [
+     "changes-things"
+    ],
+    "Get_Studio_Project": [],
+    "Delete_Studio_Project": [
+     "changes-things",
+     "deletes"
+    ],
+    "Update_Studio_Project_Content": [
+     "changes-things"
+    ],
+    "Convert_Studio_Project": [],
+    "List_Studio_Project_Snapshots": [],
+    "Get_Project_Snapshot": [],
+    "Stream_Studio_Project_Audio": [],
+    "Stream_Archive_With_Studio_Project_Audio": [],
+    "List_Chapters": [],
+    "Create_Chapter": [
+     "changes-things"
+    ],
+    "Get_Chapter": [],
+    "Update_Chapter": [
+     "changes-things"
+    ],
+    "Delete_Chapter": [
+     "changes-things",
+     "deletes"
+    ],
+    "Convert_Chapter": [],
+    "List_Chapter_Snapshots": [],
+    "Get_Chapter_Snapshot": [],
+    "Stream_Chapter_Audio": [],
+    "Get_Project_Muted_Tracks": [],
+    "Create_Dubbing_Project": [
+     "changes-things"
+    ],
+    "List_Dubbing_Projects": [],
+    "Get_Dubbing_Project": [],
+    "Delete_Dubbing_Project": [
+     "changes-things",
+     "deletes"
+    ],
+    "Create_Dubbing_Language_Target": [
+     "changes-things"
+    ],
+    "List_Dubbing_Language_Targets": [],
+    "Get_Dubbing_Language_Target": [],
+    "Delete_Dubbing_Language_Target": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Dubbing_Transcript": [],
+    "Update_Dubbing_Transcript_Segment": [
+     "changes-things"
+    ],
+    "Delete_Dubbing_Transcript_Segment": [
+     "changes-things",
+     "deletes"
+    ],
+    "Update_Dubbing_Transcript_Segments": [
+     "changes-things"
+    ],
+    "Add_Dubbing_Transcript_Segment": [
+     "changes-things"
+    ],
+    "Get_Dubbing_Target_Transcript": [],
+    "Update_Dubbing_Target_Transcript_Segment": [
+     "changes-things"
+    ],
+    "Update_Dubbing_Target_Transcript_Segments": [
+     "changes-things"
+    ],
+    "Regenerate_Dubbing_Target": [],
+    "Get_The_Dubbing_Resource_For_An_Id_": [],
+    "Add_A_Language_To_The_Resource": [
+     "changes-things"
+    ],
+    "Create_A_Segment_For_The_Speaker": [
+     "changes-things"
+    ],
+    "Modify_A_Single_Segment": [
+     "changes-things"
+    ],
+    "Move_Segments_Between_Speakers": [
+     "changes-things"
+    ],
+    "Deletes_A_Single_Segment": [],
+    "Transcribes_Segments": [],
+    "Translates_All_Or_Some_Segments_And_Languages": [],
+    "Dubs_All_Or_Some_Segments_And_Languages": [],
+    "Update_Metadata_For_A_Speaker": [
+     "changes-things"
+    ],
+    "Create_A_New_Speaker": [
+     "changes-things"
+    ],
+    "Search_The_Elevenlabs_Library_For_Voices_Similar_To_A_Speaker_": [],
+    "Render_Audio_Or_Video_For_The_Given_Language": [],
+    "List_Dubs": [],
+    "Dub_A_Video_Or_An_Audio_File": [
+     "reads-private-data"
+    ],
+    "Get_Dubbing": [],
+    "Delete_Dubbing": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Dubbed_File": [
+     "reads-private-data"
+    ],
+    "Get_Dubbed_Transcript": [],
+    "Retrieve_A_Transcript": [],
+    "Get_Models": [],
+    "Creates_Audio_Native_Enabled_Project_": [],
+    "Get_Audio_Native_Project_Settings": [],
+    "Update_Audio-Native_Project_Content": [
+     "changes-things"
+    ],
+    "Update_Audio-Native_Content_From_Url": [
+     "changes-things"
+    ],
+    "Get_Similar_Library_Voices": [],
+    "Get_Voices": [],
+    "Get_Characters_Usage_Metrics_Deprecated_": [],
+    "Add_A_Pronunciation_Dictionary": [
+     "changes-things"
+    ],
+    "Update_Pronunciation_Dictionary": [
+     "changes-things"
+    ],
+    "Get_Metadata_For_A_Pronunciation_Dictionary": [],
+    "Set_Rules_On_The_Pronunciation_Dictionary": [
+     "changes-things"
+    ],
+    "Add_Rules_To_The_Pronunciation_Dictionary": [
+     "changes-things"
+    ],
+    "Remove_Rules_From_The_Pronunciation_Dictionary": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_A_Pls_File_With_A_Pronunciation_Dictionary_Version_Rules": [
+     "reads-private-data"
+    ],
+    "Get_Pronunciation_Dictionaries": [],
+    "Disable_Api_Key": [],
+    "Set_Workspace_Third-Party_Disabling_Policy": [
+     "changes-things"
+    ],
+    "Get_Service_Account_Api_Keys_Route": [
+     "reads-private-data"
+    ],
+    "Create_Service_Account_Api_Key": [
+     "changes-things"
+    ],
+    "Edit_Service_Account_Api_Key": [
+     "changes-things"
+    ],
+    "Delete_Service_Account_Api_Key": [
+     "changes-things",
+     "deletes"
+    ],
+    "Disable_Service_Account_Api_Key": [
+     "reads-private-data"
+    ],
+    "Get_Workspace_Audit_Logs": [
+     "reads-private-data"
+    ],
+    "Create_Workspace_Auth_Connection": [
+     "changes-things"
+    ],
+    "Get_Workspace_Auth_Connections": [],
+    "Update_Workspace_Auth_Connection": [
+     "changes-things"
+    ],
+    "Delete_Workspace_Auth_Connection": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Workspace_Service_Accounts": [
+     "reads-private-data"
+    ],
+    "Create_Service_Account": [
+     "changes-things"
+    ],
+    "Get_All_Groups": [],
+    "Search_User_Groups": [
+     "reads-private-data"
+    ],
+    "Delete_Member_From_User_Group": [
+     "changes-things",
+     "deletes"
+    ],
+    "Add_Member_To_User_Group": [
+     "changes-things"
+    ],
+    "Invite_User": [
+     "sends-out"
+    ],
+    "Invite_Multiple_Users": [
+     "sends-out"
+    ],
+    "Delete_Existing_Invitation": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Workspace_Members": [],
+    "Update_Member": [
+     "changes-things"
+    ],
+    "Get_Resource": [],
+    "Share_Workspace_Resource": [
+     "sends-out"
+    ],
+    "Unshare_Workspace_Resource": [],
+    "List_Workspace_Webhooks": [],
+    "Create_Workspace_Webhook": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Update_Workspace_Webhook": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Delete_Workspace_Webhook": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "Video_To_Music": [],
+    "Speech_To_Text": [],
+    "Get_Transcript_By_Id": [],
+    "Delete_Transcript_By_Id": [
+     "changes-things",
+     "deletes"
+    ],
+    "Create_Single_Use_Token": [
+     "changes-things"
+    ],
+    "Create_Forced_Alignment": [
+     "changes-things"
+    ],
+    "Get_Signed_Url": [],
+    "Get_Webrtc_Token": [],
+    "Handle_An_Outbound_Call_Via_Twilio": [],
+    "Register_A_Twilio_Call_And_Return_Twiml": [],
+    "Handle_An_Outbound_Call_Via_Exotel": [],
+    "Make_An_Outbound_Call_Via_Whatsapp": [],
+    "Send_An_Outbound_Message_Via_Whatsapp": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Create_Agent": [
+     "changes-things"
+    ],
+    "Get_Agent_Summaries": [],
+    "Get_Agent": [],
+    "Patches_An_Agent_Settings": [],
+    "Delete_Agent": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Agent_Widget_Config": [],
+    "Get_Shareable_Agent_Link": [],
+    "Post_Agent_Avatar": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Post_Agent_Hold_Audio": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Delete_Agent_Hold_Audio": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Agents": [],
+    "Returns_The_Size_Of_The_Agent_S_Knowledge_Base": [],
+    "Calculate_Expected_Llm_Usage_For_An_Agent": [],
+    "Duplicate_Agent": [],
+    "Simulates_A_Conversation": [
+     "reads-outside-content"
+    ],
+    "Simulates_A_Conversation_Stream_": [
+     "reads-outside-content"
+    ],
+    "Create_Agent_Response_Test": [
+     "changes-things"
+    ],
+    "Create_Agent_Test_Folder": [
+     "changes-things"
+    ],
+    "Get_Agent_Test_Folder_By_Id": [
+     "reads-private-data"
+    ],
+    "Update_Agent_Test_Folder": [
+     "changes-things"
+    ],
+    "Delete_Agent_Test_Folder": [
+     "changes-things",
+     "deletes"
+    ],
+    "Bulk_Move_Tests_To_Folder": [
+     "changes-things"
+    ],
+    "Get_Agent_Response_Test_By_Id": [],
+    "Update_Agent_Response_Test": [
+     "changes-things"
+    ],
+    "Delete_Agent_Response_Test": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Agent_Response_Test_Summaries_By_Ids": [],
+    "List_Agent_Response_Tests": [],
+    "List_Test_Invocations": [],
+    "Run_Tests_On_The_Agent": [],
+    "Get_Test_Invocation": [],
+    "Update_Test_Invocation": [
+     "changes-things"
+    ],
+    "Cancel_Test_Invocation": [
+     "changes-things",
+     "deletes"
+    ],
+    "Resubmit_Tests": [],
+    "Get_Conversations": [
+     "reads-outside-content"
+    ],
+    "Get_Conversation_Users": [
+     "reads-outside-content",
+     "reads-private-data"
+    ],
+    "Resolve_Conversation_Reference": [
+     "reads-outside-content"
+    ],
+    "Get_Conversation_Details": [
+     "reads-outside-content"
+    ],
+    "Delete_Conversation": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Conversation_Summary": [
+     "reads-outside-content"
+    ],
+    "Get_Sip_Messages_For_A_Conversation": [
+     "reads-outside-content"
+    ],
+    "Get_Conversation_Audio": [
+     "reads-outside-content"
+    ],
+    "Send_Conversation_Feedback": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Text_Search_Conversation_Messages": [
+     "reads-outside-content"
+    ],
+    "Smart_Search_Conversation_Messages": [
+     "reads-outside-content"
+    ],
+    "Assign_Conversation_Tags": [
+     "reads-outside-content"
+    ],
+    "Unassign_Conversation_Tag": [
+     "reads-outside-content"
+    ],
+    "List_Conversation_Tags": [
+     "reads-outside-content"
+    ],
+    "Create_Conversation_Tag": [
+     "changes-things"
+    ],
+    "Get_Conversation_Tag": [
+     "reads-outside-content"
+    ],
+    "Update_Conversation_Tag": [
+     "changes-things"
+    ],
+    "Delete_Conversation_Tag": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Agent_Conversation_Tickets": [
+     "reads-outside-content"
+    ],
+    "Create_Manual_Agent_Ticket": [
+     "changes-things",
+     "sends-out"
+    ],
+    "List_Workspace_Conversation_Tickets": [
+     "reads-outside-content"
+    ],
+    "Create_Agent_Conversation_Ticket": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Get_Agent_Conversation_Ticket_Assignable_Users": [
+     "reads-outside-content",
+     "reads-private-data"
+    ],
+    "Get_Agent_Conversation_Ticket": [
+     "reads-outside-content"
+    ],
+    "Update_Agent_Conversation_Ticket": [
+     "changes-things"
+    ],
+    "Delete_Agent_Conversation_Ticket": [
+     "changes-things",
+     "deletes"
+    ],
+    "Add_Comment_To_Agent_Conversation_Ticket": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Merge_Agent_Conversation_Tickets": [
+     "changes-things"
+    ],
+    "Add_Turn_Comment_To_Agent_Conversation_Ticket": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Import_Phone_Number": [],
+    "List_Phone_Numbers": [],
+    "Get_Phone_Number": [],
+    "Delete_Phone_Number": [
+     "changes-things",
+     "deletes"
+    ],
+    "Update_Phone_Number": [
+     "changes-things"
+    ],
+    "List_Phone_Numbers_Page": [],
+    "Get_Sip_Messages_For_A_Phone_Number": [
+     "reads-outside-content"
+    ],
+    "Calculate_Expected_Llm_Usage": [],
+    "List_Available_Llms": [],
+    "Upload_File": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Delete_File_Upload": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "Get_Live_Count": [],
+    "Get_Knowledge_Base_Summaries_By_Ids": [],
+    "Add_To_Knowledge_Base": [
+     "changes-things"
+    ],
+    "Get_Knowledge_Base_List": [],
+    "Create_Url_Document": [
+     "changes-things"
+    ],
+    "Create_Crawl_Job": [
+     "changes-things",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "List_Ongoing_And_Recent_Crawl_Jobs_Created_By_A_User": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "Get_Crawl_Job_Details": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "Cancel_Crawl_Job": [
+     "changes-things",
+     "deletes",
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "Create_File_Document": [
+     "changes-things"
+    ],
+    "Create_Text_Document": [
+     "changes-things"
+    ],
+    "Create_Folder": [
+     "changes-things"
+    ],
+    "Update_Document": [
+     "changes-things"
+    ],
+    "Get_Documentation_From_Knowledge_Base": [],
+    "Delete_Knowledge_Base_Document_Or_Folder": [
+     "changes-things",
+     "deletes"
+    ],
+    "Update_File_Document": [
+     "changes-things"
+    ],
+    "Compute_Rag_Indexes_In_Batch": [],
+    "Get_Rag_Index_Overview_": [],
+    "Refresh_Url_Document_Content": [],
+    "Compute_Rag_Index_": [],
+    "Get_Rag_Indexes_Of_The_Specified_Knowledgebase_Document_": [],
+    "Delete_Rag_Index_": [
+     "changes-things",
+     "deletes"
+    ],
+    "Search_Knowledge_Base_Content": [],
+    "Query_Agent_Knowledge_Base_Rag": [],
+    "Get_Dependent_Agents_List": [],
+    "Get_Dependent_Agents_For_Multiple_Documents": [],
+    "Get_Document_Content": [],
+    "Get_Document_Source_File_Url": [
+     "reads-private-data"
+    ],
+    "Get_Documentation_Chunk_From_Knowledge_Base": [],
+    "Get_All_Rag_Chunks_For_A_Document": [],
+    "Move_Entity_To_Folder": [
+     "changes-things"
+    ],
+    "Bulk_Move_Entities_To_Folder": [
+     "changes-things"
+    ],
+    "Bulk_Delete_Knowledge_Base_Documents": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Agent_Conversation_Topics": [
+     "reads-outside-content"
+    ],
+    "Add_Tool": [
+     "changes-things"
+    ],
+    "Get_Tools": [],
+    "Get_Tool": [],
+    "Update_Tool": [
+     "changes-things"
+    ],
+    "Delete_Tool": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Tool_Executions": [],
+    "Create_Analysis_Item": [
+     "changes-things"
+    ],
+    "List_Analysis_Items": [],
+    "Update_Analysis_Item_Attachments": [
+     "changes-things"
+    ],
+    "Get_Analysis_Item": [],
+    "Update_Analysis_Item": [
+     "changes-things"
+    ],
+    "Delete_Analysis_Item": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Analysis_Item_Versions": [],
+    "Copy_Analysis_Item": [],
+    "Get_Analysis_Item_Dependent_Agents": [],
+    "Get_Convai_Settings": [],
+    "Update_Convai_Settings": [
+     "changes-things"
+    ],
+    "Get_Convai_Dashboard_Settings": [],
+    "Update_Convai_Dashboard_Settings": [
+     "changes-things"
+    ],
+    "Create_Convai_Workspace_Secret": [
+     "changes-things"
+    ],
+    "Get_Convai_Workspace_Secrets": [
+     "reads-private-data"
+    ],
+    "Get_Convai_Workspace_Secret": [
+     "reads-private-data"
+    ],
+    "Delete_Convai_Workspace_Secret": [
+     "changes-things",
+     "deletes"
+    ],
+    "Update_Convai_Workspace_Secret": [
+     "changes-things"
+    ],
+    "Get_Secret_Dependencies_By_Type": [
+     "reads-private-data"
+    ],
+    "Submit_A_Batch_Call_Request_": [
+     "sends-out"
+    ],
+    "Get_All_Batch_Calls_For_A_Workspace_": [],
+    "Get_A_Batch_Call_By_Id_": [],
+    "Delete_A_Batch_Call_": [
+     "changes-things",
+     "deletes"
+    ],
+    "Cancel_A_Batch_Call_": [
+     "changes-things",
+     "deletes"
+    ],
+    "Retry_A_Batch_Call_": [],
+    "Export_Batch_Call_Results": [],
+    "Handle_An_Outbound_Call_Via_Sip_Trunk": [],
+    "Create_Mcp_Server": [
+     "changes-things"
+    ],
+    "List_Mcp_Servers": [],
+    "Get_Mcp_Server": [],
+    "Delete_Mcp_Server": [
+     "changes-things",
+     "deletes"
+    ],
+    "Update_Mcp_Server_Configuration": [
+     "changes-things"
+    ],
+    "List_Mcp_Server_Tools": [],
+    "Update_Mcp_Server_Approval_Policy": [
+     "changes-things"
+    ],
+    "Create_Mcp_Server_Tool_Approval": [
+     "changes-things"
+    ],
+    "Delete_Mcp_Server_Tool_Approval": [
+     "changes-things",
+     "deletes"
+    ],
+    "Create_Mcp_Tool_Configuration_Override": [
+     "changes-things"
+    ],
+    "Get_Mcp_Tool_Configuration_Override": [],
+    "Update_Mcp_Tool_Configuration_Override": [
+     "changes-things"
+    ],
+    "Delete_Mcp_Tool_Configuration_Override": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Whatsapp_Account": [
+     "reads-private-data"
+    ],
+    "Update_Whatsapp_Account": [
+     "changes-things"
+    ],
+    "Delete_Whatsapp_Account": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Whatsapp_Accounts": [
+     "reads-private-data"
+    ],
+    "Create_A_New_Branch": [
+     "changes-things"
+    ],
+    "List_Agent_Branches": [],
+    "Get_Agent_Branch": [],
+    "Update_Agent_Branch": [
+     "changes-things"
+    ],
+    "Get_Agent_Version_Metadata": [],
+    "Preview_Merged_Configuration": [],
+    "Merge_A_Branch_Into_A_Target_Branch": [
+     "changes-things"
+    ],
+    "Preview_Rebased_Configuration": [],
+    "Rebase_A_Branch_Onto_Main": [],
+    "Create_Or_Update_Deployments": [
+     "changes-things"
+    ],
+    "List_Agent_Deployments": [],
+    "Create_Agent_Draft": [
+     "changes-things"
+    ],
+    "Delete_Agent_Draft": [
+     "changes-things",
+     "deletes"
+    ],
+    "Create_A_Merge_Proposal": [
+     "changes-things"
+    ],
+    "List_Proposals": [],
+    "Get_A_Merge_Proposal": [
+     "changes-things"
+    ],
+    "Update_A_Merge_Proposal": [
+     "changes-things"
+    ],
+    "Review_A_Merge_Proposal": [
+     "changes-things"
+    ],
+    "Comment_On_A_Merge_Proposal": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Merge_A_Merge_Proposal": [
+     "changes-things"
+    ],
+    "List_Speech_Engines": [],
+    "Create_Speech_Engine": [
+     "changes-things"
+    ],
+    "Get_Speech_Engine": [],
+    "Update_Speech_Engine": [
+     "changes-things"
+    ],
+    "Delete_Speech_Engine": [
+     "changes-things",
+     "deletes"
+    ],
+    "Duplicate_Speech_Engine": [],
+    "Create_Procedure": [
+     "changes-things"
+    ],
+    "List_Procedures": [],
+    "Legacy_Compile_Procedures": [],
+    "Remove_Procedure": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Procedure": [],
+    "Get_Procedure_Draft": [],
+    "Update_Procedure_Draft": [
+     "changes-things"
+    ],
+    "Delete_Procedure_Draft": [
+     "changes-things",
+     "deletes"
+    ],
+    "Run_Conversation_Analysis": [
+     "reads-outside-content"
+    ],
+    "Run_Conversation_Evaluation": [
+     "reads-outside-content"
+    ],
+    "List_Environment_Variables": [],
+    "Create_Environment_Variable": [
+     "changes-things"
+    ],
+    "Get_Environment_Variable": [],
+    "Update_Environment_Variable": [
+     "changes-things"
+    ],
+    "Delete_Environment_Variable": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Environments": [],
+    "Create_Environment": [
+     "changes-things"
+    ],
+    "Delete_Environment": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Realtime_Conversation_Groups": [
+     "reads-outside-content"
+    ],
+    "Create_Realtime_Conversation_Group": [
+     "changes-things"
+    ],
+    "Get_Realtime_Conversation_Group": [
+     "reads-outside-content"
+    ],
+    "Update_Realtime_Conversation_Group": [
+     "changes-things"
+    ],
+    "Delete_Realtime_Conversation_Group": [
+     "changes-things",
+     "deletes"
+    ],
+    "Set_Realtime_Conversation_Group": [
+     "changes-things"
+    ],
+    "Clear_Realtime_Conversation_Group": [
+     "reads-outside-content"
+    ],
+    "Create_Realtime_Client_Secret": [
+     "changes-things"
+    ],
+    "Generate_Composition_Plan": [],
+    "Compose_Music": [],
+    "Compose_Music_With_A_Detailed_Response": [],
+    "Stream_Composed_Music_With_A_Detailed_Response": [],
+    "Stream_Composed_Music": [],
+    "Upload_Music": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Stem_Separation": [],
+    "Get_Music_Finetunes": [],
+    "Create_Music_Finetune": [
+     "changes-things"
+    ],
+    "Get_Music_Finetune": [],
+    "Update_Music_Finetune": [
+     "changes-things"
+    ],
+    "Delete_Music_Finetune": [
+     "changes-things",
+     "deletes"
+    ],
+    "Create_Order": [
+     "changes-things"
+    ],
+    "List_Orders": [],
+    "Get_Order": [],
+    "Update_Order": [
+     "changes-things"
+    ],
+    "Register_Media": [],
+    "Get_Media_Info": [],
+    "Upsert_Order_Item": [
+     "changes-things"
+    ],
+    "Remove_Order_Item": [
+     "changes-things",
+     "deletes"
+    ],
+    "Submit_Order": [
+     "sends-out"
+    ],
+    "Get_Order_Deliverables": [],
+    "Get_Available_Languages": [],
+    "Create_Pvc_Voice": [
+     "changes-things"
+    ],
+    "Edit_Pvc_Voice": [
+     "changes-things"
+    ],
+    "Add_Samples_To_Pvc_Voice": [
+     "changes-things"
+    ],
+    "Update_Pvc_Voice_Sample": [
+     "changes-things"
+    ],
+    "Delete_Pvc_Voice_Sample": [
+     "changes-things",
+     "deletes"
+    ],
+    "Retrieve_Voice_Sample_Audio": [],
+    "Retrieve_Voice_Sample_Visual_Waveform": [],
+    "Retrieve_Speaker_Separation_Status": [],
+    "Start_Speaker_Separation": [],
+    "Retrieve_Separated_Speaker_Audio": [],
+    "Get_Pvc_Voice_Captcha": [],
+    "Verify_Pvc_Voice_Captcha": [],
+    "Run_Pvc_Training": [],
+    "Request_Manual_Verification": [
+     "sends-out"
+    ],
+    "Create_Video_Generation": [
+     "changes-things"
+    ],
+    "List_Video_Generations": [],
+    "Get_Video_Generation": [],
+    "Create_Image_Generation": [
+     "changes-things"
+    ],
+    "List_Image_Generations": [],
+    "Get_Image_Generation": [],
+    "Create_Speech_Generation": [
+     "changes-things"
+    ],
+    "List_Speech_Generations": [],
+    "Get_Speech_Generation": [],
+    "Create_Template_Run": [
+     "changes-things"
+    ],
+    "List_Template_Runs": [],
+    "Get_Template_Run": [],
+    "List_Templates": [],
+    "Get_Template": [],
+    "Upload_Asset": [
+     "changes-things",
+     "sends-out"
+    ],
+    "List_Assets": [],
+    "Get_Asset": [],
+    "Delete_Asset": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Workspace_Usage": [],
+    "Get_Workspace_Cost_Usage": [],
+    "List_Api_Requests": [],
+    "Get_All_Services": [],
+    "Create_Service": [
+     "changes-things"
+    ],
+    "Get_Service": [],
+    "Update_Service": [
+     "changes-things"
+    ],
+    "Delete_Service": [
+     "changes-things",
+     "deletes"
+    ],
+    "Confirm_Service_Update": [
+     "changes-things"
+    ],
+    "Get_All_Assets": [],
+    "Create_Asset": [
+     "changes-things"
+    ],
+    "Update_Asset": [
+     "changes-things"
+    ],
+    "Get_All_Products": [],
+    "Create_Product": [
+     "changes-things"
+    ],
+    "Get_Product": [],
+    "Update_Product": [
+     "changes-things"
+    ],
+    "Delete_Product": [
+     "changes-things",
+     "deletes"
+    ],
+    "Update_Product_Stock": [
+     "changes-things"
+    ],
+    "Adjust_Product_Stock": [],
+    "Get_All_Staff": [],
+    "Create_Staff_Member": [
+     "changes-things"
+    ],
+    "Get_Staff_Member": [],
+    "Update_Staff_Member": [
+     "changes-things"
+    ],
+    "Delete_Staff_Member": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Receptionists": [],
+    "Update_Receptionist": [
+     "changes-things"
+    ],
+    "Activate_Receptionist": [],
+    "Add_Rule": [
+     "changes-things"
+    ],
+    "Update_Rule": [
+     "changes-things"
+    ],
+    "Delete_Rule": [
+     "changes-things",
+     "deletes"
+    ],
+    "Add_Procedure": [
+     "changes-things"
+    ],
+    "Update_Procedure": [
+     "changes-things"
+    ],
+    "Delete_Procedure": [
+     "changes-things",
+     "deletes"
+    ],
+    "Add_Transfer_Rule": [
+     "changes-things"
+    ],
+    "Update_Transfer_Rule": [
+     "changes-things"
+    ],
+    "Delete_Transfer_Rule": [
+     "changes-things",
+     "deletes"
+    ],
+    "Assign_Phone_Number": [],
+    "Release_Phone_Number": [],
+    "Move_Phone_Number": [
+     "changes-things"
+    ],
+    "Get_All_Holidays": [],
+    "Create_Holiday": [
+     "changes-things"
+    ],
+    "Get_Holiday": [],
+    "Update_Holiday": [
+     "changes-things"
+    ],
+    "Delete_Holiday": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Locations": [],
+    "Create_Location": [
+     "changes-things"
+    ],
+    "Get_Location": [],
+    "Update_Location": [
+     "changes-things"
+    ],
+    "Delete_Location": [
+     "changes-things",
+     "deletes"
+    ],
+    "Get_Business_Profile": [
+     "reads-private-data"
+    ],
+    "Update_Business_Profile": [
+     "changes-things"
+    ],
+    "List_Knowledge_Sources": [],
+    "Upload_Knowledge_Source": [
+     "changes-things",
+     "sends-out"
+    ],
+    "Get_Knowledge_Source": [],
+    "Delete_Knowledge_Source": [
+     "changes-things",
+     "deletes"
+    ],
+    "Add_Url_Source": [
+     "changes-things"
+    ],
+    "List_Reseller_Workspaces": [],
+    "Create_Reseller_Workspace": [
+     "changes-things"
+    ],
+    "Complete_Reseller_Workspace_Onboarding": [],
+    "Assign_Reseller_Tier": [],
+    "Change_Reseller_Tier": [],
+    "Unassign_Reseller_Tier": [],
+    "Restore_Reseller_Subscription": [],
+    "Cancel_Reseller_Pending_Downgrade": [
+     "changes-things",
+     "deletes"
+    ],
+    "List_Reseller_Tiers": [],
+    "List_Reseller_Invoices": [
+     "reads-private-data"
+    ],
+    "Get_Reseller_Invoice": [
+     "reads-private-data"
+    ],
+    "List_Reseller_Upcoming_Payments": [
+     "reads-private-data"
+    ],
+    "Get_Team_Members": [],
+    "Get_Pending_Team_Invites": [],
+    "Invite_Team_Member": [
+     "sends-out"
+    ],
+    "Cancel_Team_Invite": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "Update_Team_Member_Role": [
+     "changes-things"
+    ],
+    "Remove_Team_Member": [
+     "changes-things",
+     "deletes"
+    ],
+    "Redirect_To_Mintlify": []
+   }
+  },
+  {
+   "n": "wikipedia-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 43,
+   "dl": 25645,
+   "kind": "npm",
+   "info": {
+    "name": "Wikipedia",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content"
+   ],
+   "tools": 2,
+   "tok": 149,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "search": [
+     "reads-outside-content"
+    ],
+    "readArticle": [
+     "reads-outside-content"
+    ]
+   }
+  },
+  {
+   "n": "tavily-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 44,
+   "dl": 24480,
+   "kind": "npm",
+   "info": {
+    "name": "tavily-mcp",
+    "version": "0.2.22"
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content",
+    "sends-out"
+   ],
+   "tools": 5,
+   "tok": 2018,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "tavily_search": [
+     "reads-outside-content"
+    ],
+    "tavily_extract": [],
+    "tavily_crawl": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "tavily_map": [],
+    "tavily_research": []
+   }
+  },
+  {
+   "n": "axe-mcp-server",
+   "st": "failed",
+   "e": "server exited. ts your account is entitled to\\nSet both API keys if your account has both products. API keys come from the axe Account Portal; an OAuth token co",
+   "rank": 45,
+   "dl": 24448,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@mui/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 46,
+   "dl": 23962,
+   "kind": "npm",
+   "info": {
+    "name": "mui-mcp",
+    "version": "0.1.9"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 2,
+   "tok": 808,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "generateReactCode": [],
+    "fetchDocs": []
+   }
+  },
+  {
+   "n": "@productbrain/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 47,
+   "dl": 23856,
+   "kind": "npm",
+   "info": {
+    "name": "Product Brain",
+    "version": "0.7.2"
+   },
+   "fl": [],
+   "caps": [
+    "deletes"
+   ],
+   "tools": 16,
+   "tok": 16938,
+   "ann": 16,
+   "pr": 4,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "session": [],
+    "entries": [
+     "deletes"
+    ],
+    "relations": [
+     "deletes"
+    ],
+    "context": [],
+    "collections": [
+     "deletes"
+    ],
+    "orient": [],
+    "capture": [],
+    "quality": [],
+    "workflows": [],
+    "workspace": [],
+    "feedback": [
+     "deletes"
+    ],
+    "conflicts": [],
+    "question": [],
+    "role": [
+     "deletes"
+    ],
+    "people": [
+     "deletes"
+    ],
+    "outcome": []
+   }
+  },
+  {
+   "n": "@circleci/mcp-server-circleci",
+   "st": "ok",
+   "e": "",
+   "rank": 48,
+   "dl": 23271,
+   "kind": "npm",
+   "info": {
+    "name": "mcp-server-circleci",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 13,
+   "tok": 13077,
+   "ann": 5,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "get_build_failure_logs": [
+     "reads-private-data"
+    ],
+    "find_flaky_tests": [
+     "deletes"
+    ],
+    "get_latest_pipeline_status": [],
+    "get_job_test_results": [],
+    "config_helper": [],
+    "run_pipeline": [
+     "deletes"
+    ],
+    "list_followed_projects": [],
+    "rerun_workflow": [
+     "deletes"
+    ],
+    "download_usage_api_data": [
+     "deletes"
+    ],
+    "find_underused_resource_classes": [],
+    "run_rollback_pipeline": [
+     "deletes"
+    ],
+    "list_component_versions": [],
+    "list_artifacts": []
+   }
+  },
+  {
+   "n": "@togglhq/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 49,
+   "dl": 22203,
+   "kind": "npm",
+   "info": {
+    "name": "toggl-focus",
+    "version": "1.13.161"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 55,
+   "tok": 33439,
+   "ann": 55,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "workspace-list": [],
+    "workspace-switch": [],
+    "profile-list": [
+     "reads-private-data"
+    ],
+    "profile-switch": [
+     "reads-private-data"
+    ],
+    "profile-remove": [
+     "changes-things",
+     "deletes"
+    ],
+    "auth": [],
+    "logout": [],
+    "ai": [
+     "deletes"
+    ],
+    "alerts": [
+     "deletes"
+    ],
+    "archived-clients": [],
+    "archived-projects": [],
+    "archived-tasks": [],
+    "archived-time-entries": [],
+    "attachments": [],
+    "audit-log": [
+     "reads-private-data"
+    ],
+    "capacities": [],
+    "clients": [
+     "deletes"
+    ],
+    "projects": [
+     "deletes"
+    ],
+    "tasks": [
+     "deletes"
+    ],
+    "custom-fields": [
+     "deletes"
+    ],
+    "customreports": [
+     "deletes"
+    ],
+    "designations": [
+     "deletes"
+    ],
+    "goals": [
+     "deletes"
+    ],
+    "milestones": [
+     "deletes"
+    ],
+    "organization": [
+     "deletes"
+    ],
+    "public-holidays": [],
+    "publicsharedreports": [],
+    "rates": [
+     "deletes"
+    ],
+    "recurring-budget-suggestions": [],
+    "reports": [],
+    "reportschedules": [
+     "deletes"
+    ],
+    "saved-views": [
+     "deletes"
+    ],
+    "search": [],
+    "sharedreports": [
+     "deletes"
+    ],
+    "statuses": [
+     "deletes"
+    ],
+    "subscriptions": [],
+    "tags": [
+     "deletes"
+    ],
+    "time-entries": [
+     "deletes"
+    ],
+    "time-off": [
+     "deletes"
+    ],
+    "timesheets": [
+     "deletes"
+    ],
+    "track-team-invites": [],
+    "users": [
+     "reads-private-data"
+    ],
+    "workspace-settings": [],
+    "version": [],
+    "work-preparation": [],
+    "working-hours": [
+     "deletes"
+    ],
+    "workspace": [],
+    "org-invitations": [],
+    "org-members": [],
+    "org-workspaces": [],
+    "shared-status": [],
+    "shared-holidays": [],
+    "shared-working-hours": [
+     "deletes"
+    ],
+    "org-time-off-me": [
+     "deletes"
+    ],
+    "deep-links": []
+   }
+  },
+  {
+   "n": "@aventurevc/mcp-server",
+   "st": "failed",
+   "e": "server exited. npm warn EBADENGINE Unsupported engine {\\x0anpm warn EBADENGINE   package: '@aventurevc/mcp-server@0.8.360',\\x0anpm warn EBADENGINE   required: {",
+   "rank": 50,
+   "dl": 22170,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@benborla29/mcp-server-mysql",
+   "st": "failed",
+   "e": "server exited. npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead\\x0a",
+   "rank": 51,
+   "dl": 22154,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "backlog-mcp-server",
+   "st": "failed",
+   "e": "server exited. .js:15:15)\\n    at file:///home/runner/work/_temp/npm/_npx/cc2e669421a5de2a/node_modules/backlog-mcp-server/build/index.js:128:7\\n    at ModuleJo",
+   "rank": 52,
+   "dl": 21569,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@stripe/mcp",
+   "st": "timeout",
+   "e": "no reply to initialize. treamableHTTPClientTransport.send (/home/runner/work/_temp/npm/_npx/bce731a0395adf49/node_modules/@modelcontextprotocol/sdk/dist/cjs/cli",
+   "rank": 53,
+   "dl": 21440,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@contentful/mcp-server",
+   "st": "failed",
+   "e": "server exited. npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use",
+   "rank": 54,
+   "dl": 18390,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@socketsecurity/mcp",
+   "st": "failed",
+   "e": "server exited.",
+   "rank": 55,
+   "dl": 17795,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@gongrzhe/server-gmail-autoauth-mcp",
+   "st": "failed",
+   "e": "server exited. @1.0.0: Use your platform's native DOMException instead\\x0anpm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM cod",
+   "rank": 56,
+   "dl": 17241,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@auth0/auth0-mcp-server",
+   "st": "failed",
+   "e": "server exited. /modules/cjs/loader:1505:32)\\x0a    at Function._load (node:internal/modules/cjs/loader:1309:12)\\x0a    at wrapModuleLoad (node:internal/modules/",
+   "rank": 57,
+   "dl": 16923,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "appium-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 58,
+   "dl": 16850,
+   "kind": "npm",
+   "info": {
+    "name": "MCP Appium",
+    "version": "1.99.3"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 32,
+   "tok": 11226,
+   "ann": 32,
+   "pr": 0,
+   "res": 4,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "select_device": [],
+    "appium_session_management": [
+     "deletes"
+    ],
+    "appium_mobile_device_control": [],
+    "appium_geolocation": [],
+    "appium_mobile_device_info": [],
+    "appium_mobile_file": [
+     "reads-private-data"
+    ],
+    "appium_driver_settings": [],
+    "prepare_ios_simulator": [],
+    "appium_prepare_ios_real_device": [],
+    "appium_gesture": [],
+    "appium_drag_and_drop": [
+     "changes-things",
+     "deletes"
+    ],
+    "appium_perform_actions": [],
+    "appium_find_element": [],
+    "appium_find_elements": [],
+    "appium_mobile_press_key": [],
+    "appium_set_value": [
+     "changes-things"
+    ],
+    "appium_mobile_keyboard": [],
+    "appium_get_text": [],
+    "appium_get_element_attribute": [],
+    "appium_mobile_clipboard": [],
+    "appium_get_active_element": [],
+    "appium_get_page_source": [],
+    "appium_orientation": [],
+    "appium_alert": [],
+    "appium_screenshot": [],
+    "appium_get_window_size": [],
+    "appium_screen_recording": [],
+    "appium_app_lifecycle": [],
+    "appium_mobile_permissions": [],
+    "appium_context": [],
+    "generate_locators": [],
+    "appium_generate_tests": []
+   }
+  },
+  {
+   "n": "tiny-http-mcp-server",
+   "st": "timeout",
+   "e": "no reply to initialize.",
+   "rank": 59,
+   "dl": 16629,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@xeroapi/xero-mcp-server",
+   "st": "failed",
+   "e": "server exited. nv file\\x0a    at file:///home/runner/work/_temp/npm/_npx/814987d51c90703d/node_modules/@xeroapi/xero-mcp-server/dist/clients/xero-client.js:11:1",
+   "rank": 60,
+   "dl": 15341,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@21st-dev/magic",
+   "st": "failed",
+   "e": "Not authenticated - your API key is missing or was reset. Get a fresh key at https://21st.dev/mcp and update your MCP config (x-api-key / Bearer).. Magic MCP is",
+   "rank": 61,
+   "dl": 13677,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@executeautomation/playwright-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 62,
+   "dl": 13447,
+   "kind": "npm",
+   "info": {
+    "name": "playwright-mcp",
+    "version": "1.0.11"
+   },
+   "fl": [
+    "lethal-trifecta",
+    "injection-to-command"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 33,
+   "tok": 3650,
+   "ann": 0,
+   "pr": 0,
+   "res": 1,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "start_codegen_session": [],
+    "end_codegen_session": [],
+    "get_codegen_session": [
+     "reads-outside-content"
+    ],
+    "clear_codegen_session": [],
+    "playwright_navigate": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "playwright_screenshot": [],
+    "playwright_click": [],
+    "playwright_iframe_click": [],
+    "playwright_iframe_fill": [],
+    "playwright_fill": [],
+    "playwright_select": [],
+    "playwright_hover": [],
+    "playwright_upload_file": [
+     "changes-things",
+     "sends-out"
+    ],
+    "playwright_evaluate": [
+     "runs-commands"
+    ],
+    "playwright_console_logs": [
+     "reads-private-data"
+    ],
+    "playwright_resize": [],
+    "playwright_close": [],
+    "playwright_get": [
+     "reads-outside-content"
+    ],
+    "playwright_post": [
+     "changes-things",
+     "sends-out"
+    ],
+    "playwright_put": [
+     "changes-things"
+    ],
+    "playwright_patch": [
+     "changes-things"
+    ],
+    "playwright_delete": [
+     "changes-things",
+     "deletes"
+    ],
+    "playwright_expect_response": [],
+    "playwright_assert_response": [],
+    "playwright_custom_user_agent": [
+     "reads-private-data"
+    ],
+    "playwright_get_visible_text": [
+     "reads-outside-content"
+    ],
+    "playwright_get_visible_html": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "playwright_go_back": [],
+    "playwright_go_forward": [
+     "sends-out"
+    ],
+    "playwright_drag": [],
+    "playwright_press_key": [],
+    "playwright_save_as_pdf": [
+     "changes-things"
+    ],
+    "playwright_click_and_switch_tab": []
+   }
+  },
+  {
+   "n": "@sap/mdk-mcp-server",
+   "st": "timeout",
+   "e": "no reply to initialize. 400/1985 (20%)\\x0aProgress: 500/1985 (25%)\\x0aProgress: 600/1985 (30%)\\x0aProgress: 700/1985 (35%)\\x0aProgress: 800/1985 (40%)\\x0aProgre",
+   "rank": 63,
+   "dl": 12977,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@primer/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 64,
+   "dl": 11688,
+   "kind": "npm",
+   "info": {
+    "name": "Primer",
+    "version": "1.1.2"
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content"
+   ],
+   "tools": 20,
+   "tok": 2023,
+   "ann": 20,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "init": [],
+    "list_components": [],
+    "get_component": [],
+    "get_component_batch": [],
+    "get_component_examples": [],
+    "get_component_usage_guidelines": [],
+    "get_component_accessibility_guidelines": [],
+    "list_patterns": [],
+    "get_pattern": [],
+    "find_tokens": [],
+    "get_token_group_bundle": [],
+    "get_design_token_specs": [],
+    "get_token_usage_patterns": [],
+    "lint_css": [],
+    "get_color_usage": [],
+    "get_typography_usage": [],
+    "list_icons": [],
+    "get_icon": [],
+    "primer_coding_guidelines": [],
+    "review_alt_text": [
+     "reads-outside-content"
+    ]
+   }
+  },
+  {
+   "n": "@thirdstrandstudio/mcp-figma",
+   "st": "ok",
+   "e": "",
+   "rank": 65,
+   "dl": 11389,
+   "kind": "npm",
+   "info": {
+    "name": "mcp_figma",
+    "version": "0.6.2"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 31,
+   "tok": 4166,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "figma_get_me": [],
+    "figma_get_file": [
+     "reads-private-data"
+    ],
+    "figma_get_file_nodes": [
+     "reads-private-data"
+    ],
+    "figma_get_images": [],
+    "figma_get_image_fills": [],
+    "figma_get_file_versions": [
+     "reads-private-data"
+    ],
+    "figma_get_comments": [
+     "reads-outside-content"
+    ],
+    "figma_post_comment": [
+     "changes-things",
+     "sends-out"
+    ],
+    "figma_delete_comment": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "figma_get_comment_reactions": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "figma_post_comment_reaction": [
+     "changes-things",
+     "sends-out"
+    ],
+    "figma_delete_comment_reaction": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "figma_get_team_projects": [],
+    "figma_get_project_files": [
+     "reads-private-data"
+    ],
+    "figma_get_team_components": [],
+    "figma_get_file_components": [
+     "reads-private-data"
+    ],
+    "figma_get_component": [],
+    "figma_get_team_component_sets": [],
+    "figma_get_file_component_sets": [
+     "reads-private-data"
+    ],
+    "figma_get_component_set": [
+     "changes-things"
+    ],
+    "figma_get_team_styles": [],
+    "figma_get_file_styles": [
+     "reads-private-data"
+    ],
+    "figma_get_style": [],
+    "figma_post_webhook": [
+     "changes-things",
+     "sends-out"
+    ],
+    "figma_get_webhook": [],
+    "figma_update_webhook": [
+     "changes-things",
+     "sends-out"
+    ],
+    "figma_delete_webhook": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "figma_get_team_webhooks": [],
+    "figma_get_library_analytics_component_usages": [],
+    "figma_get_library_analytics_style_usages": [],
+    "figma_get_library_analytics_variable_usages": []
+   }
+  },
+  {
+   "n": "sample-aws-pricing-calculator-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 66,
+   "dl": 11302,
+   "kind": "npm",
+   "info": {
+    "name": "sample-aws-pricing-calculator-mcp",
+    "version": "1.3.4"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things"
+   ],
+   "tools": 10,
+   "tok": 5636,
+   "ann": 10,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "get_server_info": [],
+    "search_services": [],
+    "get_service_fields": [],
+    "create_estimate": [
+     "changes-things"
+    ],
+    "add_service": [
+     "changes-things"
+    ],
+    "validate_estimate": [],
+    "export_estimate": [],
+    "build_estimate": [],
+    "import_estimate": [],
+    "get_estimate_cost": []
+   }
+  },
+  {
+   "n": "@fanyangmeng/ghost-mcp",
+   "st": "failed",
+   "e": "server exited. Error: GHOST_API_URL environment variable is not set.\\x0a",
+   "rank": 67,
+   "dl": 11008,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@magicuidesign/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 68,
+   "dl": 10905,
+   "kind": "npm",
+   "info": {
+    "name": "Magic UI MCP",
+    "version": "2.0.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 3,
+   "tok": 683,
+   "ann": 3,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "listRegistryItems": [],
+    "getRegistryItem": [],
+    "searchRegistryItems": []
+   }
+  },
+  {
+   "n": "@ivotoby/openapi-mcp-server",
+   "st": "failed",
+   "e": "server exited. api-mcp-server/dist/cli.js:25922:20)\\x0a    at file:///home/runner/work/_temp/npm/_npx/e736e327047e2908/node_modules/@ivotoby/openapi-mcp-server/",
+   "rank": 69,
+   "dl": 10298,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "chelaile-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 70,
+   "dl": 9643,
+   "kind": "npm",
+   "info": {
+    "name": "chelaile-mcp-server",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 15,
+   "tok": 8525,
+   "ann": 15,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "bus_list_cities": [],
+    "bus_get_city_config": [],
+    "bus_reverse_geocode": [],
+    "bus_get_my_location": [],
+    "bus_search": [],
+    "bus_search_more": [],
+    "bus_get_nearby_stops": [],
+    "bus_get_stop_detail": [],
+    "bus_get_line_detail": [],
+    "bus_get_line_route": [],
+    "bus_get_line_realtime": [],
+    "bus_list_line_buses": [],
+    "bus_get_timetable": [],
+    "bus_refresh_lines": [],
+    "bus_plan_transit": []
+   }
+  },
+  {
+   "n": "@heroku/mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 71,
+   "dl": 8575,
+   "kind": "npm",
+   "info": {
+    "name": "Heroku MCP Server",
+    "version": "1.2.13"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 33,
+   "tok": 5615,
+   "ann": 0,
+   "pr": 0,
+   "res": 1,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "list_apps": [],
+    "get_app_info": [],
+    "create_app": [
+     "changes-things"
+    ],
+    "rename_app": [
+     "changes-things"
+    ],
+    "maintenance_on": [],
+    "maintenance_off": [],
+    "get_app_logs": [
+     "reads-private-data"
+    ],
+    "list_private_spaces": [],
+    "list_teams": [],
+    "list_addons": [],
+    "get_addon_info": [],
+    "create_addon": [
+     "changes-things"
+    ],
+    "list_addon_services": [],
+    "list_addon_plans": [],
+    "pg_psql": [],
+    "pg_info": [],
+    "pg_ps": [],
+    "pg_locks": [],
+    "pg_outliers": [],
+    "pg_credentials": [
+     "reads-private-data"
+    ],
+    "pg_kill": [
+     "changes-things",
+     "deletes"
+    ],
+    "pg_maintenance": [],
+    "pg_backups": [],
+    "pg_upgrade": [],
+    "ps_list": [],
+    "ps_scale": [],
+    "ps_restart": [],
+    "pipelines_create": [
+     "changes-things"
+    ],
+    "pipelines_promote": [],
+    "pipelines_list": [],
+    "pipelines_info": [],
+    "deploy_to_heroku": [
+     "changes-things"
+    ],
+    "deploy_one_off_dyno": [
+     "changes-things"
+    ]
+   }
+  },
+  {
+   "n": "@wdio/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 72,
+   "dl": 8119,
+   "kind": "npm",
+   "info": {
+    "name": "@wdio/mcp",
+    "version": "4.0.1"
+   },
+   "fl": [
+    "injection-to-command"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 17,
+   "tok": 4784,
+   "ann": 17,
+   "pr": 0,
+   "res": 18,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "start_session": [],
+    "close_session": [
+     "deletes"
+    ],
+    "navigate": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "switch_tab": [],
+    "switch_frame": [],
+    "scroll": [],
+    "click_element": [],
+    "set_value": [
+     "changes-things"
+    ],
+    "select_option": [],
+    "press_key": [],
+    "perform_actions": [],
+    "snapshot": [],
+    "execute_script": [
+     "runs-commands"
+    ],
+    "query_docs": [],
+    "get_screenshot": [],
+    "get_tabs": [],
+    "enable_tools": []
+   }
+  },
+  {
+   "n": "@modelcontextprotocol/server-google-maps",
+   "st": "ok",
+   "e": "",
+   "rank": 73,
+   "dl": 7846,
+   "kind": "npm",
+   "info": {
+    "name": "mcp-server/google-maps",
+    "version": "0.1.0"
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content"
+   ],
+   "tools": 7,
+   "tok": 701,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "maps_geocode": [],
+    "maps_reverse_geocode": [],
+    "maps_search_places": [
+     "reads-outside-content"
+    ],
+    "maps_place_details": [],
+    "maps_distance_matrix": [],
+    "maps_elevation": [],
+    "maps_directions": []
+   }
+  },
+  {
+   "n": "@rsdoctor/mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 74,
+   "dl": 7615,
+   "kind": "npm",
+   "info": {
+    "name": "RsdoctorAnalyticsMCPServer",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [
+    "reads-private-data"
+   ],
+   "tools": 15,
+   "tok": 2736,
+   "ann": 0,
+   "pr": 0,
+   "res": 2,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "get_chunks": [],
+    "get_chunk_by_id": [],
+    "get_module_by_id": [],
+    "get_module_by_path": [],
+    "get_module_issuer_path": [],
+    "get_package_info": [],
+    "get_package_dependency": [],
+    "get_rule_info": [],
+    "get_similar_packages": [],
+    "get_packages_by_package_name": [],
+    "get_duplicate_packages": [],
+    "get_bundle_optimize": [],
+    "get_loader_time_all_files": [
+     "reads-private-data"
+    ],
+    "get_loader_times": [],
+    "get_port": []
+   }
+  },
+  {
+   "n": "@transcend-io/mcp-server-consent",
+   "st": "failed",
+   "e": "server exited. 8bcb009d1dd5/node_modules/@transcend-io/mcp-server-base/dist/index.mjs:2368:8)\\x0a    at resolveStdioStartupAuth (file:///home/runner/work/_temp/",
+   "rank": 75,
+   "dl": 7444,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@transcend-io/mcp-server-inventory",
+   "st": "failed",
+   "e": "server exited. 7af7136438f6/node_modules/@transcend-io/mcp-server-base/dist/index.mjs:2368:8)\\x0a    at resolveStdioStartupAuth (file:///home/runner/work/_temp/",
+   "rank": 76,
+   "dl": 7393,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@react-aria/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 77,
+   "dl": 7150,
+   "kind": "npm",
+   "info": {
+    "name": "react-aria-docs-server",
+    "version": "1.2.1"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 3,
+   "tok": 343,
+   "ann": 3,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "list_react_aria_pages": [],
+    "get_react_aria_page_info": [],
+    "get_react_aria_page": []
+   }
+  },
+  {
+   "n": "@phantom/mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 78,
+   "dl": 6720,
+   "kind": "npm",
+   "info": {
+    "name": "phantom",
+    "version": "3.0.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 30,
+   "tok": 12737,
+   "ann": 30,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "buy": [
+     "deletes"
+    ],
+    "evm_allowance": [],
+    "evm_send": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "evm_sign": [],
+    "evm_sign-typed": [],
+    "login": [],
+    "logout": [],
+    "pay": [
+     "deletes"
+    ],
+    "perps_account": [
+     "reads-private-data"
+    ],
+    "perps_cancel": [
+     "changes-things",
+     "deletes"
+    ],
+    "perps_close": [
+     "deletes"
+    ],
+    "perps_deposit": [
+     "deletes"
+    ],
+    "perps_history": [
+     "reads-private-data"
+    ],
+    "perps_leverage": [
+     "deletes"
+    ],
+    "perps_markets": [],
+    "perps_open": [
+     "deletes"
+    ],
+    "perps_orders": [],
+    "perps_positions": [],
+    "perps_transfer": [],
+    "perps_withdraw": [
+     "deletes"
+    ],
+    "perps_withdraw-hl-spot": [
+     "deletes"
+    ],
+    "price": [],
+    "simulate": [],
+    "solana_send": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "solana_sign": [],
+    "transfer": [
+     "deletes"
+    ],
+    "wallet_addresses": [],
+    "wallet_balances": [],
+    "wallet_rebalance": [
+     "deletes"
+    ],
+    "wallet_status": []
+   }
+  },
+  {
+   "n": "@air/mcp",
+   "st": "failed",
+   "e": "server exited. Error: AIR_API_KEY environment variable is required\\x0a",
+   "rank": 79,
+   "dl": 6658,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@modelcontextprotocol/server-gdrive",
+   "st": "failed",
+   "e": "server exited. ol/server-gdrive@2025.1.14: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.\\x0anpm warn deprecated u",
+   "rank": 80,
+   "dl": 6271,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@agentdeskai/browser-tools-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 81,
+   "dl": 5548,
+   "kind": "npm",
+   "info": {
+    "name": "browser-tools-mcp",
+    "version": "2.0.0"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 16,
+   "tok": 7036,
+   "ann": 16,
+   "pr": 3,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "listBrowserTabs": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "getConsoleLogs": [
+     "reads-outside-content",
+     "reads-private-data"
+    ],
+    "getConsoleErrors": [
+     "reads-outside-content"
+    ],
+    "getNetworkLogs": [
+     "reads-outside-content",
+     "reads-private-data"
+    ],
+    "getNetworkErrors": [
+     "reads-outside-content"
+    ],
+    "getSelectedElement": [
+     "reads-outside-content"
+    ],
+    "getPageInfo": [
+     "reads-outside-content"
+    ],
+    "getConnectionStatus": [
+     "reads-outside-content"
+    ],
+    "takeScreenshot": [],
+    "refreshBrowser": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "getBrowserStorage": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "wipeLogs": [
+     "changes-things",
+     "deletes"
+    ],
+    "runAccessibilityAudit": [],
+    "runPerformanceAudit": [],
+    "runSEOAudit": [],
+    "runBestPracticesAudit": []
+   }
+  },
+  {
+   "n": "@amap/amap-maps-mcp-server",
+   "st": "failed",
+   "e": "server exited. npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead\\x0aAMAP_MAPS_API_KEY environment variable is not set",
+   "rank": 82,
+   "dl": 5174,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "puppeteer-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 83,
+   "dl": 5093,
+   "kind": "npm",
+   "info": {
+    "name": "example-servers/puppeteer",
+    "version": "0.1.0"
+   },
+   "fl": [
+    "injection-to-command"
+   ],
+   "caps": [
+    "reads-outside-content",
+    "runs-commands",
+    "sends-out"
+   ],
+   "tools": 8,
+   "tok": 613,
+   "ann": 0,
+   "pr": 0,
+   "res": 1,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "puppeteer_connect_active_tab": [],
+    "puppeteer_navigate": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "puppeteer_screenshot": [],
+    "puppeteer_click": [],
+    "puppeteer_fill": [],
+    "puppeteer_select": [],
+    "puppeteer_hover": [],
+    "puppeteer_evaluate": [
+     "runs-commands"
+    ]
+   }
+  },
+  {
+   "n": "@penpot/mcp",
+   "st": "failed",
+   "e": "server exited. 4.5\\x0a  help: Run \"pnpm approve-builds\" to pick which dependencies should be allowed\\x0a        to run scripts.\\x0a\\x0a[WARN] The install that r",
+   "rank": 84,
+   "dl": 4903,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@negokaz/excel-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 85,
+   "dl": 4768,
+   "kind": "npm",
+   "info": {
+    "name": "excel-mcp-server",
+    "version": "0.12.0-SNAPSHOT-1ff4340"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 6,
+   "tok": 1505,
+   "ann": 6,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "excel_copy_sheet": [
+     "deletes",
+     "reads-private-data"
+    ],
+    "excel_create_table": [
+     "changes-things",
+     "deletes"
+    ],
+    "excel_describe_sheets": [
+     "deletes",
+     "reads-private-data"
+    ],
+    "excel_format_range": [
+     "deletes"
+    ],
+    "excel_read_sheet": [
+     "deletes",
+     "reads-private-data"
+    ],
+    "excel_write_to_sheet": [
+     "changes-things",
+     "deletes"
+    ]
+   }
+  },
+  {
+   "n": "@coinbase/cds-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 86,
+   "dl": 4675,
+   "kind": "npm",
+   "info": {
+    "name": "cds",
+    "version": "9.30.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 2,
+   "tok": 237,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "list-cds-routes": [],
+    "get-cds-doc": []
+   }
+  },
+  {
+   "n": "@infineon/design-system-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 87,
+   "dl": 4514,
+   "kind": "npm",
+   "info": {
+    "name": "infineon-design-system",
+    "version": "1.0.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 4,
+   "tok": 834,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "infineon_list_components": [],
+    "infineon_get_component_docs": [],
+    "infineon_list_foundations": [],
+    "infineon_get_foundation_docs": []
+   }
+  },
+  {
+   "n": "@transcend-io/mcp-server-admin",
+   "st": "failed",
+   "e": "server exited. dd81ee4e911d/node_modules/@transcend-io/mcp-server-base/dist/index.mjs:2368:8)\\x0a    at resolveStdioStartupAuth (file:///home/runner/work/_temp/",
+   "rank": 88,
+   "dl": 4282,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@transcend-io/mcp-server-dsr",
+   "st": "failed",
+   "e": "server exited. 4fea1e3b0b07/node_modules/@transcend-io/mcp-server-base/dist/index.mjs:2368:8)\\x0a    at resolveStdioStartupAuth (file:///home/runner/work/_temp/",
+   "rank": 89,
+   "dl": 4273,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@sigmacomputing/slack-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 90,
+   "dl": 4256,
+   "kind": "npm",
+   "info": {
+    "name": "Slack MCP Server",
+    "version": "1.0.0"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 17,
+   "tok": 2424,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "slack_list_channels": [],
+    "slack_post_message": [
+     "changes-things",
+     "sends-out"
+    ],
+    "slack_reply_to_thread": [
+     "sends-out"
+    ],
+    "slack_add_reaction": [
+     "changes-things"
+    ],
+    "slack_get_channel_history": [
+     "reads-outside-content",
+     "reads-private-data"
+    ],
+    "slack_get_thread_replies": [
+     "reads-outside-content"
+    ],
+    "slack_get_users": [
+     "reads-private-data"
+    ],
+    "slack_get_user_profile": [
+     "reads-private-data"
+    ],
+    "slack_download_file": [
+     "reads-private-data"
+    ],
+    "slack_list_files": [
+     "reads-private-data"
+    ],
+    "slack_join_channel": [
+     "reads-outside-content"
+    ],
+    "slack_get_reactions": [],
+    "slack_remove_reaction": [
+     "changes-things",
+     "deletes"
+    ],
+    "slack_list_pins": [],
+    "slack_list_bookmarks": [],
+    "slack_search_messages": [
+     "reads-outside-content"
+    ],
+    "slack_search_files": [
+     "reads-private-data"
+    ]
+   }
+  },
+  {
+   "n": "@transcend-io/mcp-server-discovery",
+   "st": "failed",
+   "e": "server exited. d1fcead061a2/node_modules/@transcend-io/mcp-server-base/dist/index.mjs:2368:8)\\x0a    at resolveStdioStartupAuth (file:///home/runner/work/_temp/",
+   "rank": 91,
+   "dl": 4217,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@transcend-io/mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 92,
+   "dl": 4217,
+   "kind": "npm",
+   "info": {
+    "name": "transcend-mcp",
+    "version": "1.7.1"
+   },
+   "fl": [
+    "lethal-trifecta"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 91,
+   "tok": 26327,
+   "ann": 91,
+   "pr": 4,
+   "res": 2,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "docs_list": [],
+    "docs_fetch": [],
+    "dsr_submit": [
+     "deletes",
+     "sends-out"
+    ],
+    "dsr_poll_status": [],
+    "dsr_list": [],
+    "dsr_get_details": [],
+    "dsr_list_identifiers": [],
+    "dsr_list_request_data_silos": [],
+    "dsr_list_pending_requests": [],
+    "dsr_enrich_identifiers": [
+     "deletes"
+    ],
+    "dsr_cancel": [
+     "changes-things",
+     "deletes"
+    ],
+    "dsr_analyze": [],
+    "consent_get_preferences": [],
+    "consent_list_purposes": [],
+    "consent_list_data_flows": [],
+    "consent_list_cookies": [],
+    "consent_list_airgap_bundles": [],
+    "consent_list_regimes": [],
+    "consent_get_inventory_stats": [],
+    "consent_cookie_triage_review_app": [
+     "reads-outside-content"
+    ],
+    "consent_get_aggregate_analytics": [],
+    "consent_get_timeseries_analytics": [],
+    "consent_get_analytics_data": [],
+    "consent_update_cookies": [
+     "changes-things",
+     "deletes"
+    ],
+    "consent_update_data_flows": [
+     "changes-things",
+     "deletes"
+    ],
+    "consent_bulk_triage": [
+     "deletes"
+    ],
+    "consent_list_roc_records": [
+     "reads-private-data"
+    ],
+    "custom_functions_upsert": [
+     "changes-things"
+    ],
+    "custom_functions_list": [],
+    "custom_functions_get_code": [],
+    "custom_functions_promote_version": [
+     "deletes"
+    ],
+    "custom_functions_test_run": [],
+    "preferences_list_partitions": [],
+    "preferences_query": [],
+    "preferences_upsert": [
+     "changes-things"
+    ],
+    "preferences_delete": [
+     "changes-things",
+     "deletes"
+    ],
+    "preferences_append_identifiers": [
+     "changes-things"
+    ],
+    "preferences_update_identifiers": [
+     "changes-things",
+     "deletes"
+    ],
+    "preferences_delete_identifiers": [
+     "changes-things",
+     "deletes"
+    ],
+    "inventory_list_data_silos": [],
+    "inventory_get_data_silo": [],
+    "inventory_list_catalog_integrations": [],
+    "inventory_write_data_silo": [
+     "changes-things"
+    ],
+    "inventory_list_vendors": [],
+    "inventory_write_vendor": [
+     "changes-things"
+    ],
+    "inventory_list_data_points": [],
+    "inventory_update_or_create_data_point": [
+     "changes-things"
+    ],
+    "inventory_list_sub_data_points": [],
+    "inventory_list_identifiers": [],
+    "inventory_list_categories": [],
+    "inventory_write_category": [
+     "changes-things"
+    ],
+    "inventory_list_processing_purposes": [],
+    "inventory_write_processing_purpose": [
+     "changes-things"
+    ],
+    "inventory_list_business_entities": [
+     "reads-private-data"
+    ],
+    "inventory_list_data_subjects": [],
+    "inventory_analyze": [],
+    "discovery_classify_text": [],
+    "discovery_ner_extract": [],
+    "discovery_list_scans": [],
+    "discovery_list_plugins": [],
+    "assessments_list": [],
+    "assessments_get": [],
+    "assessments_create": [
+     "changes-things"
+    ],
+    "assessments_create_group": [
+     "changes-things"
+    ],
+    "assessments_list_groups": [],
+    "assessments_list_comments": [
+     "reads-outside-content"
+    ],
+    "assessments_write_comment": [
+     "changes-things",
+     "sends-out"
+    ],
+    "assessments_update": [
+     "changes-things"
+    ],
+    "assessments_list_templates": [],
+    "assessments_update_assignees": [
+     "changes-things"
+    ],
+    "assessments_answer_question": [],
+    "assessments_submit_response": [
+     "deletes",
+     "sends-out"
+    ],
+    "assessments_create_template": [
+     "changes-things"
+    ],
+    "assessments_add_section": [
+     "changes-things"
+    ],
+    "assessments_export_template": [],
+    "assessments_prefill": [],
+    "workflows_list": [],
+    "workflows_update_config": [
+     "changes-things"
+    ],
+    "workflows_list_email_templates": [
+     "reads-private-data"
+    ],
+    "policy_get_templates": [],
+    "policy_list_bundles": [],
+    "policy_publish": [
+     "sends-out"
+    ],
+    "policy_set_live": [
+     "changes-things",
+     "deletes"
+    ],
+    "admin_get_organization": [],
+    "admin_get_current_user": [
+     "reads-private-data"
+    ],
+    "admin_list_users": [
+     "reads-private-data"
+    ],
+    "admin_list_teams": [],
+    "admin_list_api_keys": [],
+    "admin_list_scopes": [],
+    "admin_get_privacy_center": [],
+    "admin_test_connection": []
+   }
+  },
+  {
+   "n": "@transcend-io/mcp-server-assessment",
+   "st": "failed",
+   "e": "server exited. 46009162ef19/node_modules/@transcend-io/mcp-server-base/dist/index.mjs:2368:8)\\x0a    at resolveStdioStartupAuth (file:///home/runner/work/_temp/",
+   "rank": 93,
+   "dl": 4195,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@lottiefiles/creator-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": 94,
+   "dl": 3967,
+   "kind": "npm",
+   "info": {
+    "name": "@lottiefiles/creator-mcp",
+    "version": "0.2.3"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes"
+   ],
+   "tools": 108,
+   "tok": 74116,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "read_scene": [],
+    "apply_keyframes": [],
+    "apply_motion_preset": [],
+    "apply_motion_path": [],
+    "set_anchor_point": [
+     "changes-things"
+    ],
+    "create_shape": [
+     "changes-things"
+    ],
+    "bend_shape": [],
+    "create_text": [
+     "changes-things"
+    ],
+    "create_text_group": [
+     "changes-things"
+    ],
+    "create_button": [
+     "changes-things"
+    ],
+    "create_reference_board": [
+     "changes-things"
+    ],
+    "set_text": [
+     "changes-things"
+    ],
+    "set_text_style": [
+     "changes-things"
+    ],
+    "measure_text_units": [],
+    "split_text": [],
+    "stagger_layers": [],
+    "animate_entrance": [],
+    "list_fonts": [],
+    "center_layer": [],
+    "set_fill": [
+     "changes-things"
+    ],
+    "set_stroke": [
+     "changes-things"
+    ],
+    "animate_paint": [],
+    "animate_property": [],
+    "set_blend_mode": [
+     "changes-things"
+    ],
+    "add_drop_shadow": [
+     "changes-things",
+     "deletes"
+    ],
+    "add_blur": [
+     "changes-things"
+    ],
+    "add_color_overlay": [
+     "changes-things"
+    ],
+    "add_tint": [
+     "changes-things"
+    ],
+    "add_tritone": [
+     "changes-things"
+    ],
+    "list_layer_effects": [],
+    "remove_layer_effect": [
+     "changes-things",
+     "deletes"
+    ],
+    "update_layer_effect": [
+     "changes-things"
+    ],
+    "list_themes": [],
+    "list_slots": [],
+    "list_motion_system_items": [],
+    "link_slot_to_layer": [],
+    "create_slot": [
+     "changes-things"
+    ],
+    "create_slot_from_value": [
+     "changes-things"
+    ],
+    "update_slot_value": [
+     "changes-things"
+    ],
+    "unlink_slot": [],
+    "add_theme": [
+     "changes-things"
+    ],
+    "select_theme": [],
+    "remove_theme": [
+     "changes-things",
+     "deletes"
+    ],
+    "list_segments": [],
+    "add_segment": [
+     "changes-things"
+    ],
+    "rename_segment": [
+     "changes-things"
+    ],
+    "remove_segment": [
+     "changes-things",
+     "deletes"
+    ],
+    "select_segment": [],
+    "list_state_machines": [],
+    "add_state_machine": [
+     "changes-things"
+    ],
+    "set_active_state_machine": [
+     "changes-things"
+    ],
+    "remove_state_machine": [
+     "changes-things",
+     "deletes"
+    ],
+    "list_states": [],
+    "add_state": [
+     "changes-things"
+    ],
+    "add_global_state": [
+     "changes-things"
+    ],
+    "remove_state": [
+     "changes-things",
+     "deletes"
+    ],
+    "update_state": [
+     "changes-things"
+    ],
+    "set_state_actions": [
+     "changes-things"
+    ],
+    "set_initial_state": [
+     "changes-things"
+    ],
+    "add_transition": [
+     "changes-things"
+    ],
+    "remove_transition": [
+     "changes-things",
+     "deletes"
+    ],
+    "list_interactions": [],
+    "add_pointer_interaction": [
+     "changes-things"
+    ],
+    "add_state_interaction": [
+     "changes-things"
+    ],
+    "remove_interaction": [
+     "changes-things",
+     "deletes"
+    ],
+    "list_inputs": [],
+    "add_input": [
+     "changes-things"
+    ],
+    "update_input": [
+     "changes-things"
+    ],
+    "remove_input": [
+     "changes-things",
+     "deletes"
+    ],
+    "import_asset": [],
+    "vectorize_image": [],
+    "remove_keyframes": [
+     "changes-things",
+     "deletes"
+    ],
+    "duplicate_layer": [],
+    "tile_layer": [],
+    "reorder_layer": [],
+    "group_layers": [],
+    "create_shape_group": [
+     "changes-things"
+    ],
+    "add_shape_to_layer": [
+     "changes-things"
+    ],
+    "set_group_transform": [
+     "changes-things"
+    ],
+    "reorder_shape": [],
+    "set_layer_time": [
+     "changes-things"
+    ],
+    "retime_keyframes": [],
+    "delete_layer": [
+     "changes-things",
+     "deletes"
+    ],
+    "create_mask": [
+     "changes-things"
+    ],
+    "update_mask": [
+     "changes-things"
+    ],
+    "remove_mask": [
+     "changes-things",
+     "deletes"
+    ],
+    "set_matte": [
+     "changes-things"
+    ],
+    "remove_matte": [
+     "changes-things",
+     "deletes"
+    ],
+    "rename_node": [
+     "changes-things"
+    ],
+    "set_layer_visibility": [
+     "changes-things"
+    ],
+    "set_layer_lock": [
+     "changes-things"
+    ],
+    "flip_layer": [],
+    "align_layer": [],
+    "align_layers": [],
+    "layout": [],
+    "read_keyframes": [],
+    "copy_animation": [],
+    "list_scenes": [],
+    "create_scene": [
+     "changes-things"
+    ],
+    "switch_scene": [],
+    "set_current_frame": [
+     "changes-things"
+    ],
+    "set_scene_background": [
+     "changes-things"
+    ],
+    "set_scene_settings": [
+     "changes-things"
+    ],
+    "create_scene_layer": [
+     "changes-things"
+    ],
+    "break_scene_layer": [],
+    "apply_bounce": [],
+    "apply_squash": [],
+    "apply_coupled_shadow": []
+   }
+  },
+  {
+   "n": "@elastic/mcp-server-elasticsearch",
+   "st": "failed",
+   "e": "server exited. e @opentelemetry/sdk-trace package\\x0aServer error: [\\x0a  {\\x0a    \"code\": \"too_small\",\\x0a    \"minimum\": 1,\\x0a    \"type\": \"string\",\\x0a    \"in",
+   "rank": 95,
+   "dl": 3910,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@cloudflare/mcp-server-cloudflare",
+   "st": "failed",
+   "e": "server exited. [DEBUG 2026-11-05T04:24:52.148Z] Uncaught exception: Error: Unknown command: undefined. Expected 'init' or 'run'.\\x0a",
+   "rank": 96,
+   "dl": 3818,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "langsmith-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 97,
+   "dl": 3707,
+   "kind": "npm",
+   "info": {
+    "name": "LangSmith API MCP Server",
+    "version": "0.1.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "reads-private-data"
+   ],
+   "tools": 15,
+   "tok": 3772,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "list_prompts": [],
+    "get_prompt_by_name": [],
+    "push_prompt": [
+     "changes-things"
+    ],
+    "get_thread_history": [
+     "reads-private-data"
+    ],
+    "fetch_runs": [],
+    "list_projects": [],
+    "get_billing_usage": [],
+    "list_experiments": [],
+    "list_datasets": [],
+    "list_examples": [],
+    "read_dataset": [],
+    "read_example": [],
+    "create_dataset": [
+     "changes-things"
+    ],
+    "update_examples": [
+     "changes-things"
+    ],
+    "run_experiment": []
+   }
+  },
+  {
+   "n": "@clipform/mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": 98,
+   "dl": 3648,
+   "kind": "npm",
+   "info": {
+    "name": "io.github.Clipform/mcp-server",
+    "version": "4.11.2"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 32,
+   "tok": 26462,
+   "ann": 32,
+   "pr": 10,
+   "res": 13,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "clipform_create_form": [
+     "changes-things"
+    ],
+    "clipform_import_form": [],
+    "clipform_list_forms": [],
+    "clipform_whoami": [],
+    "clipform_get_form": [],
+    "clipform_update_form": [
+     "changes-things",
+     "deletes"
+    ],
+    "clipform_delete_form": [
+     "changes-things",
+     "deletes"
+    ],
+    "clipform_get_results": [],
+    "clipform_get_responses": [],
+    "clipform_add_node": [
+     "changes-things"
+    ],
+    "clipform_update_node": [
+     "changes-things",
+     "deletes"
+    ],
+    "clipform_delete_node": [
+     "changes-things",
+     "deletes"
+    ],
+    "clipform_upload_media_asset": [
+     "changes-things",
+     "sends-out"
+    ],
+    "clipform_complete_media_upload": [
+     "changes-things",
+     "sends-out"
+    ],
+    "clipform_attach_node_media": [
+     "deletes"
+    ],
+    "clipform_get_node_media": [],
+    "clipform_delete_node_media": [
+     "changes-things",
+     "deletes"
+    ],
+    "clipform_set_logic": [
+     "changes-things",
+     "deletes"
+    ],
+    "clipform_log_generation": [
+     "reads-private-data"
+    ],
+    "clipform_search_news": [],
+    "clipform_generate_tts": [],
+    "clipform_search_media": [],
+    "clipform_render_composition": [
+     "deletes"
+    ],
+    "clipform_search_music": [],
+    "clipform_list_compositions": [],
+    "clipform_list_video_templates": [],
+    "clipform_render_video_template": [
+     "deletes"
+    ],
+    "clipform_list_assets": [],
+    "clipform_check_render": [],
+    "clipform_fetch_boundary": [],
+    "clipform_get_guide": [],
+    "clipform_get_workflow": []
+   }
+  },
+  {
+   "n": "twelvelabs-mcp",
+   "st": "failed",
+   "e": "server exited. /home/runner/work/_temp/npm/_npx/3edc2c0fb421219a/node_modules/.bin/twelvelabs-mcp: 1: Syntax error: \"(\" unexpected\\x0a",
+   "rank": 99,
+   "dl": 3340,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "@transcend-io/mcp-server-workflows",
+   "st": "failed",
+   "e": "server exited. 2359c7ea7397/node_modules/@transcend-io/mcp-server-base/dist/index.mjs:2368:8)\\x0a    at resolveStdioStartupAuth (file:///home/runner/work/_temp/",
+   "rank": 100,
+   "dl": 3302,
+   "kind": "npm",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "mcp-server-fetch",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "mcp-fetch",
+    "version": "2026.11.4"
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content",
+    "sends-out"
+   ],
+   "tools": 1,
+   "tok": 381,
+   "ann": 1,
+   "pr": 1,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "fetch": [
+     "reads-outside-content",
+     "sends-out"
+    ]
+   }
+  },
+  {
+   "n": "mcp-server-git",
+   "st": "failed",
+   "e": "server exited. Installed 32 packages in 24ms\\x0aERROR:mcp_server_git.server:/tmp/naka-audit-vx61lg0s is not a valid Git repository\\x0a",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "mcp-server-time",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "mcp-time",
+    "version": "2026.11.4"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 3,
+   "tok": 1146,
+   "ann": 3,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "get_current_time": [],
+    "convert_time": [],
+    "get_time_ago": []
+   }
+  },
+  {
+   "n": "mcp-server-sqlite",
+   "st": "failed",
+   "e": "server exited. 3.12.15/x64/lib/python3.12/asyncio/base_events.py\", line 691, in run_until_complete\\x0a    return future.result()\\x0a           ^^^^^^^^^^^^^^^\\x",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "mcp-atlassian",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "Atlassian MCP",
+    "version": "3.4.11"
+   },
+   "fl": [
+    "lethal-trifecta",
+    "mentions-other-tools"
+   ],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data",
+    "sends-out"
+   ],
+   "tools": 98,
+   "tok": 30117,
+   "ann": 98,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [
+    [
+     "jira_assign_issue",
+     "mentions other servers' tools: update_issue"
+    ]
+   ],
+   "tc": {
+    "jira_get_user_profile": [
+     "reads-private-data"
+    ],
+    "jira_search_assignable_users": [
+     "reads-private-data"
+    ],
+    "jira_get_issue_watchers": [
+     "reads-outside-content"
+    ],
+    "jira_add_watcher": [
+     "changes-things"
+    ],
+    "jira_remove_watcher": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_get_issue": [
+     "reads-outside-content"
+    ],
+    "jira_search": [],
+    "jira_search_fields": [],
+    "jira_get_field_options": [],
+    "jira_get_project_issues": [
+     "reads-outside-content"
+    ],
+    "jira_get_transitions": [],
+    "jira_get_worklog": [],
+    "jira_download_attachments": [],
+    "jira_get_issue_images": [
+     "reads-outside-content"
+    ],
+    "jira_get_agile_boards": [],
+    "jira_get_board_issues": [
+     "reads-outside-content"
+    ],
+    "jira_get_sprints_from_board": [],
+    "jira_get_sprint_issues": [
+     "reads-outside-content"
+    ],
+    "jira_get_link_types": [],
+    "jira_create_issue": [
+     "changes-things",
+     "sends-out"
+    ],
+    "jira_batch_create_issues": [
+     "changes-things"
+    ],
+    "jira_batch_get_changelogs": [],
+    "jira_update_issue": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_assign_issue": [
+     "reads-outside-content"
+    ],
+    "jira_delete_issue": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_move_issue": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_add_comment": [
+     "changes-things",
+     "sends-out"
+    ],
+    "jira_edit_comment": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "jira_add_worklog": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_link_to_epic": [
+     "deletes"
+    ],
+    "jira_create_issue_link": [
+     "changes-things",
+     "sends-out"
+    ],
+    "jira_create_remote_issue_link": [
+     "changes-things",
+     "sends-out"
+    ],
+    "jira_remove_issue_link": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_transition_issue": [
+     "deletes",
+     "reads-outside-content"
+    ],
+    "jira_create_sprint": [
+     "changes-things"
+    ],
+    "jira_update_sprint": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_add_issues_to_sprint": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_move_issues_to_backlog": [
+     "changes-things"
+    ],
+    "jira_get_project_issue_types": [
+     "reads-outside-content"
+    ],
+    "jira_get_create_fields": [
+     "changes-things"
+    ],
+    "jira_get_project_versions": [],
+    "jira_get_project_components": [],
+    "jira_get_all_projects": [],
+    "jira_search_projects": [],
+    "jira_get_project_fields": [],
+    "jira_get_service_desk_for_project": [],
+    "jira_get_service_desk_queues": [],
+    "jira_get_queue_issues": [
+     "reads-outside-content"
+    ],
+    "jira_get_request_types": [],
+    "jira_get_request_type_fields": [],
+    "jira_create_customer_request": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "jira_create_version": [
+     "changes-things"
+    ],
+    "jira_batch_create_versions": [
+     "changes-things"
+    ],
+    "jira_update_version": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_get_issue_proforma_forms": [
+     "reads-outside-content"
+    ],
+    "jira_get_proforma_form_details": [],
+    "jira_update_proforma_form_answers": [
+     "changes-things",
+     "deletes"
+    ],
+    "jira_get_issue_dates": [
+     "reads-outside-content"
+    ],
+    "jira_get_issue_sla": [
+     "reads-outside-content"
+    ],
+    "jira_get_issue_development_info": [
+     "reads-outside-content"
+    ],
+    "jira_get_issues_development_info": [
+     "reads-outside-content"
+    ],
+    "jira_get_project_epic_hierarchy": [],
+    "jira_get_cross_project_dependencies": [],
+    "confluence_search": [],
+    "confluence_get_page": [],
+    "confluence_get_page_children": [],
+    "confluence_get_space_page_tree": [],
+    "confluence_get_comments": [
+     "reads-outside-content"
+    ],
+    "confluence_get_labels": [],
+    "confluence_add_label": [
+     "changes-things"
+    ],
+    "confluence_create_page": [
+     "changes-things",
+     "sends-out"
+    ],
+    "confluence_update_page": [
+     "changes-things",
+     "deletes"
+    ],
+    "confluence_update_page_section": [
+     "changes-things",
+     "deletes"
+    ],
+    "confluence_delete_page": [
+     "changes-things",
+     "deletes"
+    ],
+    "confluence_move_page": [
+     "changes-things",
+     "deletes"
+    ],
+    "confluence_add_comment": [
+     "changes-things",
+     "sends-out"
+    ],
+    "confluence_reply_to_comment": [
+     "sends-out"
+    ],
+    "confluence_get_inline_comments": [
+     "reads-outside-content"
+    ],
+    "confluence_add_inline_comment": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "confluence_search_user": [
+     "reads-private-data"
+    ],
+    "confluence_get_page_history": [
+     "reads-private-data"
+    ],
+    "confluence_get_page_diff": [],
+    "confluence_get_page_views": [],
+    "confluence_upload_attachment": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "confluence_upload_attachments": [
+     "changes-things",
+     "deletes",
+     "sends-out"
+    ],
+    "confluence_get_attachments": [],
+    "confluence_download_attachment": [],
+    "confluence_download_content_attachments": [],
+    "confluence_delete_attachment": [
+     "changes-things",
+     "deletes"
+    ],
+    "confluence_get_page_images": [],
+    "confluence_list_page_templates": [],
+    "confluence_get_page_template": [],
+    "confluence_create_page_from_template": [
+     "changes-things",
+     "sends-out"
+    ],
+    "confluence_get_page_restrictions": [],
+    "confluence_set_page_restrictions": [
+     "changes-things",
+     "deletes"
+    ],
+    "confluence_copy_page": [
+     "deletes"
+    ],
+    "confluence_check_content_permissions": [],
+    "confluence_get_space_permissions": []
+   }
+  },
+  {
+   "n": "markitdown-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "markitdown",
+    "version": ""
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 1,
+   "tok": 112,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "convert_to_markdown": []
+   }
+  },
+  {
+   "n": "mcp-server-qdrant",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "mcp-server-qdrant",
+    "version": "1.30.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 2,
+   "tok": 225,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "qdrant-find": [],
+    "qdrant-store": []
+   }
+  },
+  {
+   "n": "duckduckgo-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "ddg-search",
+    "version": ""
+   },
+   "fl": [],
+   "caps": [
+    "reads-outside-content",
+    "sends-out"
+   ],
+   "tools": 3,
+   "tok": 1175,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "search": [
+     "reads-outside-content"
+    ],
+    "fetch_content": [
+     "reads-outside-content",
+     "sends-out"
+    ],
+    "expand_link": []
+   }
+  },
+  {
+   "n": "arxiv-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "arxiv-mcp-server",
+    "version": "0.8.2"
+   },
+   "fl": [],
+   "caps": [
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data"
+   ],
+   "tools": 19,
+   "tok": 4618,
+   "ann": 19,
+   "pr": 7,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "search_papers": [
+     "reads-outside-content"
+    ],
+    "download_paper": [],
+    "list_papers": [],
+    "read_paper": [
+     "reads-outside-content"
+    ],
+    "get_abstract": [
+     "reads-outside-content"
+    ],
+    "semantic_search": [
+     "reads-outside-content"
+    ],
+    "reindex": [],
+    "citation_graph": [
+     "reads-private-data"
+    ],
+    "export_citations": [],
+    "watch_topic": [],
+    "check_alerts": [],
+    "list_watches": [],
+    "unwatch_topic": [
+     "deletes"
+    ],
+    "get_paper_latex": [
+     "reads-outside-content"
+    ],
+    "list_paper_latex_sections": [],
+    "get_paper_latex_section": [
+     "reads-outside-content"
+    ],
+    "get_paper_outline": [
+     "reads-outside-content"
+    ],
+    "read_paper_section": [
+     "reads-outside-content"
+    ],
+    "search_paper_text": [
+     "reads-outside-content"
+    ]
+   }
+  },
+  {
+   "n": "awslabs.aws-documentation-mcp-server",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "awslabs.aws-documentation-mcp-server",
+    "version": ""
+   },
+   "fl": [],
+   "caps": [
+    "reads-private-data"
+   ],
+   "tools": 5,
+   "tok": 5784,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "read_documentation": [],
+    "read_sections": [],
+    "search_table": [
+     "reads-private-data"
+    ],
+    "search_documentation": [],
+    "recommend": []
+   }
+  },
+  {
+   "n": "awslabs.core-mcp-server",
+   "st": "failed",
+   "e": "server exited. error: No solution found when resolving tool dependencies\\x0a  cause: Because all versions of awslabs-core-mcp-server were yanked (reason: load i",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "mcp-obsidian",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "mcp-obsidian",
+    "version": "1.30.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-private-data"
+   ],
+   "tools": 15,
+   "tok": 2367,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "obsidian_list_files_in_dir": [
+     "reads-private-data"
+    ],
+    "obsidian_list_files_in_vault": [
+     "reads-private-data"
+    ],
+    "obsidian_get_file_contents": [
+     "reads-private-data"
+    ],
+    "obsidian_simple_search": [],
+    "obsidian_patch_content": [
+     "changes-things"
+    ],
+    "obsidian_append_content": [
+     "changes-things"
+    ],
+    "obsidian_put_content": [
+     "changes-things"
+    ],
+    "obsidian_delete_file": [
+     "changes-things",
+     "deletes"
+    ],
+    "obsidian_complex_search": [],
+    "obsidian_search_by_tag": [],
+    "obsidian_get_frontmatter": [],
+    "obsidian_batch_get_file_contents": [
+     "reads-private-data"
+    ],
+    "obsidian_get_periodic_note": [
+     "reads-private-data"
+    ],
+    "obsidian_get_recent_periodic_notes": [
+     "reads-private-data"
+    ],
+    "obsidian_get_recent_changes": []
+   }
+  },
+  {
+   "n": "blender-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "MCP for Blender",
+    "version": "1.30.0"
+   },
+   "fl": [],
+   "caps": [
+    "reads-private-data",
+    "runs-commands"
+   ],
+   "tools": 9,
+   "tok": 4328,
+   "ann": 0,
+   "pr": 0,
+   "res": 1,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "get_addon_status": [],
+    "disable_telemetry": [],
+    "get_scene_info": [],
+    "execute_blender_code": [
+     "runs-commands"
+    ],
+    "record_trajectory_feedback": [
+     "reads-private-data"
+    ],
+    "look": [],
+    "generate_3d": [],
+    "search_assets": [],
+    "import_asset": []
+   }
+  },
+  {
+   "n": "mcp-server-docker",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "docker-server",
+    "version": "0.3.0"
+   },
+   "fl": [],
+   "caps": [
+    "changes-things",
+    "deletes",
+    "reads-outside-content",
+    "reads-private-data"
+   ],
+   "tools": 19,
+   "tok": 4596,
+   "ann": 19,
+   "pr": 1,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "list_containers": [],
+    "create_container": [
+     "changes-things"
+    ],
+    "run_container": [],
+    "recreate_container": [
+     "deletes"
+    ],
+    "start_container": [],
+    "fetch_container_logs": [
+     "reads-private-data"
+    ],
+    "stop_container": [],
+    "remove_container": [
+     "changes-things",
+     "deletes"
+    ],
+    "list_images": [],
+    "pull_image": [
+     "reads-outside-content"
+    ],
+    "push_image": [
+     "changes-things"
+    ],
+    "build_image": [],
+    "remove_image": [
+     "changes-things",
+     "deletes"
+    ],
+    "list_networks": [],
+    "create_network": [
+     "changes-things"
+    ],
+    "remove_network": [
+     "changes-things",
+     "deletes"
+    ],
+    "list_volumes": [],
+    "create_volume": [
+     "changes-things"
+    ],
+    "remove_volume": [
+     "changes-things",
+     "deletes"
+    ]
+   }
+  },
+  {
+   "n": "mcp-youtube-transcript",
+   "st": "failed",
+   "e": "server exited.   from mcp_youtube_transcript.cli import main\\x0a  File \"/home/runner/work/_temp/uv/archive-v0/rYdj_ceUZxfFWNQN/lib/python3.12/site-packages/mcp_",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "zotero-mcp",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "Zotero",
+    "version": ""
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 3,
+   "tok": 993,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "zotero_item_metadata": [],
+    "zotero_item_fulltext": [],
+    "zotero_search_items": []
+   }
+  },
+  {
+   "n": "mcp-server-motherduck",
+   "st": "failed",
+   "e": "server exited.  duckdb\\x0aInstalled 65 packages in 71ms\\x0aUsage: mcp-server-motherduck [OPTIONS]\\x0aTry 'mcp-server-motherduck --help' for help.\\x0a\\x0aError: ",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "serper-mcp-server",
+   "st": "failed",
+   "e": "server exited. ork/_temp/uv/archive-v0/2GAGn1qizTR6jDiY/lib/python3.12/site-packages/serper_mcp_server/__init__.py\", line 3, in <module>\\x0a    from . import se",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {},
+   "fl": [],
+   "caps": [],
+   "tools": 0,
+   "tok": 0,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {}
+  },
+  {
+   "n": "mcp-server-calculator",
+   "st": "ok",
+   "e": "",
+   "rank": null,
+   "dl": null,
+   "kind": "pypi",
+   "info": {
+    "name": "calculator",
+    "version": "1.30.0"
+   },
+   "fl": [],
+   "caps": [],
+   "tools": 1,
+   "tok": 100,
+   "ann": 0,
+   "pr": 0,
+   "res": 0,
+   "inst": [],
+   "tf": [],
+   "notes": [],
+   "tc": {
+    "calculate": []
+   }
+  }
+ ]
+}

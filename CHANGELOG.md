@@ -7,6 +7,7 @@ All notable changes to Naka. The format follows [Keep a Changelog](https://keepa
 ### Added
 - `naka audit`: start an MCP server, read only its lists, and report hidden instructions, cross-server mentions, "lethal trifecta" capability mixes, mislabelled read-only tools and context cost. Useful before installing any server.
 - The public MCP server scan (`.github/workflows/mcp-scan.yml`): `naka audit` run weekly on the most downloaded MCP servers, in a throwaway GitHub Actions machine with placeholder settings only.
+- The first public scan (docs/MCP-SCAN.md): 119 popular MCP servers, 75 started; no hidden instructions, 12 "lethal trifecta" servers, 8 that go from outside content to running code.
 - Canary keys: `naka canary plant` leaves decoy credentials; sending one anywhere blocks the call and locks the session (`canary`, `hijacked-session`).
 - Elicitation phishing: server pop-up forms asking for passwords, codes, keys or cards, or impersonating Naka, are declined (`elicitation-phishing`).
 - Agentjacking: install and download-and-run commands after outside content ask first (`install-after-untrusted`), script links from that content are blocked (`untrusted-install`), and typo-squatted package names ask first (`lookalike-package`).

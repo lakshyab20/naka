@@ -21,6 +21,7 @@ Stops poisoned tools, rug-pulls, data theft, AI worms and memory poisoning in th
   <a href="#get-started">Get started</a> ·
   <a href="docs/EXPLAINED.md">Explained simply</a> ·
   <a href="docs/BENCHMARK.md">Benchmark</a> ·
+  <a href="docs/MCP-SCAN.md">MCP server scan</a> ·
   <a href="docs/EVALS.md">Test any guard</a> ·
   <a href="docs/ARCHITECTURE.md">Architecture</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>
@@ -71,6 +72,10 @@ To see it work first:
 naka demo --unprotected   # a hijacked agent, two servers: 7 attacks succeed
 naka demo                 # the same agent through Naka: every one is stopped
 ```
+
+## The MCP server scan
+
+We started the 100 most downloaded MCP servers and read what they tell the AI. None hid instructions, but 12 of the 75 that started (including the official GitHub, Slack and Notion servers) let one injected message read your private data and send it out on its own. [Full results](docs/MCP-SCAN.md), rerun every week. Check any server yourself with `naka audit -- <command>`.
 
 ## In plain words
 
