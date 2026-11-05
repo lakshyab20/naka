@@ -23,6 +23,8 @@ if len(sys.argv) > 2:  # how the earlier releases went, to spot a broken run
               "errors": [[h["name"], h["error"][:160]] for h in hist if h["status"] != "ok"][:6]}).replace("\n", " "))
     else:
         print("::notice title=naka-history::no history.json")
+naka = [[s["name"], s["naka"]] for s in data["servers"] if s.get("naka") and s["naka"].get("status") != "clean"]
+print("::notice title=naka-through::" + json.dumps(naka)[:3900])
 blob = base64.b64encode(gzip.compress(json.dumps(rows).encode())).decode()
 for i in range(0, min(len(blob), 40000), 4000):
     print(f"::warning title=naka-changes {i // 4000 + 1}::{blob[i:i + 4000]}")
