@@ -302,6 +302,11 @@ def run_one(entry: dict, timeout: float = 90) -> ServerReport:
                     "npm_config_update_notifier": "false", "NO_UPDATE_NOTIFIER": "1"})
         env.update({k: str(v) for k, v in (entry.get("env") or {}).items()})
         args = [a.replace("{tmp}", home) for a in cmd]
+        if entry.get("through_naka"):
+            # The same server behind Naka's firewall, as `naka install` would set it up.
+            env["NAKA_HOME"] = os.path.join(home, ".naka")
+            safe = re.sub(r"[^A-Za-z0-9_.-]", "_", rep.name)[:60]
+            args = [sys.executable, "-m", "naka", "wrap", "--name", safe, "--quiet", "--", *args]
         try:
             c = Client(args, env, entry.get("cwd") or home, timeout)
         except OSError as exc:
@@ -468,6 +473,8 @@ def main(args) -> int:
         return 2
     if args.only:
         entries = [e for e in entries if any(o in e["name"] for o in args.only)]
+    if getattr(args, "through_naka", False):
+        entries = [dict(e, through_naka=True) for e in entries]
     quiet = bool(args.servers)
     done = [0]
 

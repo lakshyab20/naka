@@ -74,6 +74,8 @@ def main() -> int:
     ap.add_argument("--versions")
     ap.add_argument("--picked")
     ap.add_argument("--previous")
+    ap.add_argument("--wrapped", help="the same servers audited through Naka (naka audit --through-naka)")
+    ap.add_argument("--real", help="naka eval-real results")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
@@ -90,6 +92,7 @@ def main() -> int:
         if meta.get("of") and s.get("status") == "ok":
             old_releases.setdefault(meta["of"], {})[meta.get("version")] = s
 
+    wrapped = {w["name"]: w for w in load(args.wrapped, {"servers": []}).get("servers", [])}
     servers = []
     for s in latest.get("servers", []):
         meta = picked.get(s["name"], {})
@@ -105,7 +108,7 @@ def main() -> int:
             caps = caps_of(s)
             legs = {c: [t["name"] for t in s["tools"] if c in t.get("caps", [])][:6] for c in LEGS}
             findings = findings_of(s)
-            review = reviewed.get(s["name"])
+            review = reviewed.get(s["name"]) if "hidden-instructions" in s.get("flags", []) else None
             rec.update({
                 "tools": len(s["tools"]), "tokens": s.get("context_tokens", 0), "annotated": s.get("annotated", 0),
                 "flags": [f for f in s.get("flags", []) if f != "mentions-other-tools"
@@ -127,6 +130,15 @@ def main() -> int:
                     prev = srv
                 releases.append(item)
             rec["releases"] = releases
+            # The same server behind Naka: which tools would the AI no longer see?
+            w = wrapped.get(s["name"])
+            if w is not None:
+                if w.get("status") != "ok":
+                    rec["naka"] = {"status": "failed", "error": str(w.get("error", ""))[:160]}
+                else:
+                    seen = {t["name"] for t in w.get("tools", [])}
+                    hidden = sorted(t["name"] for t in s["tools"] if t["name"] not in seen)
+                    rec["naka"] = {"status": "hid" if hidden else "clean", "hidden": hidden}
             # Since the previous weekly scan.
             before = prev_by_name.get(s["name"])
             if before and before.get("status") == "ok" and before.get("tool_index"):
@@ -158,8 +170,27 @@ def main() -> int:
         "new_findings_in_release": sum(any_rel(r, "new_findings") for r in compared),
         "changed_since_last_scan": sum(bool(r.get("since_last_scan")) for r in ok),
         "previous_scan": previous.get("date"),
+        "naka_checked": sum("naka" in r for r in ok),
+        "naka_clean": sum(r.get("naka", {}).get("status") == "clean" for r in ok),
+        "naka_hid": sum(r.get("naka", {}).get("status") == "hid" for r in ok),
+        "naka_failed": sum(r.get("naka", {}).get("status") == "failed" for r in ok),
     }
     data = {"date": time.strftime("%Y-%m-%d"), "naka": latest.get("naka"), "stats": stats, "servers": servers}
+    realres = load(args.real, None)
+    if realres:
+        sc = {x["id"]: x for x in realres.get("scenarios", [])}
+        rows: dict[str, dict] = {}
+        for r in realres.get("results", []):
+            row = rows.setdefault(r["scenario"], {"id": r["scenario"], "kind": r["kind"], "category": r["category"],
+                                                  "title": sc.get(r["scenario"], {}).get("title", ""),
+                                                  "servers": sc.get(r["scenario"], {}).get("servers", []),
+                                                  "twin": sc.get(r["scenario"], {}).get("twin", ""), "guards": {}})
+            row["guards"][r["guard"]] = {"outcome": r["outcome"], "detail": r.get("detail", "")[:160]}
+            row.setdefault("versions", {}).update(r.get("versions") or {})
+        data["real"] = {"date": realres.get("date"), "summary": realres.get("summary", {}), "scenarios": list(rows.values())}
+        nk = realres.get("summary", {}).get("naka", {})
+        stats.update(real_attacks=nk.get("attacks", 0), real_stopped=nk.get("stopped", 0),
+                     real_everyday=nk.get("everyday", 0), real_interrupted=nk.get("interrupted", 0))
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     json.dump(data, open(args.out, "w"), indent=1)
     print(json.dumps(stats))

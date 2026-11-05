@@ -51,6 +51,13 @@ jobs:
         env:
           npm_config_cache: ${{ runner.temp }}/npm
           UV_CACHE_DIR: ${{ runner.temp }}/uv
+      - name: Audit the same servers through Naka
+        run: |
+          naka audit --servers scan-servers.json --through-naka --workers 6 --timeout 150 \
+            --json results/wrapped.json || true
+        env:
+          npm_config_cache: ${{ runner.temp }}/npm
+          UV_CACHE_DIR: ${{ runner.temp }}/uv
       - name: Audit earlier releases
         run: |
           python scan/history.py results/scan.json scan-servers.json --versions 3 \
@@ -59,7 +66,8 @@ jobs:
           naka audit --servers history-servers.json --workers 6 --timeout 150 \
             --json results/history.json || echo "::warning title=naka-history-audit::naka audit exited with $?"
           python scan/compare.py --latest results/scan.json --history results/history.json \
-            --versions results/versions.json --picked results/scan-servers.json --out preview/data.json > stats.json
+            --versions results/versions.json --picked results/scan-servers.json --wrapped results/wrapped.json \
+            --out preview/data.json > stats.json
           echo "::notice title=naka-scan-stats::$(cat stats.json)"
           python scan/export_changes.py preview/data.json results/history.json
         env:
@@ -70,8 +78,34 @@ jobs:
           name: mcp-scan
           path: results/
 
+  real:
+    # Real servers, real attacks. Starts servers that run commands, so it gets
+    # its own throwaway machine with no secrets, like the scan.
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e . uv
+      - name: Real attacks on real servers
+        run: |
+          mkdir -p results
+          naka eval-real --json results/real.json --keep real-runs | tee results/real.txt || true
+          python -c "import json; d=json.load(open('results/real.json')); [print('::notice title=naka-real ' + g + '::' + json.dumps({r['scenario']: [r['outcome'], r['detail'][:100], r['versions']] if g == 'no guard' else [r['outcome'], r['detail'][:100]] for r in d['results'] if r['guard'] == g})) for g in d['summary']]"
+          python -c "import json; d=json.load(open('results/real.json')); print('::notice title=naka-real-summary::' + json.dumps(d['summary']))"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: real
+          path: |
+            results/
+            real-runs/
+
   publish:
-    needs: scan
+    needs: [scan, real]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -92,12 +126,17 @@ jobs:
         with:
           name: mcp-scan
           path: results/
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: real
+          path: real/
       - name: Build the page
         run: |
           # Last week's published data, to show what changed since then (absent on the first run).
           curl -fsSL "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/data.json" -o previous.json || rm -f previous.json
           python scan/compare.py --latest results/scan.json --history results/history.json \
             --versions results/versions.json --picked results/scan-servers.json \
+            --wrapped results/wrapped.json --real real/results/real.json \
             --previous previous.json --out site/data.json > stats.json
           python scan/site/build.py site/data.json site/index.html
           echo "::notice title=naka-scan-stats::$(cat stats.json)"

@@ -275,8 +275,18 @@ def main(argv: list[str] | None = None) -> int:
     au.add_argument("--timeout", type=float, default=90, help="seconds to wait for each server")
     au.add_argument("--json", help="write full results to this file")
     au.add_argument("--md", help="write a markdown report to this file")
+    au.add_argument("--through-naka", action="store_true", help="run each server behind Naka's firewall and "
+                    "report what the AI would see (to measure false alarms)")
     au.add_argument("command", nargs=argparse.REMAINDER, help="-- the server command to audit")
     au.set_defaults(func=lambda a: __import__("naka.audit", fromlist=["main"]).main(a))
+
+    er = sub.add_parser("eval-real", help="real MCP servers, real attacks (needs npx, uvx and network; "
+                                          "starts servers that run commands: use a throwaway machine)")
+    er.add_argument("--guard", action="append", help="as in `naka eval` (default: no guard and naka)")
+    er.add_argument("--only", action="append", help="only scenarios whose id contains this text")
+    er.add_argument("--json", help="write results to this file")
+    er.add_argument("--keep", help="save every run (messages, guard log, files, what the attacker heard)")
+    er.set_defaults(func=lambda a: __import__("naka.evals.real", fromlist=["main"]).main(a))
 
     dm = sub.add_parser("demo", help="run the attack demo")
     dm.add_argument("--unprotected", action="store_true", help="run the same attack without naka")

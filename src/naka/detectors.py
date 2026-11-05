@@ -53,7 +53,10 @@ INJECTION_RULES: list[tuple[str, int, re.Pattern[str]]] = [
         r"\b(?:previous|prior|above|earlier|all|system|original|your|any)\b.{0,20}?"
         r"\b(?:instructions?|prompts?|rules|guidelines|guidance|directives|guardrails|policies|constraints)")),
     ("fake-system-tag", HIGH, _rx(
-        r"<\s*/?\s*(important|system|admin|instructions?|secret|assistant)\s*>|\[\s*(system|admin|important)\s*\]|^\s*#{1,6}\s*system\b")),
+        r"<\s*/?\s*(important|system|admin|instructions?|secret|assistant)\s*>|\[\s*(system|admin)\s*\]|^\s*#{1,6}\s*system\b")),
+    # "[IMPORTANT]" on its own is ordinary emphasis in real tool descriptions
+    # (Vercel's next-devtools-mcp uses it), so it only counts with other signals.
+    ("bracket-important", MEDIUM, _rx(r"\[\s*important\s*\]")),
     # "Do not mention this to the user." but not "do not tell the user their
     # password over chat", which is ordinary security advice.
     ("conceal-from-user", HIGH, _rx(
