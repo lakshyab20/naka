@@ -20,7 +20,7 @@ Stops poisoned tools, rug-pulls, data theft, AI worms and memory poisoning in th
 <p align="center">
   <a href="#get-started">Get started</a> ·
   <a href="docs/EXPLAINED.md">Explained simply</a> ·
-  <a href="docs/SCOREBOARD.md">Scoreboard</a> ·
+  <a href="docs/BENCHMARK.md">Benchmark</a> ·
   <a href="docs/EVALS.md">Test any guard</a> ·
   <a href="docs/ARCHITECTURE.md">Architecture</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>
@@ -79,7 +79,7 @@ Same 40 attacks and 22 everyday tasks, through each guard, scored by what actual
 | **Naka** | **13 / 13** | **27 / 27** | 4 / 22 |
 | Pipelock 3.7.1 (`claude-code` and `strict` presets) | 10 / 13 | 0 / 27 | 1 / 22 |
 
-The suites are ours and include attack families other guards don't claim to cover, so read the [per-kind breakdown](docs/SCOREBOARD.md). Pipelock does plenty this test doesn't measure (an HTTP egress proxy, signed receipts). Run it yourself, or add your guard:
+These come from the [Agent Firewall Bench](docs/BENCHMARK.md), an open test any MCP guard can run, now with an agentjacking suite too (Naka: 4 / 4). The suites are ours and include attack families other guards don't claim to cover, so read the [per-kind breakdown](docs/SCOREBOARD.md). Pipelock does plenty this test doesn't measure (an HTTP egress proxy, signed receipts). Run it yourself, or add your guard:
 
 ```bash
 naka eval --guard naka --guard "yourguard=yourguard proxy -- {cmd}" -v
