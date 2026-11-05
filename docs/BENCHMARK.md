@@ -23,13 +23,13 @@ It ships inside Naka as `naka eval`, but it doesn't assume Naka: any guard that 
 
 ## Results
 
-Run on macOS 26 (Apple silicon). Raw results for the first three suites: [`scoreboard/2026-11-04.json`](scoreboard/2026-11-04.json).
+Run on macOS 26 (Apple silicon). Raw results: [`scoreboard/2026-11-04.json`](scoreboard/2026-11-04.json) (classic, worms and memory) and [`scoreboard/2026-11-05-agentjacking.json`](scoreboard/2026-11-05-agentjacking.json).
 
 | Guard | Classic MCP attacks | AI worms and memory poisoning | Agentjacking | Everyday tasks interrupted |
 |---|---:|---:|---:|---:|
 | No guard | 0 / 13 | 0 / 27 | 0 / 4 | 0 / 25 |
 | Naka 0.4 (default) | 13 / 13 | 27 / 27 | 4 / 4 | 5 / 25 |
-| Pipelock 3.7.1 | 10 / 13 | 0 / 27 | not run yet | 1 / 22 |
+| Pipelock 3.7.1 | 10 / 13 | 0 / 27 | 0 / 4 | 1 / 25 |
 
 Per-kind results and caveats: [SCOREBOARD.md](SCOREBOARD.md). Naka's authors wrote these suites, so read them with that in mind, and add your own.
 
