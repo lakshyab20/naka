@@ -167,6 +167,8 @@ def build(data: dict) -> str:
             "firewall, not the model. Each attack has an everyday task on the same servers that must keep working.</p>"
             + table(head, att_rows) + "<h3>Everyday tasks on the same servers</h3>" + table(day_head, day_rows)
             + f"<p class='muted'>Servers: {e(', '.join(versions))}. Run on {e(real.get('date', ''))} in GitHub Actions. "
+            f"The pages and the attacker run on the test machine, so the fetch server is started with "
+            f"<code>--allow-private-ips</code> (by default it refuses local addresses, a protection of its own). "
             f"Reproduce with <code>naka eval-real</code> on a throwaway machine.</p>")
 
     since = (f"Compared with the scan of {e(st['previous_scan'])}." if st.get("previous_scan")
