@@ -56,7 +56,9 @@ def test_copied_text_into_instructions_file_is_blocked():
 
 @pytest.mark.parametrize("path", ["CLAUDE.md", "repo/AGENTS.md", ".cursor/rules/team.mdc", ".cursorrules",
                                   ".github/copilot-instructions.md", "~/.claude/skills/x/SKILL.md", ".mcp.json",
-                                  ".git/hooks/pre-commit", "/home/me/.zshrc", "~/.claude/settings.json"])
+                                  ".git/hooks/pre-commit", "/home/me/.zshrc", "~/.claude/settings.json",
+                                  "~/.codex/instructions.md", "~/.codex/instructions/00-identity.md",
+                                  "~/.codex/instructions/03-protected-site.md"])
 def test_reworded_rule_with_a_link_asks_first(path):
     f = make(elicit=True)
     status, req = read_then(f, "Some page the agent read.", "write_file",
