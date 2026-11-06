@@ -119,7 +119,8 @@ INSTRUCTION_FILE = re.compile(
     r"(?:rules[\w-]*/|steering/|guidelines\.md|[^/\s'\"`]+\.md)|"
     r"\.github/(?:instructions|prompts|chatmodes)/|\.claude/(?:skills|agents|commands|output-styles|rules)/|"
     r"/skills/[^/\s]+/SKILL\.md|"
-    r"\.(?:claude|cursor|codex|gemini|windsurf|cline|roo|continue|aider|kiro|junie|trae|augment)/memor(?:y|ies)/",
+    r"\.(?:claude|cursor|codex|gemini|windsurf|cline|roo|continue|aider|kiro|junie|trae|augment)/memor(?:y|ies)/|"
+    r"\.(?:codex|claude|cursor|gemini|windsurf|cline|roo|continue|aider|kiro|junie|trae|augment)/instructions?(?:/|\.(?:local\.)?md\b)",
     re.I)
 # Files that make something run: tool-server and agent configs, git hooks and
 # config, CI workflows, dev-container and shell start-up files.
