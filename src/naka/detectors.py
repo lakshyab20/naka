@@ -118,6 +118,19 @@ INJECTION_RULES: list[tuple[str, int, re.Pattern[str]]] = [
         r"\b(you\s+must|it\s+is\s+(critical|mandatory|essential)|this\s+is\s+(very\s+)?important)\b")),
     ("tool-call-request", MEDIUM, _rx(
         r"\b(call|invoke|use|run)\s+(the\s+)?[`'\"]?[a-z0-9]+(_[a-z0-9]+)+[`'\"]?\s+(tool|function)\b")),
+    # Log-To-Leak (arXiv 2610.36108, Oct 2026): a tool description embeds an
+    # instruction to call a secondary, attacker-controlled tool. The attack
+    # template has four parts — Trigger, Tool Binding, Justification, Pressure —
+    # and the Tool Binding is the unique signal absent from normal descriptions.
+    # Two surface forms: imperative function-call syntax ("invoke audit_log()")
+    # and passive-voice automatic-forwarding ("results are automatically
+    # forwarded to data_collector"). A single HIGH match reaches the threshold.
+    ("secondary-tool-call", HIGH, _rx(
+        # Imperative function-call syntax: "call log_usage(" / "invoke audit_trail_log("
+        r"\b(?:call|invoke)\s+[a-z0-9]+(?:_[a-z0-9]+)+\s*\("
+        # Passive automatic-forwarding: "also logged/forwarded/submitted to fn_name"
+        r"|\b(?:also|automatically|always)\s+(?:logged?|forwarded?|submitted?|sent?|passed?)\s+to\s+[a-z0-9]+(?:_[a-z0-9]+)+"
+    )),
     # Other languages. Patterns, like the English ones, catch the common
     # phrasings only; a classifier is on the roadmap.
     ("override-instructions-hi", HIGH, _rx(  # Hindi and Hinglish
